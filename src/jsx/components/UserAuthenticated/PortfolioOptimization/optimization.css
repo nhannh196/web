@@ -1,0 +1,34 @@
+.heading{
+    font-size: 1rem !important;
+}
+
+.card-body.loadmore-content.recent-activity-wrapper.p-4{
+    padding-top: 0 !important;
+    padding-bottom: 0.5rem !important;
+}
+
+.card-header.border-0.p-4.pb-0 {
+    padding-top: 0.2rem !important;
+}
+
+input.form-control{
+    padding-left: 1.5rem !important;
+}
+
+.d-flex.align-items-center.student{
+    padding-top: 0.5rem !important;
+    padding-bottom: 0.5rem !important;;
+}
+
+.input-group.search-area.mb-3{
+    margin-bottom: 0 !important;
+}
+
+.justify-content-space-between{
+    justify-content: space-between;
+}
+
+.align-items-center.student{
+    padding: 0.478rem !important;
+}
+
