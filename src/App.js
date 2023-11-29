@@ -1,18 +1,33 @@
 /// Components
 import Index from './jsx/index';
-import { Route, Routes, useLocation, useNavigate, useParams } from 'react-router-dom';
 // action
-import { checkAutoLogin, isLogin } from './services/AuthService';
 import { isAuthenticated } from './store/selectors/AuthSelectors';
 /// Style
 import './other/swiper/css/swiper-bundle.min.css';
 import "./other/bootstrap-select/dist/css/bootstrap-select.min.css";
 import "./css/style.css";
-import { Login } from './jsx/pages/Login';
-
+import axios from 'axios';
 
 function App(props) {
-  
+    const getListStock = () => {
+        const data = {
+            nameStock: "",
+            dateRelease: "2023-10-18"
+        }
+        return axios.post(
+            `https://localhost:7053/api/Stocks/ViewPost`, data
+        )
+    }
+
+    getListStock()
+    .then((response) =>{
+        sessionStorage.setItem('dataStocksDefault', JSON.stringify(response.data))
+    })
+    .catch((error) =>{})
+
+// const test =JSON.parse(sessionStorage.getItem('dataStockDefault'))
+// console.log(test)
+
     return (
         <>
             <Index />

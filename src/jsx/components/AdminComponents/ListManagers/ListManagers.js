@@ -1,7 +1,5 @@
 import React, { useEffect, useMemo, useReducer, useState } from 'react';
-import PageTitle from "../../../layouts/PageTitle";
 import { useTable, useGlobalFilter, useFilters, usePagination } from 'react-table';
-import MOCK_DATA from './MOCK_DATA_2.json';
 import { COLUMNS } from './Columns';
 import { GlobalFilter } from './GlobalFilter';
 import {
@@ -497,7 +495,6 @@ const ListManagers = () => {
 						</TabPane>
 					</TabContent>
 				</Tab.Container>
-
 			</div>
 			<Modal className="modal fade" show={stateAction.addNewAdmin} onHide={() => dispatch({ type: 'addNewAdmin' })} centered>
 				<div className="modal-content">

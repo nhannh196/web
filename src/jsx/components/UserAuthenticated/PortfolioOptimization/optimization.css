@@ -1,5 +1,26 @@
 .heading{
-    font-size: 1rem !important;
+    font-size: 0.86rem !important;
+}
+
+.card-header.portofolio{
+    padding:0.5rem 0  !important;
+    justify-content: center;
+    background: #ffffff;
+}
+
+.card-body {
+    padding-top: 1.5rem !important;
+    padding-left: 1.5rem !important;
+    padding-right: 1.5rem !important;
+    padding-bottom: 0.75rem !important;
+}
+
+.input-group.search-area{
+    height: 2.5rem !important;
+}
+
+.messages .input-group.search-area input.form-control{
+    height: 2.5rem !important;
 }
 
 .card-body.loadmore-content.recent-activity-wrapper.p-4{
@@ -31,4 +52,60 @@ input.form-control{
 .align-items-center.student{
     padding: 0.478rem !important;
 }
+
+
+.table thead tr th a {
+    color: white;
+}
+
+.table thead tr th a:hover{
+    color: gray
+}
+
+.table th, .table td{
+    padding: 0.45rem 1.125rem !important;
+    min-height: 1.625rem !important;
+}
+
+.messageError{
+    color:red;
+    padding-top: 0.1rem;
+    padding-bottom: 0.4rem;
+    
+}
+
+.table tbody tr td strong {
+    font-size: 1.06rem !important;
+}
+
+.loading{
+    border: none !important;
+}
+
+.modal-dialog{
+    max-width: fit-content !important;
+}
+
+.portofolio{
+    background: #e6ebee;
+}
+
+.modal-body.portofolio .row{
+    min-width: 86rem;
+}
+
+.options-portofolio{
+    padding-top: 0.5rem;
+}
+
+.options-portofolio #react-select-3-listbox{
+    z-index: 99;
+}
+
+.suggestion-system .btn{
+    width: 100%;
+}
+
+
+
 

@@ -54,19 +54,7 @@ const Header = ({ onNote }) => {
 				<nav className="navbar navbar-expand">
 					<div className="collapse navbar-collapse justify-content-between">
 						<div className="header-left">
-							{/* <div className="input-group search-area">
-								<input type="text"
-									className={`form-control ${searchBut ? "active" : ""}`}
-									placeholder="Search stock here..."
-								/>
-								<span className="input-group-text">
-									<Link to={"#"}>
-										<svg width="15" height="15" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-											<path d="M17.5605 15.4395L13.7527 11.6317C14.5395 10.446 15 9.02625 15 7.5C15 3.3645 11.6355 0 7.5 0C3.3645 0 0 3.3645 0 7.5C0 11.6355 3.3645 15 7.5 15C9.02625 15 10.446 14.5395 11.6317 13.7527L15.4395 17.5605C16.0245 18.1462 16.9755 18.1462 17.5605 17.5605C18.1462 16.9747 18.1462 16.0252 17.5605 15.4395V15.4395ZM2.25 7.5C2.25 4.605 4.605 2.25 7.5 2.25C10.395 2.25 12.75 4.605 12.75 7.5C12.75 10.395 10.395 12.75 7.5 12.75C4.605 12.75 2.25 10.395 2.25 7.5V7.5Z" fill="#01A3FF" />
-										</svg>
-									</Link>
-								</span>
-							</div> */}
+
 						</div>
 						<ul className="navbar-nav header-right">
 							{isLogin() ?
@@ -95,17 +83,21 @@ const Header = ({ onNote }) => {
 												</div>
 											</Dropdown.Toggle>
 											<Dropdown.Menu align="right" className="mt-3 dropdown-menu dropdown-menu-end">
-												<Link to="/app-profile" className="dropdown-item ai-icon">
-													<svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" className="svg-main-icon">
-														<g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
-															<polygon points="0 0 24 0 24 24 0 24" />
-															<path d="M12,11 C9.790861,11 8,9.209139 8,7 C8,4.790861 9.790861,3 12,3 C14.209139,3 16,4.790861 16,7 C16,9.209139 14.209139,11 12,11 Z" fill="#000000" fillRule="nonzero" opacity="0.3" />
-															<path d="M3.00065168,20.1992055 C3.38825852,15.4265159 7.26191235,13 11.9833413,13 C16.7712164,13 20.7048837,15.2931929 20.9979143,20.2 C21.0095879,20.3954741 20.9979143,21 20.2466999,21 C16.541124,21 11.0347247,21 3.72750223,21 C3.47671215,21 2.97953825,20.45918 3.00065168,20.1992055 Z" fill="var(--primary)" fillRule="nonzero" />
-														</g>
-													</svg>
-													<span className="ms-2">Profile </span>
-												</Link>
-												<LogoutPage />
+												{/* <Dropdown.Item>
+													<Link to="/app-profile" className="dropdown-item ai-icon">
+														<svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" className="svg-main-icon">
+															<g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
+																<polygon points="0 0 24 0 24 24 0 24" />
+																<path d="M12,11 C9.790861,11 8,9.209139 8,7 C8,4.790861 9.790861,3 12,3 C14.209139,3 16,4.790861 16,7 C16,9.209139 14.209139,11 12,11 Z" fill="#000000" fillRule="nonzero" opacity="0.3" />
+																<path d="M3.00065168,20.1992055 C3.38825852,15.4265159 7.26191235,13 11.9833413,13 C16.7712164,13 20.7048837,15.2931929 20.9979143,20.2 C21.0095879,20.3954741 20.9979143,21 20.2466999,21 C16.541124,21 11.0347247,21 3.72750223,21 C3.47671215,21 2.97953825,20.45918 3.00065168,20.1992055 Z" fill="var(--primary)" fillRule="nonzero" />
+															</g>
+														</svg>
+														<span className="ms-2">Profile </span>
+													</Link>
+												</Dropdown.Item> */}
+												<Dropdown.Item>
+													<LogoutPage />
+												</Dropdown.Item>
 											</Dropdown.Menu>
 										</Dropdown>
 									</li>
