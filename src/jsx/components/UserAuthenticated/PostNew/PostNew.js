@@ -71,7 +71,7 @@ const PostNew = () => {
                         <button className="btn btn-primary"
                             onClick={
                                 () => {
-                                    handleSubmitPost(userDetails.id, title, content)
+                                    handleSubmitPost(userDetails.userId, title, content)
                                 }
                             }>Post</button>
                         </div>

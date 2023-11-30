@@ -12,7 +12,7 @@ function App(props) {
     const getListStock = () => {
         const data = {
             nameStock: "",
-            dateRelease: "2023-10-18"
+            dateRelease: ""
         }
         return axios.post(
             `https://localhost:7053/api/Stocks/ViewPost`, data

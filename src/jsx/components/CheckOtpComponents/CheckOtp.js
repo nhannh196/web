@@ -63,12 +63,12 @@ const CheckOtp = (props) => {
                             <div className="col-lg-12">
                                 <div className="form-group mb-3">
                                     <div className="countdown-text">
-                                        {seconds > 0 || minutes > 0 ? (
+                                        {/* {seconds > 0 || minutes > 0 ? (
                                             <p>
                                                 Time remaining: {minutes < 10 ? `0${minutes}` : minutes}:
                                                 {seconds < 10 ? `0${seconds}` : seconds}
-                                            </p>
-                                        ) : (
+                                            </p> */}
+                                        {/* // ) : ( */}
                                             <>
                                                 <p>Didn't receive the OTP?</p>
                                                 <Button
@@ -79,7 +79,7 @@ const CheckOtp = (props) => {
                                                     Resend OTP
                                                 </Button>
                                             </>
-                                        )}
+                                        {/* // )} */}
 
                                     </div>
                                 </div>

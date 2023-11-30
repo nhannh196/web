@@ -82,9 +82,12 @@ const Home = () => {
 
 	useEffect(() => {
 		// getListStock().then((stock) => { setListStocksView(stock.data) });
-
-
-		setListStocksView(dataStocksDefault)
+		if(dataStocksDefault===null||dataStocksDefault===undefined){
+			getListStock()
+			.then((response) => {setListStocksView(response.data)})
+		}else{
+			setListStocksView(dataStocksDefault)
+		}
 	}, [])
 
 	const getListStock = () => {
@@ -174,7 +177,7 @@ const Home = () => {
 		return `${year}-${month}-${day}`;
 	}
 
-	//Get stock data
+	//filter data
 	const filterStock = () => {
 		let dateRelease = ""
 		if (dateFilter === "") {
@@ -232,8 +235,6 @@ const Home = () => {
 			}
 		}
 	}
-
-
 	//handle sort daily profits
 	const handleSortDailyProfit = () => {
 		if (sortDailyProfit === null) {
@@ -263,7 +264,6 @@ const Home = () => {
 	const handleClearFilter = () => {
 		setStockIdFilter("")
 		setDateFilter("")
-
 	}
 	//handle reset filter
 	const handleResetStockData = () => {
@@ -271,7 +271,6 @@ const Home = () => {
 		setSortStockId(null)
 		setSortDailyProfit(null)
 	}
-
 	return (
 		<div className='row'>
 			<div className="col-xl-12">
@@ -288,7 +287,6 @@ const Home = () => {
 							</Link>
 						</div>
 					</div>
-
 					<Collapse in={open}>
 						<div className="cm-content-body form excerpt">
 							<div className="card-body">
@@ -322,8 +320,6 @@ const Home = () => {
 						</div>
 					</Collapse>
 				</div>
-
-
 				<Col lg={12}>
 					<Card>
 						<Card.Header className='home'>
@@ -395,7 +391,6 @@ const Home = () => {
 													<td>{stock.close}</td>
 													<td>{stock.volume}</td>
 													<td>{stock.dtyyyymmdd}</td>
-
 													{isLogin() ?
 														<>
 															{roleID === 2 &&
@@ -412,7 +407,6 @@ const Home = () => {
 																				<Link to="/chart-apexchart" >Draw Chart</Link>
 																			</Dropdown.Item>
 																			<Dropdown.Item>Add Favorite</Dropdown.Item>
-
 																		</Dropdown.Menu>
 																	</Dropdown>
 																</td>
@@ -441,7 +435,6 @@ const Home = () => {
 									</tbody>
 								}
 							</Table>
-
 						</Card.Body>
 						<ReactPaginate
 							nextLabel=">"

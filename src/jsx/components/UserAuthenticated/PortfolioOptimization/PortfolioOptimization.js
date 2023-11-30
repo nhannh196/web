@@ -681,7 +681,7 @@ const PortofolioOptimization = () => {
                     </div>
                 </div>
             </div>
-            <Modal className="modal fade container-fluid" show={showPortofolio} centered>
+            <Modal className="modal fade container-fluid portofolio" show={showPortofolio} centered>
                 <div className="modal-content">
                     <div className="modal-header">
                         {/* <h6 className="modal-title">View</h6> */}

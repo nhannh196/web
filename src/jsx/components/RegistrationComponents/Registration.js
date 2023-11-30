@@ -20,7 +20,7 @@ function Register(props) {
   const [password, setPassword] = useState('');
   const [fullName, setFullname] = useState('');
   const [message, setMessage] = useState({});
-  const [messageOtp, setMessageOtp] = useState('');
+  const [messageOtp, setMessageOtp] = useState([])
   const [otpSystem, setOtpSystem] = useState('');
   // const [otpInput,setOtpInput] = useState('');
   const navigate = useNavigate();
@@ -94,7 +94,7 @@ function Register(props) {
     setMessageOtp("")
     setMessage(checkInput(data));
     // console.log(checkInput(data))
-    if (username.trim() && !message.userNameError && password.trim() && isValidEmail(email) && fullName.trim()) {
+    if (username.trim() && message==={} && password.trim() && isValidEmail(email) && fullName.trim()) {
       setMessage({})
       sendOtp()
       setShowComponent(!showComponent)
