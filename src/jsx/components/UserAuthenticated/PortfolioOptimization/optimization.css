@@ -83,7 +83,8 @@ input.form-control{
 }
 
 .modal-dialog{
-    max-width: fit-content !important;
+   max-width: fit-content !important;
+   
 }
 
 .portofolio{
@@ -99,11 +100,20 @@ input.form-control{
 }
 
 .options-portofolio #react-select-3-listbox{
-    z-index: 99;
+    z-index: 99 !important;
 }
 
 .suggestion-system .btn{
     width: 100%;
+}
+
+.nav-portofolio{
+color: #747475 !important;
+}
+
+.nav-portofolio.active{
+    color: #ffc338 !important;
+    border-color: #bdc3c8 #bdc3c8 #E6EBEE !important;
 }
 
 

@@ -404,7 +404,7 @@ const Home = () => {
 																		</Dropdown.Toggle>
 																		<Dropdown.Menu>
 																			<Dropdown.Item onClick={(e) => handleDrawChartClick(stock.ticker)}>
-																				<Link to="/chart-apexchart" >Draw Chart</Link>
+																				<Link to="/chart-apexchart" >Draw Daily Profit</Link>
 																			</Dropdown.Item>
 																			<Dropdown.Item>Add Favorite</Dropdown.Item>
 																		</Dropdown.Menu>
