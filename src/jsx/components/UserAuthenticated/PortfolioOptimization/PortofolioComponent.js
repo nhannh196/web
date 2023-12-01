@@ -18,9 +18,16 @@ import axios from 'axios';
 import "./optimization.css"
 import ReactApexChart from "react-apexcharts";
 
-
 const PortofolioComponent = () => {
     const [open, setOpen] = useState(false);
+    //page curren
+    const [pageCurrent, setPageCurrent] = useState();
+    //check search
+    const [searching, setSearching] = useState(false);
+    //search stock id in table
+    const [stockIdSeach, setStockIdSearch] = useState('');
+    //data to search
+    const [dataToSearching, setDataToSearching] = useState('');
     //list data portofolio view
     const [listDataPortofolioView, setlistDataPortofolioView] = useState([])
     //labels for pieChart
@@ -65,19 +72,27 @@ const PortofolioComponent = () => {
 
     //Paging
     let itemsPerPage = 10
+    // console.log(pageCurrent)
     useEffect(() => {
-        // Fetch items from another resources.
-        const endOffset = itemOffset + itemsPerPage;
-        // console.log(`Loading items from ${itemOffset} to ${endOffset}`);
-        setCurrentItems(listStocksView.slice(itemOffset, endOffset));
-        setPageCount(Math.ceil(listStocksView.length / itemsPerPage));
-    }, [itemOffset, itemsPerPage, listStocksView, sortStockId, sortDailyProfit]);
+        if (pageCurrent > pageCount) {
+            setCurrentItems(listStocksView.slice(0, itemsPerPage));
+            setPageCurrent(0)
+        } else {
+            // Fetch items from another resources.
+            const endOffset = itemOffset + itemsPerPage;
+            // console.log(`Loading items from ${itemOffset} to ${endOffset}`);
+            setCurrentItems(listStocksView.slice(itemOffset, endOffset));
+            setPageCount(Math.ceil(listStocksView.length / itemsPerPage));
+        }
+
+    }, [itemOffset, itemsPerPage, listStocksView, sortStockId, sortDailyProfit, stockIdSeach, pageCount, searching,pageCurrent]);
 
     // Invoke when user click to request another page.
     const handlePageClick = (event) => {
         const newOffset = event.selected * itemsPerPage % listStocksView.length;
         // console.log(`User requested page number ${event.selected}, which is offset ${newOffset}`);
         setItemOffset(newOffset);
+        setPageCurrent(event.selected)
     };
 
     const formatDateToYYYYMMDD = (date) => {
@@ -210,13 +225,15 @@ const PortofolioComponent = () => {
     const handleClearFilter = () => {
         setStockIdFilter("")
         setDateFilter("")
-     
+
     }
     //handle reset filter
     const handleResetStockData = () => {
         setListStocksView(dataStocksDefault)
         setSortStockId(null)
         setSortDailyProfit(null)
+        setSearching(false)
+        setDataToSearching('')
     }
 
     //options for portofolio
@@ -237,7 +254,7 @@ const PortofolioComponent = () => {
     const portofolioOfSystems = (choose) => {
         return axios.post(`https://localhost:7053/api/Stocks/QuadraticForSystemChose?mathWithDailyOrMonth=${choose}`)
     }
-
+    //method Round to four decimal places
     const parseValuesTo4Decimal = (value) => {
         return Number((value * 100).toFixed(4))
     }
@@ -274,7 +291,6 @@ const PortofolioComponent = () => {
                         }
                     })
                     if (response.data.sum < 1) {
-
                         labels = [...labels, "Not investing"]
                         series = [...series, parseValuesTo4Decimal(1 - response.data.sum)]
                     }
@@ -289,7 +305,7 @@ const PortofolioComponent = () => {
             setShowPortofolio(!showPortofolio)
         }
     }
-
+    //handle submit suggestion
     const handleSuggestions = (choose) => {
         setLoading(true)
         portofolioOfSystems(choose)
@@ -326,8 +342,37 @@ const PortofolioComponent = () => {
             })
         setShowPortofolio(!showPortofolio)
     }
+    //handle search
+    const handleSearch = () => {
+        if (searching === false) {
+            setSearching(true)
+            setDataToSearching(listStocksView)
+            let dataSearch = listStocksView.filter((stock) => {
+                return stock.ticker.includes(stockIdSeach.toUpperCase())
+            })
+            setListStocksView(dataSearch)
+            setPageCurrent(0)
+        } else {
+            if (stockIdSeach === '') {
+                setListStocksView(dataToSearching)
+                setCurrentItems(listStocksView.slice(0, itemsPerPage));
+                setPageCurrent(0)
+            } else {
+                let dataSearch = dataToSearching.filter((stock) => {
+                    return stock.ticker.includes(stockIdSeach.toUpperCase())
+                })
+                setListStocksView(dataSearch)
+                setCurrentItems(dataSearch.slice(0, itemsPerPage));
+                setPageCurrent(0)
+            }
+        }
 
-    // console.log(formatDateToYYYYMMDD(startDate))
+    }
+
+
+    console.log(stockIdSeach)
+
+    // console.log(stockIdSeach)
     return (
         <>
             <div className="row">
@@ -366,7 +411,7 @@ const PortofolioComponent = () => {
                                                     />
                                                 </div>
                                                 <div className="col-xl-3 col-xxl-6">
-                                                    <Button className="me-2" variant="warning" title="Click here to Search" onClick={() => { handleSubmitFilter() }}><i className="fa fa-search me-1"></i>
+                                                    <Button className="me-2" variant="warning" title="Click here to Search" onClick={() => { handleSubmitFilter(); setSearching(false); setStockIdSearch('') }}><i className="fa fa-search me-1"></i>
                                                         Filter
                                                     </Button>
                                                     <Button className="me-2" variant="danger" title="Click here to clear filter" onClick={() => handleClearFilter()}>
@@ -390,7 +435,21 @@ const PortofolioComponent = () => {
                                 <Col lg={12}>
                                     <Card>
                                         <Card.Header className='portofolio'>
-                                            <Card.Title>STOCK</Card.Title>
+                                            <div className="col-xl-3 col-xxl-3 input-container">
+                                                {/* <i class="bi bi-search"></i>  */}
+                                                <input value={stockIdSeach}
+                                                    onChange={(e) => {
+                                                        setStockIdSearch(e.target.value);
+                                                        
+
+                                                    }}
+                                                    onKeyUp={(e) => {
+                                                        handleSearch();
+                                                        e.preventDefault()
+                                                    }}
+                                                    type="text" className="form-control mb-xl-0 mb-3 input-field" id="exampleFormControlInput1" placeholder="Search STOCK ID" />
+                                            </div>
+
                                         </Card.Header>
                                         <Card.Body>
                                             <Table responsive>
@@ -478,10 +537,12 @@ const PortofolioComponent = () => {
                                         </Card.Body>
                                         <ReactPaginate
                                             nextLabel=">"
-                                            onPageChange={handlePageClick}
+                                            onPageChange={(e) => { handlePageClick(e) }
+                                            }
                                             pageRangeDisplayed={2}
                                             marginPagesDisplayed={2}
                                             pageCount={pageCount}
+                                            forcePage={pageCurrent}
                                             previousLabel="<"
                                             pageClassName="page-item"
                                             pageLinkClassName="page-link"
@@ -494,7 +555,7 @@ const PortofolioComponent = () => {
                                             breakLinkClassName="page-link"
                                             containerClassName="pagination"
                                             activeClassName="active"
-                                            renderOnZeroPageCount={null}
+                                        // renderOnZeroPageCount={null}
                                         />
                                     </Card>
                                 </Col >
@@ -561,10 +622,18 @@ const PortofolioComponent = () => {
                                         </div>
                                         <div className="card-footer text-center border-0 pt-0">
                                             {messageError && <div className='messageError'>{messageError}</div>}
-                                            {listStockPortofolio.length < 2 ?
-                                                <div>Please add 2 to 10 stock</div>
+                                            {listStockPortofolio.length < 1 ?
+                                                <>
+                                                    <div>Please add 2 to 10 stock</div>
+                                                </>
                                                 :
-                                                <Link className="btn btn-block btn-primary dlab-load-more" onClick={(e) => { e.preventDefault(); handleSubmitOptimization(); console.log(messageError) }}>Start</Link>
+                                                listStockPortofolio.length < 2 ?
+                                                    <Link className="btn btn-block btn-danger dlab-load-more" onClick={(e) => { setListStockPortofolio([]) }}>Clear All</Link>
+                                                    :
+                                                    <>
+                                                        <Link className="btn btn-block btn-primary dlab-load-more" onClick={(e) => { handleSubmitOptimization(); console.log(messageError) }}>Start</Link>
+                                                        <Link className="btn btn-block btn-danger dlab-load-more" onClick={(e) => { setListStockPortofolio([]); console.log(messageError) }}>Clear All</Link>
+                                                    </>
                                             }
                                         </div>
                                     </div>
@@ -574,7 +643,7 @@ const PortofolioComponent = () => {
                     </div>
                 </div>
             </div>
-            <Modal className="modal fade container-fluid " show={showPortofolio} centered>
+            <Modal className="modal container-fluid modal-portofolio" show={showPortofolio} >
                 <div className="modal-content">
                     <div className="modal-header">
                         {/* <h6 className="modal-title">View</h6> */}
@@ -596,8 +665,8 @@ const PortofolioComponent = () => {
                                                         <Card.Title>STOCK</Card.Title>
                                                     </Card.Header>
                                                     <Card.Body>
-                                                        {dataPortofolio.rr && <h6>Estimated profit: {dataPortofolio.rr.toFixed(4)}%</h6>}
-                                                        {dataPortofolio.sum && <h6>Sum of rate: {parseValuesTo4Decimal(dataPortofolio.sum)}%</h6>}
+                                                        {dataPortofolio.rr > 0 && <h6>Estimated profit: {dataPortofolio.rr.toFixed(4)}%</h6>}
+                                                        {dataPortofolio.sum > 0 && <h6>Sum of rate: {parseValuesTo4Decimal(dataPortofolio.sum)}%</h6>}
                                                         <Table responsive>
                                                             <thead>
                                                                 <tr>
@@ -608,7 +677,7 @@ const PortofolioComponent = () => {
                                                                         <strong>DAILY PROFIT</strong>
                                                                     </th> */}
                                                                     <th>
-                                                                        <strong>RATE</strong>
+                                                                        <strong>INVESTMENT RATIO</strong>
                                                                     </th>
                                                                     {/* <th>
                                                                         <strong >STANDARD DEVIATION</strong>

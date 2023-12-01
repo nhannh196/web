@@ -26,14 +26,14 @@ const PortofolioOptimization = () => {
                 <TabContainer defaultActiveKey="PortofolioComponent">
                     <Nav className="nav nav-tabs tab-auto" id="nav-tab" role="tablist">
                         <Nav.Link className="nav-link nav-portofolio" eventKey="PortofolioComponent" onClick={() => { }}>Portofolio optimization</Nav.Link>
-                        <Nav.Link className="nav-link nav-portofolio" eventKey="Chart" onClick={() => { }}>Draw chart</Nav.Link>
+                        <Nav.Link className="nav-link nav-portofolio" eventKey="Chart" onClick={() => { }}>My Favorite</Nav.Link>
                     </Nav>
                     <TabContent>
                         <TabPane eventKey="PortofolioComponent">
                             <PortofolioComponent />
                         </TabPane>
                         <TabPane eventKey="Chart">
-                            <PortofolioComponent />
+                            
                         </TabPane>
                     </TabContent>
                 </TabContainer>

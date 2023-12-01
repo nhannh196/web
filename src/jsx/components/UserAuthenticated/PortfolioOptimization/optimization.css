@@ -82,9 +82,8 @@ input.form-control{
     border: none !important;
 }
 
-.modal-dialog{
-   max-width: fit-content !important;
-   
+.modal-portofolio>.modal-dialog {
+   max-width: fit-content;
 }
 
 .portofolio{
@@ -99,8 +98,9 @@ input.form-control{
     padding-top: 0.5rem;
 }
 
-.options-portofolio #react-select-3-listbox{
+.options-portofolio .css-1nmdiq5-menu{
     z-index: 99 !important;
+    /* width: 100%; */
 }
 
 .suggestion-system .btn{
@@ -114,8 +114,24 @@ color: #747475 !important;
 .nav-portofolio.active{
     color: #ffc338 !important;
     border-color: #bdc3c8 #bdc3c8 #E6EBEE !important;
+    background-color: #000080 !important;
 }
 
+.input-container {
+    position: relative;
+    width: 300px;
+  }
+  #icon {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 10px;
+    pointer-events: none;
+  }
+  .input-field {
+    padding-left: 30px; /* Để biểu tượng không che phủ lên nội dung nhập liệu */
+    width: 100%;
+  }
 
 
 
