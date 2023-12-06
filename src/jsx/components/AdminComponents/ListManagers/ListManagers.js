@@ -14,6 +14,7 @@ import { Link } from "react-router-dom";
 // import './table.css';
 import './filtering.css';
 import axios from 'axios';
+import { axiosInstance } from '../../../../services/AxiosConfig';
 
 const init = false;
 const initialState = false;
@@ -72,7 +73,7 @@ const ListManagers = () => {
 		setUser({ ...user, [e.target.name]: e.target.value })
 	}
 	const getListUser = () => {
-		return axios.get('https://localhost:7053/api/UsersAdmin')
+		return axiosInstance.get('/api/UsersAdmin')
 			.then((response) => {
 				const listManagers = response.data.filter((user) => {
 					return user.roleId === 3
@@ -103,7 +104,7 @@ const ListManagers = () => {
 			email: user.email,
 			baned: user.baned
 		}
-		const response = axios.put(`https://localhost:7053/api/UsersAdmin/${user.userId}`, data)
+		const response = axiosInstance.put(`/api/UsersAdmin/${user.userId}`, data)
 			.then((response) => {
 				setUser({});
 			})
@@ -138,7 +139,7 @@ const ListManagers = () => {
 		}
 		const { userNameError, passwordError } = checkInput(data)
 		if (!userNameError && !passwordError) {
-			const response = axios.post(`https://localhost:7053/api/UsersAdmin/create-manager-account`, data)
+			const response = axiosInstance.post(`/api/UsersAdmin/create-manager-account`, data)
 				.then((response) => {
 					setUser(userDefault);
 					dispatch({ type: 'addNewManager' });
@@ -161,7 +162,7 @@ const ListManagers = () => {
 		}
 		const { userNameError, passwordError } = checkInput(data)
 		if (!userNameError && !passwordError) {
-			const response = axios.post(`https://localhost:7053/api/UsersAdmin/create-admin-account`, data)
+			const response = axiosInstance.post(`/api/UsersAdmin/create-admin-account`, data)
 				.then((response) => {
 					setUser(userDefault);
 					dispatch({ type: 'addNewAdmin' });
@@ -187,7 +188,7 @@ const ListManagers = () => {
 			email: user.email,
 			baned: !user.baned
 		}
-		const response = axios.put(`https://localhost:7053/api/UsersAdmin/${user.userId}`, data)
+		const response = axiosInstance.put(`/api/UsersAdmin/${user.userId}`, data)
 			.then((response) => {
 				setUser({});
 			})

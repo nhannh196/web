@@ -13,6 +13,7 @@ import { Link } from "react-router-dom";
 // import './table.css';
 import './filtering.css';
 import axios from 'axios';
+import { axiosInstance } from '../../../../services/AxiosConfig';
 
 const init = false;
 const initialState = false;
@@ -43,7 +44,7 @@ export const ListUsers = () => {
 		setUser({ ...user, [e.target.name]: e.target.value })
 	}
 	const getListUser = () => {
-		return axios.get('https://localhost:7053/api/UsersAdmin')
+		return axiosInstance.get('/api/UsersAdmin')
 			.then((response) => {
 				const listNeed = response.data.filter((user) => {
 					return user.roleId === null || user.roleId === 2
@@ -68,7 +69,7 @@ export const ListUsers = () => {
 			email: user.email,
 			baned: user.baned
 		}
-		const response = axios.put(`https://localhost:7053/api/UsersAdmin/${user.userId}`, data)
+		const response = axiosInstance.put(`/api/UsersAdmin/${user.userId}`, data)
 			.then((response) => {
 				setUser({});
 			})
@@ -85,7 +86,7 @@ export const ListUsers = () => {
 			email: user.email,
 			baned: !user.baned
 		}
-		const response = axios.put(`https://localhost:7053/api/UsersAdmin/${user.userId}`, data)
+		const response = axiosInstance.put(`/api/UsersAdmin/${user.userId}`, data)
 			.then((response) => {
 				setUser({});
 			})
