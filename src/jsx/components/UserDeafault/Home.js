@@ -109,6 +109,9 @@ const Home = () => {
 				let stocksName = respone.data.map((stock) => stock.stockName)
 				setListMyFavorite(respone.data)
 				setListStockNameFavorite(stocksName)
+			}).catch(error=>{
+				console.log(error)
+				setListMyFavorite([])
 			})
 	}, [])
 
@@ -122,7 +125,7 @@ const Home = () => {
 						setListMyFavorite(respone.data)
 						setListStockNameFavorite(stocksName)
 						console.log(respone.data)
-					})
+					}).catch(error=>{console.log(error)})
 			})
 			.catch(error => console.log(error))
 	}
@@ -138,6 +141,7 @@ const Home = () => {
 						setListMyFavorite(respone.data)
 						setListStockNameFavorite(stocksName)
 					})
+					.catch(error=>console.log(error))
 			})
 			.catch(error => console.log(error))
 	}
