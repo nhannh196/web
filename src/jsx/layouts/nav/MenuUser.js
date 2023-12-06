@@ -26,10 +26,10 @@ export const MenuUser = [
                 title: 'Forum',
                 to: '/forum'
             }, 
-            // {
-            //     title: 'Manage My Posts',
-            //     to: '/course-listing'
-            // },
+            {
+                title: 'Manage My Posts',
+                to: '/manage-my-posts'
+            },
         ],
     },
     //Portfolio Optimization

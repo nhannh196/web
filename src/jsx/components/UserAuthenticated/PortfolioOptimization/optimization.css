@@ -1,9 +1,9 @@
-.heading{
+.heading {
     font-size: 0.86rem !important;
 }
 
-.card-header.portofolio{
-    padding:0.5rem 0  !important;
+.card-header.portofolio {
+    padding: 0.5rem 0 !important;
     justify-content: center;
     background: #ffffff;
 }
@@ -15,15 +15,15 @@
     padding-bottom: 0.75rem !important;
 }
 
-.input-group.search-area{
+.input-group.search-area {
     height: 2.5rem !important;
 }
 
-.messages .input-group.search-area input.form-control{
+.messages .input-group.search-area input.form-control {
     height: 2.5rem !important;
 }
 
-.card-body.loadmore-content.recent-activity-wrapper.p-4{
+.card-body.loadmore-content.recent-activity-wrapper.p-4 {
     padding-top: 0 !important;
     padding-bottom: 0.5rem !important;
 }
@@ -32,24 +32,25 @@
     padding-top: 0.2rem !important;
 }
 
-input.form-control{
+input.form-control {
     padding-left: 1.5rem !important;
 }
 
-.d-flex.align-items-center.student{
+.d-flex.align-items-center.student {
     padding-top: 0.5rem !important;
-    padding-bottom: 0.5rem !important;;
+    padding-bottom: 0.5rem !important;
+    ;
 }
 
-.input-group.search-area.mb-3{
+.input-group.search-area.mb-3 {
     margin-bottom: 0 !important;
 }
 
-.justify-content-space-between{
+.justify-content-space-between {
     justify-content: space-between;
 }
 
-.align-items-center.student{
+.align-items-center.student {
     padding: 0.478rem !important;
 }
 
@@ -58,60 +59,61 @@ input.form-control{
     color: white;
 }
 
-.table thead tr th a:hover{
+.table thead tr th a:hover {
     color: gray
 }
 
-.table th, .table td{
+.table th,
+.table td {
     padding: 0.45rem 1.125rem !important;
     min-height: 1.625rem !important;
 }
 
-.messageError{
-    color:red;
+.messageError {
+    color: red;
     padding-top: 0.1rem;
     padding-bottom: 0.4rem;
-    
+
 }
 
 .table tbody tr td strong {
     font-size: 1.06rem !important;
 }
 
-.loading{
+.loading {
     border: none !important;
 }
 
 .modal-portofolio>.modal-dialog {
-   max-width: fit-content;
+    max-width: fit-content;
 }
 
-.portofolio{
+.portofolio {
     background: #e6ebee;
 }
 
-.modal-body.portofolio .row{
+.modal-body.portofolio .row {
     min-width: 86rem;
 }
 
-.options-portofolio{
+.options-portofolio {
     padding-top: 0.5rem;
 }
 
-.options-portofolio .css-1nmdiq5-menu{
+.options-portofolio .css-1nmdiq5-menu {
     z-index: 99 !important;
     /* width: 100%; */
 }
 
-.suggestion-system .btn{
+.suggestion-system .btn {
     width: 100%;
 }
 
-.nav-portofolio{
-color: #747475 !important;
+.nav-portofolio {
+    color: #747475 !important;
 }
 
-.nav-portofolio.active{
+.nav-portofolio.active {
     color: #ffc338 !important;
     border-color: #bdc3c8 #bdc3c8 #E6EBEE !important;
     background-color: #000080 !important;
@@ -120,18 +122,30 @@ color: #747475 !important;
 .input-container {
     position: relative;
     width: 300px;
-  }
-  #icon {
+}
+
+#icon {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
     left: 10px;
     pointer-events: none;
-  }
-  .input-field {
-    padding-left: 30px; /* Để biểu tượng không che phủ lên nội dung nhập liệu */
+}
+
+.input-field {
+    padding-left: 30px;
+    /* Để biểu tượng không che phủ lên nội dung nhập liệu */
     width: 100%;
-  }
+}
 
+.btn-portofolio {
+    margin-top: 0.8rem;
+}
 
+.td-favorite {
+    color: #fd5f62;
+}
 
+i:hover {
+    cursor: pointer;
+}

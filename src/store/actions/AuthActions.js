@@ -13,6 +13,8 @@ import {
 
 } from '../../services/AuthService';
 
+import { getTokenForAxios } from '../../services/AxiosConfig';
+
 
 export const SIGNUP_CONFIRMED_ACTION = '[signup action] confirmed signup';
 export const SIGNUP_FAILED_ACTION = '[signup action] failed signup';
@@ -62,16 +64,17 @@ export function loginAction(email, password, navigate) {
         login(email, password)
             .then((response) => {
                 //userDetails   
-                saveTokenInLocalStorage(response.data.token);
-                const accessToken = response.data.token;
-                getUserDetails(accessToken)
+                saveTokenInLocalStorage(response.data.token)
+                getUserDetails(response.data.token)
                     .then((user) => {
-                        //   userLocalStorage(user.data)
                         localStorage.setItem('userDetails', JSON.stringify(user.data))
-                        // console.log(user.data)
                         navigate('/home');
                         window.location.reload();
+                    }).catch((error) => {
+                        console.log(error)
                     })
+                // navigate('/home');
+                //         window.location.reload();
             })
             .catch((error) => {
                 console.log(error);
@@ -79,9 +82,11 @@ export function loginAction(email, password, navigate) {
                 dispatch(loginFailedAction(errorMessage));
             });
 
+
         //   console.log(loc)
     };
 }
+
 
 export function loginFailedAction(data) {
     return {

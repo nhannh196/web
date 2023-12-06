@@ -1,0 +1,11 @@
+.modal-manage-post>.modal-dialog {
+    min-width: fit-content;
+}
+
+.modal-manage-post>.modal-dialog>.modal-content {
+    width: 60rem ;
+}
+
+.about-content.post-detail-content {
+margin-top: 0.6rem !important;
+}

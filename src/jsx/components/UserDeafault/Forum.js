@@ -7,96 +7,131 @@ import { isLogin } from '../../../services/AuthService';
 import axios from 'axios';
 
 import InfiniteScroll from 'react-infinite-scroll-component';
+import { axiosInstance } from '../../../services/AxiosConfig';
+import { preventDefault } from '@fullcalendar/react';
 
 
 function Forum() {
     const [socialModal, setSocialModal] = useState();
     const [isOpen, setOpen] = useState(false);
-    let copyText = 'https://finlab.dexignlab.com/react';
-    const copyToClipboard = () => {
-        copy(copyText);
-        alert(`You have copied ${copyText}`);
-    }
+
     const [comment, setComment] = useState("");
     const [commentError, setCommentError] = useState(false);
     const [commentblog, setCommentblog] = useState([]);
 
-    const fakeData = (index, postQuality) => {
-        let listPosts = []
-        for (let i = 1; i <= postQuality; i++) {
-            let post = {
-                postId: i + index,
-                title: `Title ${i + index}`,
-                content: `Content ${i + index}: 
-             Rerum quia sit vel soluta natus quisquam error. Repellat et nulla corrupti ad tempora corrupti tenetur vel. Iusto et quod aut qui eos sed. Libero facere ut deserunt iusto.
- 
-Illum repellendus incidunt id ipsam. Blanditiis eligendi voluptatem nostrum occaecati fuga. Ut dolorum repudiandae eos sequi id ipsa culpa. Corporis tempora ullam omnis magni.
- 
-Reiciendis natus officia impedit. Amet sit omnis officiis. Facere sit sit ut reprehenderit fuga dolor. Neque necessitatibus in praesentium voluptatibus. Ut assumenda quisquam in doloremque molestiae eaque. Tenetur voluptatum quia omnis dolores facilis labore.`,
-                accept: true,
-                baned: false,
-            }
-            listPosts = [...listPosts, post]
-        }
+    //     const fakeData = (index, postQuality) => {
+    //         let listPosts = []
+    //         for (let i = 1; i <= postQuality; i++) {
+    //             let post = {
+    //                 postId: i + index,
+    //                 title: `Title ${i + index}`,
+    //                 content: `Content ${i + index}: 
+    //              Rerum quia sit vel soluta natus quisquam error. Repellat et nulla corrupti ad tempora corrupti tenetur vel. Iusto et quod aut qui eos sed. Libero facere ut deserunt iusto.
 
-        return listPosts;
-    }
+    // Illum repellendus incidunt id ipsam. Blanditiis eligendi voluptatem nostrum occaecati fuga. Ut dolorum repudiandae eos sequi id ipsa culpa. Corporis tempora ullam omnis magni.
+
+    // Reiciendis natus officia impedit. Amet sit omnis officiis. Facere sit sit ut reprehenderit fuga dolor. Neque necessitatibus in praesentium voluptatibus. Ut assumenda quisquam in doloremque molestiae eaque. Tenetur voluptatum quia omnis dolores facilis labore.`,
+    //                 accept: true,
+    //                 baned: false,
+    //             }
+    //             listPosts = [...listPosts, post]
+    //         }
+
+    //         return listPosts;
+    //     }
     const userDetails = JSON.parse(localStorage.getItem('userDetails'));
     const [listPosts, setListPosts] = useState([])
     const [hasMore, setHasMore] = useState(true)
     const [listShowDetail, setListShowDetail] = useState([])
     const [commentsOfPost, setCommentsOfPost] = useState([])
-    const fetchMoreData = () => {
-        if (listPosts.length >= 20) {
-            setHasMore(false)
-            return;
+    const [listPostsView, setListPostsView] = useState([])
+    const [startOffset, setStartOffset] = useState(0)
+
+
+
+    //get post by quality
+    const getPostByQuality = (startOffset, itemOnePage, listPosts) => {
+        let result = [];
+        for (let i = startOffset; i < startOffset + itemOnePage; ++i) {
+            result = [...result, listPosts[i]]
         }
-        // a fake async api call like which sends
-        // 20 more records in 1.5 secs
-        setTimeout(() => {
-            setListPosts([...listPosts, ...fakeData(listPosts.length, 5)]);
-        }, 2000);
-    };
+        setStartOffset(startOffset + itemOnePage)
+        return result
+    }
+    //get all posts
+    const getPostData = () => {
+        return axiosInstance.get('/api/ForumPosts')
+    }
+
+
+    //get all comment
+    const getComment = () => {
+        axiosInstance.get(`/api/Comments`)
+            .then((response) => {
+                setCommentsOfPost(response.data)
+            })
+            .catch(() => {
+                setCommentsOfPost([])
+            })
+    }
+
     useEffect(() => {
         // console.log('load danh sach lan dau')
+        // const loadData = async () => {
+        //     const response = await getPostData()
+        //     try {
+        //         let listPostsNeed = response.data.filter((post) => {
+        //             return post.accept === true && (post.baned === false || post.baned === null)
+        //         })
+        //         setListPosts(listPostsNeed)
+        //         setListPostsView(getPostByQuality(0, 3, listPostsNeed))
+        //     } catch (error) {
+        //         console.log(error)
+        //     }
+        // }
+        // loadData()
         getPostData()
+            .then((response) => {
+                let listPostsNeed = response.data.filter((post) => {
+                    return post.accept === true && (post.baned === false || post.baned === null)
+                })
+                setListPosts(listPostsNeed)
+                setListPostsView(getPostByQuality(0, 3, listPostsNeed))
+            })
     }, [])
+
     useEffect(() => {
         getComment()
     }, [commentsOfPost])
-    const getPostData = () => {
-        try {
-            axios.get('https://localhost:7053/api/ForumPosts')
-                .then((response) => {
 
-                    let listPost = response.data.filter((post) => {
-                        return post.accept === true && (post.baned === false || post.baned === null)
-                    })
-                    // console.log(listPost)
-                    setListPosts(listPost)
-                });
 
-        }
-        catch (err) {
+    // console.log(listPosts[0])
+    // console.log(getPostByQuality(1,2,listPosts))
 
-        }
-    }
+    // console.log(startOffset)
+    // console.log(hasMore)
+    // console.log(listPosts)
+    // console.log(listPostsView)
 
-    const getComment = () => {
-        try {
-            axios.get(`https://localhost:7053/api/Comments`)
-                .then((response) => {
-                    setCommentsOfPost(response.data)
-                })
-                .catch(() => {
-                    setCommentsOfPost([])
-                })
-        }
-        catch (err) {
-            // console.log(err)
-        }
-    }
 
+    const fetchMoreData = () => {
+        console.log('call fetch')
+        setHasMore(false)
+        // if (listPostsView.length >= 11) {
+        //     console.log('dung')
+        //     setHasMore(false)
+        //     return;
+        // }
+        console.log('chay')
+        setListPostsView([...listPostsView, ...getPostByQuality(0, listPosts.length, listPosts)]);
+
+
+        // a fake async api call like which sends
+        // 20 more records in 1.5 secs
+        // setTimeout(() => {
+        //     setListPostsView([...listPostsView, ...getPostByQuality(startOffset, 2, listPosts)]);
+        // }, 2000);
+    };
 
     const handleShowDetail = (postId, e) => {
         if (listShowDetail.includes(postId)) {
@@ -134,13 +169,21 @@ Reiciendis natus officia impedit. Amet sit omnis officiis. Facere sit sit ut rep
         }
     }
 
+    const parseDate = (date) => {
+        let datePare = date.split('T');
+        let timeParse = datePare[1].split(':')
+        return `${datePare[0]} ${timeParse[0]}:${timeParse[1]}`;
+    }
+
+    
+
     return (
         <>
 
             <div id="scrollableDiv" className="row">
-                {listPosts &&
+                {listPostsView &&
                     <InfiniteScroll
-                        dataLength={listPosts.length}
+                        dataLength={3}
                         next={fetchMoreData}
                         hasMore={hasMore}
                         loader={<h4>Loading...</h4>}
@@ -153,14 +196,14 @@ Reiciendis natus officia impedit. Amet sit omnis officiis. Facere sit sit ut rep
                     // scrollableTarget="scrollableDiv"
                     >
 
-                        {listPosts && listPosts.map((post, index) => {
+                        {listPostsView && listPostsView.map((post, index) => {
                             return (
                                 <div key={post.postId}>
                                     <div className="card">
                                         <div className="card-body">
                                             <div className="course-content d-flex justify-content-between flex-wrap">
                                                 <div>
-                                                    <h3>{post.title}</h3>
+                                                    <h4>{post.title}</h4>
                                                     <ul className="d-flex align-items-center raiting my-0 flex-wrap">
                                                         {/* <li><span className="font-w500">5.0</span><i className="fas fa-star text-orange ms-2"></i></li> */}
                                                         {/* <li>Review (1k)</li> */}
@@ -224,7 +267,7 @@ Reiciendis natus officia impedit. Amet sit omnis officiis. Facere sit sit ut rep
                                                                                                 <i className="fas fa-star star-orange me-1"></i>
                                                                                                 <i className="fas fa-star star-orange"></i>
                                                                                             </li> */}
-                                                                                            <li>{data.commentDate}</li>
+                                                                                            <li>{parseDate(data.commentDate)}</li>
                                                                                         </ul>
                                                                                     </div>
                                                                                 </div>

@@ -1,0 +1,18 @@
+.initial-avatar {
+    /* Center the content */
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    /* Colors */
+    /* background-color: rgb(112, 48, 160); */
+    background-color: #ffc338;
+    color: #fff;
+    /* Rounded border */
+    border-radius: 50%;
+    height: 3rem;
+    width: 3rem;
+}
+
+.header-item {
+    margin: 6px;
+}

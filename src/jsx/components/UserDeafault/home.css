@@ -7,3 +7,14 @@
     justify-content: center;
     padding: 0.6rem 0;
 }
+
+.td-action>a>i{
+    padding-left: 1.6rem;
+}
+
+.td-favorite{
+    color: #fd5f62;
+}
+i:hover{
+    cursor: pointer;
+}

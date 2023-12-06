@@ -4,6 +4,7 @@ import {
     loginConfirmedAction,
     Logout,
 } from '../store/actions/AuthActions';
+import { axiosInstance, baseURL } from './AxiosConfig';
 
 export function signUp(username, email, fullname, password) {
     //axios call
@@ -29,20 +30,22 @@ export function login(username, password) {
         `https://localhost:7053/Users/Login`,
         postData,
     )
-        ;
+
 }
 
 export function getUserDetails(accessToken) {
     return axios.get(
-        `https://localhost:7053/Users/GetById`,
+        `${baseURL}/Users/GetById`,
         {
             headers: {
-                'Authorization': `Bearer ${accessToken}`, // Gửi token qua header Authorization
-                'Content-Type': 'application/json'
-              }
-        }       
+                'Authorization': `Bearer ${accessToken}`,
+                'Content-Type': 'application/json' // Có thể thay đổi tùy theo API yêu cầu
+            }
+        }
     )
 }
+
+
 
 export function formatError(errorResponse) {
     // console.log('errorResponse.message', errorResponse.message)
@@ -73,7 +76,6 @@ export function formatError(errorResponse) {
 export function saveTokenInLocalStorage(tokenDetails) {
     // tokenDetails.expireDate = new Date(
     //     new Date().getTime() + tokenDetails.expiresIn * 1000,
-    // );
     localStorage.setItem('accessToken', tokenDetails)
 }
 

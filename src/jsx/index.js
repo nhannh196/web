@@ -41,6 +41,7 @@ import ListManagers from "./components/AdminComponents/ListManagers/ListManagers
 import CheckOtp from "./components/CheckOtpComponents/CheckOtp";
 import PortofolioOptimization from "./components/UserAuthenticated/PortfolioOptimization/PortfolioOptimization";
 import { getUserDetails, userLocalStorage } from "../services/AuthService";
+import ManageMyPosts from "./components/UserAuthenticated/ManageMyPost/ManageMyPosts";
 const Markup = () => {
   let routesDefault = [
     { url: "/", component: <Home /> },
@@ -66,6 +67,8 @@ const Markup = () => {
         { url: "post-new", component: <PostNew /> },
         { url: "chart-apexchart", component: <ApexChart /> },
         { url: "portofolio-optimization", component: <PortofolioOptimization /> },
+        { url: "manage-my-posts", component: <ManageMyPosts /> },
+
       ]
       setAllRoutes([...routesDefault, ...routes])
     }

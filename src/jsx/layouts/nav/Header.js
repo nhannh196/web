@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { Button } from "react-bootstrap";
 import { Login } from "../../pages/Login"
 import { isLogin } from "../../../services/AuthService";
+import "../../../css/icon-name.css"
 /// Scroll
 import { Dropdown } from "react-bootstrap";
 import PerfectScrollbar from "react-perfect-scrollbar";
@@ -12,11 +13,8 @@ import LogoutPage from './Logout';
 
 /// Image
 import profile from "../../../images/user.jpg";
-import avatar from "../../../images/avatar/1.jpg";
 import alb from '../../../images/svg/albania.svg';
-import alg from '../../../images/svg/algeria.svg';
-import usf from '../../../images/svg/usflag.svg';
-import rus from '../../../images/svg/rus.svg';
+
 
 
 function SideBarAdd() {
@@ -48,6 +46,27 @@ const Header = ({ onNote }) => {
 	//Data user
 	const userDetails = JSON.parse(localStorage.getItem('userDetails'));
 	// console.log(userDetails);
+
+	const convertFullName = (fullName) => {
+		// console.log(fullName.trim() === "")
+		if (fullName.trim() === null || fullName.trim() === "" || fullName.trim() === undefined) {
+			// console.log('chay vo khong tu')
+			return ""
+		} else {
+			const nameSplit = fullName.trim().split(' ');
+			if (nameSplit.length > 1) {
+				// console.log('chay vo nhieu tu')
+				const firstLetterFirstName = nameSplit[0][0].toUpperCase()
+				const lastName = nameSplit[nameSplit.length - 1]
+				const firstLetterLastName = lastName[lastName.length - 1].toUpperCase()
+				return firstLetterFirstName + firstLetterLastName
+			} else {
+				// console.log('chay vo 1 tu')
+				return nameSplit[0][0].toUpperCase()
+			}
+		}
+	}
+
 	return (
 		<div className={`header ${headerFix ? "sticky" : ""}`}>
 			<div className="header-content">
@@ -60,26 +79,31 @@ const Header = ({ onNote }) => {
 							{isLogin() ?
 								<>
 									<li className="nav-item ">
+										{/* <Dropdown className="dropdown header-profile2">
+											<Dropdown.Toggle variant="" as="a" className="nav-link i-false c-pointer"> */}
+										<div className="header-info2 d-flex align-items-center">
+											<div className="d-flex align-items-center sidebar-info">
+												<div>
+													<h4 className="mb-0">{userDetails.fullName}</h4>
+													{userDetails.roleid == 1 &&
+														<>
+															<span className="d-block text-end">Admin</span>
+														</>}
+													{userDetails.roleid == 2 &&
+														<>
+														</>}
+													{userDetails.roleid == 3 &&
+														<>
+															<span className="d-block text-end">Manage</span>
+														</>}
+												</div>
+											</div>
+										</div>
 										<Dropdown className="dropdown header-profile2">
 											<Dropdown.Toggle variant="" as="a" className="nav-link i-false c-pointer">
-												<div className="header-info2 d-flex align-items-center">
-													<div className="d-flex align-items-center sidebar-info">
-														<div>
-															<h4 className="mb-0">{userDetails.fullName}</h4>
-															{userDetails.roleid == 1 &&
-																<>
-																	<span className="d-block text-end">Admin</span>
-																</>}
-															{userDetails.roleid == 2 &&
-																<>
-																</>}
-															{userDetails.roleid == 3 &&
-																<>
-																	<span className="d-block text-end">Manage</span>
-																</>}
-														</div>
-													</div>
-													<img src={profile} alt="" />
+												<div class="initial-avatar header-item">
+													{convertFullName(userDetails.fullName)}
+													{/* Alo 123 */}
 												</div>
 											</Dropdown.Toggle>
 											<Dropdown.Menu align="right" className="mt-3 dropdown-menu dropdown-menu-end">

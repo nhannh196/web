@@ -3,7 +3,7 @@ import ReactPaginate from 'react-paginate';
 import { Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import ApexCharts from 'apexcharts';
-import { isLogin } from '../../../services/AuthService';
+import { getUserDetails, isLogin } from '../../../services/AuthService';
 // import { getListStock } from '../../../services/GetService'
 import '../../../css/datepicker.css';
 import DatePicker from "react-datepicker";
@@ -22,6 +22,7 @@ import loadable from "@loadable/component";
 import pMinDelay from "p-min-delay";
 import "../UserAuthenticated/PortfolioOptimization/optimization.css"
 import "./home.css"
+import "../../../css/number-ratio.css"
 
 
 //import DonutChart from './Dashboard/DonutChart';
@@ -31,6 +32,7 @@ import "./home.css"
 import { ThemeContext } from "../../../context/ThemeContext";
 import DropdownMenu from 'react-bootstrap/esm/DropdownMenu';
 import axios from 'axios';
+import { axiosInstance } from '../../../services/AxiosConfig';
 
 //images
 //import small1 from './../../../images/profile/small/pic1.jpg';
@@ -56,6 +58,10 @@ const CharacterData = [
 
 
 const Home = () => {
+	//list my stockname favorite
+	const [listStockNameFavorite, setListStockNameFavorite] = useState([])
+	//list my favorite
+	const [listMyFavorite, setListMyFavorite] = useState([])
 	const [listStocksView, setListStocksView] = useState([])
 	//Sort with StockId
 	const [sortStockId, setSortStockId] = useState(null);
@@ -74,31 +80,92 @@ const Home = () => {
 	// Here we use item offsets; we could also use page offsets
 	// following the API or data you're working with.
 	const [itemOffset, setItemOffset] = useState(0);
-	let roleID = false;
+	let roleID = '';
 	const dataStocksDefault = JSON.parse(sessionStorage.getItem('dataStocksDefault'));
+
 	if (isLogin()) {
 		roleID = JSON.parse(localStorage.getItem('userDetails')).roleId
 	}
 
+
 	useEffect(() => {
 		// getListStock().then((stock) => { setListStocksView(stock.data) });
-		if(dataStocksDefault===null||dataStocksDefault===undefined){
+		if (dataStocksDefault === null || dataStocksDefault === undefined) {
+			setLoading(true)
 			getListStock()
-			.then((response) => {setListStocksView(response.data)})
-		}else{
+				.then((response) => {
+					setListStocksView(response.data)
+					setLoading(false)
+				})
+		} else {
 			setListStocksView(dataStocksDefault)
 		}
 	}, [])
 
+	//load list favorite
+	useEffect(() => {
+		getListMyFavorite()
+			.then((respone) => {
+				let stocksName = respone.data.map((stock) => stock.stockName)
+				setListMyFavorite(respone.data)
+				setListStockNameFavorite(stocksName)
+			})
+	}, [])
+
+	//handle add favorite
+	const handleAddFavorite = (stockName) => {
+		addFavorite(stockName)
+			.then(() => {
+				getListMyFavorite()
+					.then((respone) => {
+						let stocksName = respone.data.map((stock) => stock.stockName)
+						setListMyFavorite(respone.data)
+						setListStockNameFavorite(stocksName)
+						console.log(respone.data)
+					})
+			})
+			.catch(error => console.log(error))
+	}
+	//handle delete favorite
+	const handleDeleteFavorite = (stockName) => {
+		let stockDelete = listMyFavorite.find((stock) => stock.stockName === stockName)
+		console.log(stockDelete)
+		deleteFavorite(stockDelete.id)
+			.then(() => {
+				getListMyFavorite()
+					.then((respone) => {
+						let stocksName = respone.data.map((stock) => stock.stockName)
+						setListMyFavorite(respone.data)
+						setListStockNameFavorite(stocksName)
+					})
+			})
+			.catch(error => console.log(error))
+	}
+
+	//api get list stock
 	const getListStock = () => {
 		const data = {
 			nameStock: "",
-			dateRelease: "2023-10-18"
+			dateRelease: ""
 		}
-		return axios.post(
-			`https://localhost:7053/api/Stocks/ViewPost`, data
+		return axiosInstance.post(
+			`/api/Stocks/ViewPost`, data
 		)
 	}
+
+	//api get list favorite
+	const getListMyFavorite = () => {
+		return axiosInstance.get(`/api/WatchlistStocks/getMyId`)
+	}
+	//api add favorite
+	const addFavorite = (nameStock) => {
+		return axiosInstance.post(`/api/WatchlistStocks?NameStock=${nameStock}`);
+	}
+	//apir delete favorite
+	const deleteFavorite = (id) => {
+		return axiosInstance.delete(`/api/WatchlistStocks/${id}`)
+	}
+
 
 
 	let itemsPerPage = 10
@@ -189,8 +256,8 @@ const Home = () => {
 			nameStock: stockIdFilter,
 			dateRelease: dateRelease
 		}
-		return axios.post(
-			`https://localhost:7053/api/Stocks/ViewPost`, data
+		return axiosInstance.post(
+			`/api/Stocks/ViewPost`, data
 		)
 	}
 
@@ -271,6 +338,13 @@ const Home = () => {
 		setSortStockId(null)
 		setSortDailyProfit(null)
 	}
+
+	//method Round to four decimal places
+	const parseValuesTo4Decimal = (value) => {
+		return Number(value.toFixed(4))
+	}
+
+	//
 	return (
 		<div className='row'>
 			<div className="col-xl-12">
@@ -348,7 +422,7 @@ const Home = () => {
 											</strong></Link>
 										</th>
 										<th>
-											<strong>STANDARD DEVIATION</strong>
+											<strong title='dsadasdasdasd'>SHARPE RATIO</strong>
 										</th>
 										<th>
 											<strong>CLOSE</strong>
@@ -362,9 +436,13 @@ const Home = () => {
 										{isLogin() ?
 											<>
 												{roleID === 2 &&
-													<th>
-														<strong>ACTION</strong>
-													</th>}
+													<>
+														<th>
+															<strong>ACTION</strong>
+														</th>
+														<th></th>
+													</>
+												}
 											</>
 											:
 											<>
@@ -386,29 +464,33 @@ const Home = () => {
 													<td>
 														<strong>{stock.ticker}</strong>
 													</td>
-													<td>{stock.dailyProfit}</td>
-													<td>{stock.standardDeviation}</td>
+													{stock.dailyProfit >= 0 ?
+														<td className='positive-numbers'>{stock.dailyProfit}</td>
+														:
+														<td className='negative-numbers'>{stock.dailyProfit}</td>
+													}
+													{parseValuesTo4Decimal(stock.sharpeRatio) >= 0 ?
+														<td className='positive-numbers'>{parseValuesTo4Decimal(stock.sharpeRatio)}</td>
+														:
+														<td className='negative-numbers'>{parseValuesTo4Decimal(stock.sharpeRatio)}</td>
+													}
 													<td>{stock.close}</td>
 													<td>{stock.volume}</td>
 													<td>{stock.dtyyyymmdd}</td>
 													{isLogin() ?
+
+														roleID === 2 &&
 														<>
-															{roleID === 2 &&
-																<td>
-																	<Dropdown>
-																		<Dropdown.Toggle
-																			variant="success"
-																			className="light sharp i-false home"
-																		>
-																			{svg1}
-																		</Dropdown.Toggle>
-																		<Dropdown.Menu>
-																			<Dropdown.Item onClick={(e) => handleDrawChartClick(stock.ticker)}>
-																				<Link to="/chart-apexchart" >Draw Daily Profit</Link>
-																			</Dropdown.Item>
-																			<Dropdown.Item>Add Favorite</Dropdown.Item>
-																		</Dropdown.Menu>
-																	</Dropdown>
+															<td className='td-action'>
+																<Link><i class="bi bi-bar-chart-fill"></i></Link>
+															</td>
+															{listStockNameFavorite.includes(stock.ticker) ?
+																<td className='td-favorite'>
+																	<i onClick={() => handleDeleteFavorite(stock.ticker)} class="bi bi-heart-fill" title='Delete from favorites'></i>
+																</td>
+																:
+																<td >
+																	<i onClick={() => handleAddFavorite(stock.ticker)} class="bi bi-heart-fill" title='Add to favorites'></i>
 																</td>
 															}
 														</>
