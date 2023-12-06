@@ -119,6 +119,10 @@ const PortofolioComponent = () => {
                         setListMyFavorite(respone.data)
                         setListStockNameFavorite(stocksName)
                         console.log(respone.data)
+                    }).then((error)=>{
+                        console.log(error)
+                        setListMyFavorite([])
+                        setListStockNameFavorite([])
                     })
             })
             .catch(error => console.log(error))
