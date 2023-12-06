@@ -58,7 +58,7 @@ const Header = ({ onNote }) => {
 				// console.log('chay vo nhieu tu')
 				const firstLetterFirstName = nameSplit[0][0].toUpperCase()
 				const lastName = nameSplit[nameSplit.length - 1]
-				const firstLetterLastName = lastName[lastName.length - 1].toUpperCase()
+				const firstLetterLastName = lastName[0].toUpperCase()
 				return firstLetterFirstName + firstLetterLastName
 			} else {
 				// console.log('chay vo 1 tu')
@@ -67,6 +67,7 @@ const Header = ({ onNote }) => {
 		}
 	}
 
+	console.log(convertFullName('Ba Hung'))
 	return (
 		<div className={`header ${headerFix ? "sticky" : ""}`}>
 			<div className="header-content">
