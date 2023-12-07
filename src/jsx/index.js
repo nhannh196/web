@@ -2,7 +2,7 @@ import React, { useContext, useState, useEffect } from "react";
 
 /// React router dom
 import { Routes, Route, Outlet } from "react-router-dom";
-
+//
 /// Layout
 import Nav from "./layouts/nav";
 import Nav2 from "./layouts/nav/index2";
