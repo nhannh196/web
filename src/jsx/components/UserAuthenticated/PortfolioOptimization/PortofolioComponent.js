@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import {
     Col,
@@ -19,9 +19,17 @@ import "./optimization.css"
 import "../../../../css/number-ratio.css";
 import ReactApexChart from "react-apexcharts";
 import { axiosInstance } from '../../../../services/AxiosConfig';
+import DrawChart from '../../DrawChart/DrawChart';
+
+//Paging
+let ITEMS_PER_PAGE = 10
 
 const PortofolioComponent = () => {
     const [open, setOpen] = useState(false);
+    //stockName to draw
+    const [stockNameDraw, setStockNameDraw] = useState('');
+    //show chart
+    const [showChart, setShowChart] = useState(false);
     //list my stockname favorite
     const [listStockNameFavorite, setListStockNameFavorite] = useState([])
     //list my favorite
@@ -33,7 +41,7 @@ const PortofolioComponent = () => {
     //Desired quantity
     const [desiredQuantity, setDesiredQuantity] = useState()
     //page current
-    const [pageCurrent, setPageCurrent] = useState();
+    const [pageCurrent, setPageCurrent] = useState(0);
     //check search
     const [searching, setSearching] = useState(false);
     //search stock id in table
@@ -70,35 +78,28 @@ const PortofolioComponent = () => {
     //List stock view
     const [listStocksView, setListStocksView] = useState([])
     //Page load
-    const [currentItems, setCurrentItems] = useState(listStocksView);
+    // const [currentItems, setCurrentItems] = useState(listStocksView);
     const [pageCount, setPageCount] = useState(0);
     // Here we use item offsets; we could also use page offsets
     // following the API or data you're working with.
-    const [itemOffset, setItemOffset] = useState(0);
-    const dataStocksDefault = JSON.parse(sessionStorage.getItem('dataStocksDefault'));
+    const dataStocksDefault = useMemo(() => JSON.parse(sessionStorage.getItem('dataStocksDefault')), []);
     useEffect(() => {
         // getListStock().then((stock) => { setListStocksView(stock.data) });
         setListStocksView(dataStocksDefault)
         //
-    }, [])
+    }, [dataStocksDefault])
 
-    //Paging
-    let itemsPerPage = 10
+
     // console.log(pageCurrent)
     useEffect(() => {
-        if (pageCurrent > pageCount) {
-            setCurrentItems(listStocksView.slice(0, itemsPerPage));
-            setPageCurrent(0)
-        } else {
-            // Fetch items from another resources.
-            const endOffset = itemOffset + itemsPerPage;
-            // console.log(`Loading items from ${itemOffset} to ${endOffset}`);
-            setCurrentItems(listStocksView.slice(itemOffset, endOffset));
-            setPageCount(Math.ceil(listStocksView.length / itemsPerPage));
-        }
+        setPageCount(Math.ceil(listStocksView.length / ITEMS_PER_PAGE));
+    }, [listStocksView]);
 
-    }, [itemOffset, itemsPerPage, listStocksView, sortStockId, sortDailyProfit, stockIdSeach, pageCount, searching, pageCurrent]);
-
+    const currentItems = useMemo(() => {
+        const itemOffset = pageCurrent * ITEMS_PER_PAGE % listStocksView.length
+        const endOffset = itemOffset + ITEMS_PER_PAGE;
+        return listStocksView.slice(itemOffset, endOffset)
+    }, [listStocksView, pageCurrent,sortStockId,sortDailyProfit])
     //load list favorite
     useEffect(() => {
         getListMyFavorite()
@@ -119,7 +120,7 @@ const PortofolioComponent = () => {
                         setListMyFavorite(respone.data)
                         setListStockNameFavorite(stocksName)
                         console.log(respone.data)
-                    }).then((error)=>{
+                    }).then((error) => {
                         console.log(error)
                         setListMyFavorite([])
                         setListStockNameFavorite([])
@@ -159,9 +160,7 @@ const PortofolioComponent = () => {
 
     // Invoke when user click to request another page.
     const handlePageClick = (event) => {
-        const newOffset = event.selected * itemsPerPage % listStocksView.length;
         // console.log(`User requested page number ${event.selected}, which is offset ${newOffset}`);
-        setItemOffset(newOffset);
         setPageCurrent(event.selected)
     };
 
@@ -363,13 +362,14 @@ const PortofolioComponent = () => {
                         series = [...series, parseValuesTo4Decimal(stock.xValue * 100)]
                     }
                 })
+
                 if (response.data.sum < 1) {
                     labels = [...labels, "Not investing"]
                     series = [...series, parseValuesTo4Decimal(1 - response.data.sum)]
                 }
                 setLabelsPieChart(labels)
                 setSeriesPieChart(series)
-                setlistDataPortofolioView(data)
+                setlistDataPortofolioView(sortNumberDescending(data, "value"))
                 setLoadingOptimizePortofolioView(false)
                 // console.log(seriesPieChart)
             })
@@ -425,22 +425,22 @@ const PortofolioComponent = () => {
         } else {
             if (stockIdSeach === '') {
                 setListStocksView(dataToSearching)
-                setCurrentItems(dataToSearching.slice(0, itemsPerPage));
+                // setCurrentItems(dataToSearching.slice(0, itemsPerPage));
                 setSearching(false)
                 setPageCurrent(0)
             } else {
                 let dataSearch = dataToSearching.filter((stock) => {
                     return stock.ticker.includes(stockIdSeach.toUpperCase())
                 })
+                console.log(dataSearch.slice(0, ITEMS_PER_PAGE))
                 setListStocksView(dataSearch)
-                setCurrentItems(dataSearch.slice(0, itemsPerPage));
+                // setCurrentItems(dataSearch.slice(0, itemsPerPage));
                 setPageCurrent(0)
             }
         }
 
     }
-
-    // console.log(stockIdSeach)
+    const isNotFound = !currentItems?.length
     return (
         <>
             <div className="row">
@@ -513,11 +513,11 @@ const PortofolioComponent = () => {
                                                         handleSearch();
                                                         e.preventDefault()
                                                     }}
-                                                    type="text" className="form-control mb-xl-0 mb-3 input-field" id="exampleFormControlInput1" placeholder="Search STOCK ID" />
+                                                    type="text" className="form-control mb-xl-0 mb-3 input-field" id="exampleFormControlInput1" placeholder="Search STOCK CODE" />
                                             </div>
 
-                                        </Card.Header>
-                                        <Card.Body>
+                                        </Card.Header >
+                                        <Card.Body className='portofolio-body'>
                                             <Table responsive>
                                                 <thead>
                                                     <tr>
@@ -525,7 +525,7 @@ const PortofolioComponent = () => {
                                                             <Link><strong onClick={() => {
                                                                 handleSortStockId();
                                                                 setSortDailyProfit(null)
-                                                            }}>STOCK ID
+                                                            }}>STOCK CODE
                                                                 {sortStockId && <i class="bi bi-arrow-up"></i>}
                                                                 {(!sortStockId && sortStockId !== null) && <i class="bi bi-arrow-down"></i>}
                                                             </strong></Link>
@@ -559,62 +559,82 @@ const PortofolioComponent = () => {
                                                     <h5 className='loading'>Loading...</h5>
                                                     :
                                                     <tbody>
-                                                        {currentItems.map((stock, index) => {
-                                                            return (
-                                                                <tr key={index}>
-                                                                    <td>
-                                                                        <strong>{stock.ticker}</strong>
-                                                                    </td>
-                                                                    {stock.dailyProfit >= 0 ?
-                                                                        <td className='positive-numbers'>{stock.dailyProfit}</td>
-                                                                        :
-                                                                        <td className='negative-numbers'>{stock.dailyProfit}</td>
-                                                                    }
-                                                                    {parseValuesTo4Decimal(stock.sharpeRatio) >= 0 ?
-                                                                        <td className='positive-numbers'>{parseValuesTo4Decimal(stock.sharpeRatio)}</td>
-                                                                        :
-                                                                        <td className='negative-numbers'>{parseValuesTo4Decimal(stock.sharpeRatio)}</td>
-                                                                    }
-                                                                    <td>{stock.dtyyyymmdd}</td>
-                                                                    <td>
-                                                                        <span className="d-flex justify-content-end">
-                                                                            {listStockPortofolio.length < 25 ?
-                                                                                checkStockTiker(stock.ticker) ?
-                                                                                    <Link title="Delete" className="me-2 btn btn-danger shadow btn-xs sharp" onClick={() => { deleteStockPortofolio(stock.ticker) }}>
-                                                                                        <i className="fa fa-close color-danger"></i>
-                                                                                    </Link>
-                                                                                    :
-                                                                                    <Link
-                                                                                        className="me-2 btn btn-primary shadow btn-xs sharp"
-                                                                                        title="Add to Stock Investment Portofolio"
-                                                                                        onClick={() => { addStockPortofolio(stock) }}
-                                                                                    >
-                                                                                        {/* <i className="fas fa-pencil-alt color-muted"></i> */}
-                                                                                        {/* <i class="bi bi-plus-circle"></i> */}
-                                                                                        <i class="bi bi-plus"></i>
-                                                                                    </Link>
-                                                                                :
-                                                                                checkStockTiker(stock.ticker) ?
-                                                                                    <Link title="Delete" className="me-2 btn btn-danger shadow btn-xs sharp" onClick={() => { deleteStockPortofolio(stock.ticker) }}>
-                                                                                        <i className="fa fa-close color-danger"></i>
-                                                                                    </Link>
-                                                                                    :
-                                                                                    <></>
-                                                                            }
-                                                                        </span>
-                                                                    </td>
-                                                                    {listStockNameFavorite.includes(stock.ticker) ?
-                                                                        <td className='td-favorite'>
-                                                                            <i onClick={() => handleDeleteFavorite(stock.ticker)} class="bi bi-heart-fill" title='Delete from favorites'></i>
+                                                        {!isNotFound && (
+                                                            currentItems.map((stock, index) => {
+                                                                return (
+                                                                    <tr key={index}>
+                                                                        <td>
+                                                                            <strong>{stock.ticker}</strong>
                                                                         </td>
-                                                                        :
-                                                                        <td >
-                                                                            <i onClick={() => handleAddFavorite(stock.ticker)} class="bi bi-heart-fill" title='Add to favorites'></i>
+                                                                        {stock.dailyProfit >= 0 ?
+                                                                            <td className='positive-numbers'>{stock.dailyProfit}</td>
+                                                                            :
+                                                                            <td className='negative-numbers'>{stock.dailyProfit}</td>
+                                                                        }
+                                                                        {parseValuesTo4Decimal(stock.sharpeRatio) >= 0 ?
+                                                                            <td className='positive-numbers'>{parseValuesTo4Decimal(stock.sharpeRatio)}</td>
+                                                                            :
+                                                                            <td className='negative-numbers'>{parseValuesTo4Decimal(stock.sharpeRatio)}</td>
+                                                                        }
+                                                                        <td>{stock.dtyyyymmdd}</td>
+
+                                                                        <td>
+                                                                            <span className="d-flex justify-content-end">
+                                                                                <Link className="me-2 shadow btn-xs sharp"
+                                                                                    onClick={() => {
+                                                                                        setShowChart(!showChart);
+                                                                                        setStockNameDraw(stock.ticker)
+                                                                                    }}
+                                                                                ><i class="bi bi-bar-chart-fill"></i></Link>
+                                                                                {listStockPortofolio.length < 25 ?
+                                                                                    checkStockTiker(stock.ticker) ?
+                                                                                        <Link title="Delete" className="me-2 btn btn-danger shadow btn-xs sharp" onClick={() => { deleteStockPortofolio(stock.ticker) }}>
+                                                                                            <i className="fa fa-close color-danger"></i>
+                                                                                        </Link>
+                                                                                        :
+                                                                                        <Link
+                                                                                            className="me-2 btn btn-primary shadow btn-xs sharp"
+                                                                                            title="Add to Stock Investment Portofolio"
+                                                                                            onClick={() => { addStockPortofolio(stock) }}
+                                                                                        >
+                                                                                            {/* <i className="fas fa-pencil-alt color-muted"></i> */}
+                                                                                            {/* <i class="bi bi-plus-circle"></i> */}
+                                                                                            <i class="bi bi-plus"></i>
+                                                                                        </Link>
+                                                                                    :
+                                                                                    checkStockTiker(stock.ticker) ?
+                                                                                        <Link title="Delete" className="me-2 btn btn-danger shadow btn-xs sharp" onClick={() => { deleteStockPortofolio(stock.ticker) }}>
+                                                                                            <i className="fa fa-close color-danger"></i>
+                                                                                        </Link>
+                                                                                        :
+                                                                                        <></>
+                                                                                }
+                                                                            </span>
                                                                         </td>
-                                                                    }
-                                                                </tr>
-                                                            )
-                                                        })}
+                                                                        {listStockNameFavorite.includes(stock.ticker) ?
+                                                                            <td className='td-favorite'>
+                                                                                <i onClick={() => handleDeleteFavorite(stock.ticker)} class="bi bi-heart-fill" title='Delete from favorites'></i>
+                                                                            </td>
+                                                                            :
+                                                                            <td >
+                                                                                <i onClick={() => handleAddFavorite(stock.ticker)} class="bi bi-heart-fill" title='Add to favorites'></i>
+                                                                            </td>
+                                                                        }
+                                                                    </tr>
+                                                                )
+                                                            })
+                                                        )}
+                                                        {isNotFound && (
+                                                            <tr style={{ cursor: 'default', pointerEvents: 'none' }}>
+                                                                <td colSpan={6}>
+                                                                    <div className='d-flex flex-column py-2 align-items-center justify-content-center'>
+                                                                        <h4>No Result Found</h4>
+                                                                        <span>Please try again with another keywords</span>
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                        )}
+
                                                     </tbody>
                                                 }
                                             </Table>
@@ -623,8 +643,8 @@ const PortofolioComponent = () => {
                                             nextLabel=">"
                                             onPageChange={(e) => { handlePageClick(e) }
                                             }
-                                            pageRangeDisplayed={2}
-                                            marginPagesDisplayed={2}
+                                            pageRangeDisplayed={5}
+                                            marginPagesDisplayed={3}
                                             pageCount={pageCount}
                                             forcePage={pageCurrent}
                                             previousLabel="<"
@@ -672,7 +692,7 @@ const PortofolioComponent = () => {
 
                                             {
                                                 loadingStockInvestmentPortofolio ?
-                                                    <h5>Please wait</h5>
+                                                    <h5 style={{ padding: '4px 0' }}>Please wait...</h5>
                                                     :
                                                     listStockPortofolio.map((stock, ind) => (
 
@@ -758,7 +778,7 @@ const PortofolioComponent = () => {
                                                                     <thead>
                                                                         <tr>
                                                                             <th>
-                                                                                <strong>STOCK ID</strong>
+                                                                                <strong>STOCK CODE</strong>
                                                                             </th>
                                                                             {/* <th>
                                                                         <strong>DAILY PROFIT</strong>
@@ -861,6 +881,19 @@ const PortofolioComponent = () => {
                                 </div>
                             </div>
                         </div>
+                    </div>
+                </div>
+            </Modal>
+            <Modal className="modal container-fluid modal-portofolio" show={showChart}>
+                <div className="modal-content">
+                    <div className="modal-header">
+                        <h4 className="modal-title">{`Stock code: ${stockNameDraw}`}</h4>
+                        <Button variant="" type="button" className="btn-close" data-dismiss="modal" onClick={() => { setShowChart(!showChart) }
+                        }>
+                        </Button>
+                    </div>
+                    <div className="modal-body portofolio">
+                        <DrawChart stockName={stockNameDraw} />
                     </div>
                 </div>
             </Modal>

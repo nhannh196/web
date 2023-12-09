@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect, useReducer } from 'react';
+import React, { useState, useContext, useEffect, useMemo } from 'react';
 import ReactPaginate from 'react-paginate';
 import { Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
@@ -56,6 +56,8 @@ const CharacterData = [
 	{ svgColor: '#FCFCFC', title: 'Expense' },
 ];
 
+//Paging
+let ITEMS_PER_PAGE = 10
 
 const Home = () => {
 	//list my stockname favorite
@@ -73,9 +75,9 @@ const Home = () => {
 	const [stockIdFilter, setStockIdFilter] = useState('')
 	//Loaing
 	const [loading, setLoading] = useState(false);
-
+	const [pageCurrent, setPageCurrent] = useState(0);
 	// We start with an empty list of items.
-	const [currentItems, setCurrentItems] = useState(listStocksView);
+	// const [currentItems, setCurrentItems] = useState(listStocksView);
 	const [pageCount, setPageCount] = useState(0);
 	// Here we use item offsets; we could also use page offsets
 	// following the API or data you're working with.
@@ -170,22 +172,29 @@ const Home = () => {
 		return axiosInstance.delete(`/api/WatchlistStocks/${id}`)
 	}
 
-
-
-	let itemsPerPage = 10
 	useEffect(() => {
-		// Fetch items from another resources.
-		const endOffset = itemOffset + itemsPerPage;
-		// console.log(`Loading items from ${itemOffset} to ${endOffset}`);
-		setCurrentItems(listStocksView.slice(itemOffset, endOffset));
-		setPageCount(Math.ceil(listStocksView.length / itemsPerPage));
-	}, [itemOffset, itemsPerPage, listStocksView, sortStockId, sortDailyProfit]);
+        setPageCount(Math.ceil(listStocksView.length / ITEMS_PER_PAGE));
+    }, [listStocksView]);
+
+	const currentItems = useMemo(() => {
+        const itemOffset = pageCurrent * ITEMS_PER_PAGE % listStocksView.length
+        const endOffset = itemOffset + ITEMS_PER_PAGE;
+        return listStocksView.slice(itemOffset, endOffset)
+    }, [listStocksView, pageCurrent,sortStockId,sortDailyProfit])
+	// useEffect(() => {
+	// 	// Fetch items from another resources.
+	// 	const endOffset = itemOffset + itemsPerPage;
+	// 	// console.log(`Loading items from ${itemOffset} to ${endOffset}`);
+	// 	setCurrentItems(listStocksView.slice(itemOffset, endOffset));
+	// 	setPageCount(Math.ceil(listStocksView.length / itemsPerPage));
+	// }, [itemOffset, itemsPerPage, listStocksView, sortStockId, sortDailyProfit]);
 
 	// Invoke when user click to request another page.
 	const handlePageClick = (event) => {
-		const newOffset = event.selected * itemsPerPage % listStocksView.length;
-		// console.log(`User requested page number ${event.selected}, which is offset ${newOffset}`);
-		setItemOffset(newOffset);
+		// const newOffset = event.selected * itemsPerPage % listStocksView.length;
+		// // console.log(`User requested page number ${event.selected}, which is offset ${newOffset}`);
+		// setItemOffset(newOffset);
+		setPageCurrent(event.selected)
 	};
 
 	// const [stockDraw, setStockDraw] = useState({})
@@ -411,7 +420,7 @@ const Home = () => {
 											<Link><strong onClick={() => {
 												handleSortStockId();
 												setSortDailyProfit(null)
-											}}>STOCK ID
+											}}>STOCK CODE
 												{sortStockId && <i class="bi bi-arrow-up"></i>}
 												{(!sortStockId && sortStockId !== null) && <i class="bi bi-arrow-down"></i>}
 											</strong></Link>

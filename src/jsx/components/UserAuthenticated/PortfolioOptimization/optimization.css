@@ -76,9 +76,9 @@ input.form-control {
 
 }
 
-.table tbody tr td strong {
+/* .table tbody tr td strong {
     font-size: 1.06rem !important;
-}
+} */
 
 .loading {
     border: none !important;
@@ -148,4 +148,16 @@ input.form-control {
 
 i:hover {
     cursor: pointer;
+}
+
+.portofolio.card-header>.input-container>.form-control{
+    font-size: 0.8rem;
+}
+
+.card-body.portofolio-body>.table-responsive>.table>thead>tr>th{
+    font-size: 0.8rem;
+}
+
+.portofolio-body.card-body>.table-responsive>.table>tbody>tr{
+    height: 36px;
 }

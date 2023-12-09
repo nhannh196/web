@@ -84,7 +84,7 @@ const ListManagers = () => {
 				setListManagers(listManagers)
 				setListAdmins(listAdmins)
 				const listDefault = [...listManagers]
-			});
+			}).catch(error=>console.log(error));
 	}
 	const changeStatusClickSave = () => {
 		updateUser()
@@ -95,6 +95,7 @@ const ListManagers = () => {
 
 	const updateUser = () => {
 		const data = {
+			userId: user.userId,
 			username: user.username,
 			password: user.password,
 			fullName: user.fullName,
@@ -107,7 +108,7 @@ const ListManagers = () => {
 		const response = axiosInstance.put(`/api/UsersAdmin/${user.userId}`, data)
 			.then((response) => {
 				setUser({});
-			})
+			}).catch(error=>console.log(error))
 	}
 
 	const checkInput = (input) => {
@@ -179,6 +180,7 @@ const ListManagers = () => {
 
 	const changeStatusAccount = () => {
 		const data = {
+			userId: user.userId,
 			username: user.username,
 			password: user.password,
 			fullName: user.fullName,
@@ -191,7 +193,7 @@ const ListManagers = () => {
 		const response = axiosInstance.put(`/api/UsersAdmin/${user.userId}`, data)
 			.then((response) => {
 				setUser({});
-			})
+			}).catch(error=>console.log(error))
 	}
 
 	const getManage = () => {

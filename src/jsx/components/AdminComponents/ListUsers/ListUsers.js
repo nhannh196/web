@@ -49,9 +49,8 @@ export const ListUsers = () => {
 				const listNeed = response.data.filter((user) => {
 					return user.roleId === null || user.roleId === 2
 				})
-
 				setListUsers(listNeed)
-			});
+			}).catch(err => console.log(err));
 	}
 	const changeStatusClickSave = () => {
 		updateUser()
@@ -60,36 +59,38 @@ export const ListUsers = () => {
 
 	const updateUser = () => {
 		const data = {
+			userId: user.userId,
 			username: user.username,
 			password: user.password,
 			fullName: user.fullName,
 			dateOfBirth: user.dateOfBirth,
-			registrationDate:user.registrationDate,
-			roleId:user.roleId,
+			registrationDate: user.registrationDate,
+			roleId: user.roleId,
 			email: user.email,
 			baned: user.baned
 		}
 		const response = axiosInstance.put(`/api/UsersAdmin/${user.userId}`, data)
 			.then((response) => {
 				setUser({});
-			})
+			}).catch(err => console.log(err))
 	}
 
 	const changeStatusAccount = () => {
 		const data = {
+			userId: user.userId,
 			username: user.username,
 			password: user.password,
 			fullName: user.fullName,
 			dateOfBirth: user.dateOfBirth,
-			registrationDate:user.registrationDate,
-			roleId:user.roleId,
+			registrationDate: user.registrationDate,
+			roleId: user.roleId,
 			email: user.email,
 			baned: !user.baned
 		}
 		const response = axiosInstance.put(`/api/UsersAdmin/${user.userId}`, data)
 			.then((response) => {
 				setUser({});
-			})
+			}).catch(err => console.log(err))
 	}
 
 
@@ -167,7 +168,7 @@ export const ListUsers = () => {
 									prepareRow(row)
 									return (
 										<tr {...row.getRowProps()}>
-										
+
 											{row.cells.map((cell) => {
 												return (
 
@@ -207,7 +208,7 @@ export const ListUsers = () => {
 															<div to={"#"} onClick={() => { dispatch({ type: 'editProfile' }); setUser(row.original) }}>Edit</div>
 														</Dropdown.Item>
 														<Dropdown.Item>
-															<div variant="primary" type="button" className="mb-2 me-1" onClick={() => { dispatch({ type: 'changeStatusAccount' }); setUser(row.original)}}>
+															<div variant="primary" type="button" className="mb-2 me-1" onClick={() => { dispatch({ type: 'changeStatusAccount' }); setUser(row.original) }}>
 																{row.original.baned ? "UnBan" : "Ban"}
 															</div>
 														</Dropdown.Item>

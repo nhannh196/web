@@ -67,7 +67,6 @@ const Header = ({ onNote }) => {
 		}
 	}
 
-	console.log(convertFullName('Ba Hung'))
 	return (
 		<div className={`header ${headerFix ? "sticky" : ""}`}>
 			<div className="header-content">

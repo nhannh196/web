@@ -134,7 +134,7 @@ const ManageMyPosts = () => {
                                                         {post.accept === true ?
                                                             <td><span className="light badge-success badge">Aprroved</span></td>
                                                             :
-                                                            <td ><span className="light badge-danger badge">Waiting</span></td>
+                                                            <td ><span className="light badge-warning badge">Waiting</span></td>
                                                         }
                                                         <td >
                                                             <Link title="Detail of post" onClick={() => handleDetail(post)}>
