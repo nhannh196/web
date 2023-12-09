@@ -5,6 +5,7 @@ import {
     TabPane,
     Nav
 } from 'react-bootstrap';
+
 import { useMemo, useState, useEffect } from "react";
 import { axiosInstance } from "../../../services/AxiosConfig";
 import './chart.css';
