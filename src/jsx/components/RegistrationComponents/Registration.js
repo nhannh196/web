@@ -9,7 +9,7 @@ import CheckOtp from "../CheckOtpComponents/CheckOtp";
 import axios from "axios";
 import { Button } from "react-bootstrap";
 import { axiosInstance, axiosInstanceCookie, baseURL } from "../../../services/AxiosConfig";
-import Cookies from 'universal-cookie';
+
 // image
 // import logo from "../../images/logo-full.png";
 const messageDeafault = {
@@ -34,7 +34,6 @@ function Register(props) {
     // const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailPattern.test(email);
   }
-  const [isDuplicate, setIsDuplicate] = useState(false)
 
   const checkUserName = (userName) => {
     return axios.get(`${baseURL}/Users/CheckUserName?userName=${userName}`)
