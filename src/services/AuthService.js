@@ -16,7 +16,7 @@ export function signUp(username, email, fullname, password) {
         roleid: 2
     };
     return axios.post(
-        `https://localhost:7053/Users/register`,
+        `${baseURL}/Users/register`,
         postData,
     );
 }
@@ -27,7 +27,7 @@ export function login(username, password) {
         password
     };
     return axios.post(
-        `https://localhost:7053/Users/Login`,
+        `${baseURL}/Users/Login`,
         postData,
     )
 

@@ -21,6 +21,7 @@ import ReactApexChart from "react-apexcharts";
 import { axiosInstance } from '../../../../services/AxiosConfig';
 import DrawChart from '../../DrawChart/DrawChart';
 import "../../../../css/page-load.css"
+import { baseURL } from '../../../../services/AxiosConfig';
 
 //Paging
 let ITEMS_PER_PAGE = 10
@@ -202,7 +203,7 @@ const PortofolioComponent = () => {
             dateRelease: dateRelease
         }
         return axios.post(
-            `https://localhost:7053/api/Stocks/ViewPost`, data
+            `${baseURL}/api/Stocks/ViewPost`, data
         )
     }
 
