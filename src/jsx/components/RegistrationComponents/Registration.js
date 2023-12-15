@@ -93,7 +93,7 @@ function Register(props) {
 
   //Send otp to email
   const sendOtp = () => {
-    const res = axiosInstanceCookie.post(`${baseURL}/api/Email/SendOtp/?toEmail=${email}`)
+    const res = axiosInstance.post(`${baseURL}/api/Email/SendOtp/?toEmail=${email}`)
       .then((res) => {
         console.log('da gui otp')
         setOtpSystem(res.data)
@@ -110,7 +110,7 @@ function Register(props) {
       email: email
     }
     // console.log(`https://localhost:7053/Users/register?otp=${otp}`)
-    return axiosInstanceCookie.post(`${baseURL}/Users/Register?otp=${otp}`, data)
+    return axiosInstance.post(`${baseURL}/Users/Register?otp=${otp}`, data)
   }
 
   //Handle submit of check otp component

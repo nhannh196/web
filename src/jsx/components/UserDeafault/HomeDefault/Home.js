@@ -400,14 +400,14 @@ const Home = () => {
 																</>
 																:
 																<td>
-																	<Dropdown>
+																	<Dropdown >
 																		<Dropdown.Toggle
 																			variant="success"
 																			className="light sharp i-false"
 																		>
 																			{svg1}
 																		</Dropdown.Toggle>
-																		<DropdownMenu>
+																		<DropdownMenu className='home-action'>
 																			<Button className="me-2" variant="primary" style={{ width: '100%', height: '100%' }}>
 																				<Link to="/login">Login to use</Link>
 																			</Button>

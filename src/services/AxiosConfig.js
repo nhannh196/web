@@ -5,6 +5,7 @@ import axios from "axios";
 //     return localStorage.getItem('accessToken')
 // }
 // const accessToken=getTokenForAxios()
+
 export const baseURL = 'https://localhost:7053'
 export const axiosInstance = axios.create(
   {
@@ -15,10 +16,11 @@ export const axiosInstance = axios.create(
     }
   });
 
-export const axiosInstanceCookie = axios.create(
-  {
-    baseURL: baseURL,
-    headers: {
-      'Cookies': `${document.cookie}`
-    }
-  })
+// export const axiosInstanceCookie = axios.create(
+//   {
+//     baseURL: baseURL,
+//     "maxBodyLength": Infinity,
+//     headers: {
+//       'Cookies': `${document.cookie}`
+//     }
+//   })

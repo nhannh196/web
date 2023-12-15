@@ -18,3 +18,7 @@
 i:hover{
     cursor: pointer;
 }
+
+.home-action{
+    padding: 0 !important;
+}
