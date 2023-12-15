@@ -20,12 +20,15 @@ import "../../../../css/number-ratio.css";
 import ReactApexChart from "react-apexcharts";
 import { axiosInstance } from '../../../../services/AxiosConfig';
 import DrawChart from '../../DrawChart/DrawChart';
+import "../../../../css/page-load.css"
 
 //Paging
 let ITEMS_PER_PAGE = 10
 
 const PortofolioComponent = () => {
     const [open, setOpen] = useState(false);
+    //date to draw
+    const [dateDraw, setDateDraw] = useState('')
     //stockName to draw
     const [stockNameDraw, setStockNameDraw] = useState('');
     //show chart
@@ -47,7 +50,7 @@ const PortofolioComponent = () => {
     //search stock id in table
     const [stockIdSeach, setStockIdSearch] = useState('');
     //data to search
-    const [dataToSearching, setDataToSearching] = useState('');
+    // const [dataToSearching, setDataToSearching] = useState('');
     //list data portofolio view
     const [listDataPortofolioView, setlistDataPortofolioView] = useState([])
     //labels for pieChart
@@ -61,13 +64,13 @@ const PortofolioComponent = () => {
     //Loaing
     const [loading, setLoading] = useState(false);
     //Profit margin
-    const [profitMargin, setProfitMargin] = useState(null);
+    // const [profitMargin, setProfitMargin] = useState(null);
     //message error
     const [messageError, setMessageError] = useState(null);
     //Sort with StockId
-    const [sortStockId, setSortStockId] = useState(null);
+    // const [sortStockId, setSortStockId] = useState(null);
     //Sort with Daily Profit
-    const [sortDailyProfit, setSortDailyProfit] = useState(null);
+    // const [sortDailyProfit, setSortDailyProfit] = useState(null);
     //Date to filter
     const [dateFilter, setDateFilter] = useState('');
     //Stock id to dilter
@@ -76,30 +79,44 @@ const PortofolioComponent = () => {
     const [listStockPortofolio, setListStockPortofolio] = useState([]);
 
     //List stock view
-    const [listStocksView, setListStocksView] = useState([])
+    // const [listStocksView, setListStocksView] = useState([])
     //Page load
     // const [currentItems, setCurrentItems] = useState(listStocksView);
     const [pageCount, setPageCount] = useState(0);
+
+    // sortDirection
+    const [sortDirection, setSortDirection] = useState(true);
+    //sort colum
+    const [sortColumn, setSortColumn] = useState('StockName');
+    // name stock
+    const [nameStock, setNameStock] = useState('');
+    //date
+    const [dateRelease, setDateRelease] = useState('')
+    // item in a view page
+    const [currentItems, setCurrentItems] = useState([])
     // Here we use item offsets; we could also use page offsets
     // following the API or data you're working with.
-    const dataStocksDefault = useMemo(() => JSON.parse(sessionStorage.getItem('dataStocksDefault')), []);
+    // const dataStocksDefault = useMemo(() => JSON.parse(sessionStorage.getItem('dataStocksDefault')), []);
+    //api load stock
+    const loadData = () => {
+        setLoading(true)
+        let data = {
+            nameStock: nameStock,
+            dateRelease: dateRelease
+        }
+        axiosInstance.post(`/api/Stocks/ViewStock?page=${pageCurrent + 1}&pageSize=${ITEMS_PER_PAGE}&sortColumn=${sortColumn}&sortDirection=${sortDirection}`, data)
+            .then(respone => {
+                setCurrentItems(respone.data.data)
+                setPageCount(respone.data.totalPages)
+                setLoading(false)
+            })
+            .catch(error => console.log(error))
+    }
+
     useEffect(() => {
-        // getListStock().then((stock) => { setListStocksView(stock.data) });
-        setListStocksView(dataStocksDefault)
-        //
-    }, [dataStocksDefault])
+        loadData()
+    }, [pageCurrent, nameStock, dateRelease, sortDirection, sortColumn])
 
-
-    // console.log(pageCurrent)
-    useEffect(() => {
-        setPageCount(Math.ceil(listStocksView.length / ITEMS_PER_PAGE));
-    }, [listStocksView]);
-
-    const currentItems = useMemo(() => {
-        const itemOffset = pageCurrent * ITEMS_PER_PAGE % listStocksView.length
-        const endOffset = itemOffset + ITEMS_PER_PAGE;
-        return listStocksView.slice(itemOffset, endOffset)
-    }, [listStocksView, pageCurrent,sortStockId,sortDailyProfit])
     //load list favorite
     useEffect(() => {
         getListMyFavorite()
@@ -120,10 +137,10 @@ const PortofolioComponent = () => {
                         setListMyFavorite(respone.data)
                         setListStockNameFavorite(stocksName)
                         console.log(respone.data)
-                    }).then((error) => {
-                        console.log(error)
-                        setListMyFavorite([])
-                        setListStockNameFavorite([])
+                    }).catch((error) => {
+                        console.log('Error add favorite', error)
+                        // setListMyFavorite([])
+                        // setListStockNameFavorite([])
                     })
             })
             .catch(error => console.log(error))
@@ -226,7 +243,6 @@ const PortofolioComponent = () => {
     }
 
     //function sort number ascending
-    // console.log(listStocksView)
     const sortNumerAscending = (list, obj) => {
         return list.sort(function (a, b) {
             return a[obj] - b[obj];
@@ -241,35 +257,15 @@ const PortofolioComponent = () => {
 
     //hande sort stock id
     const handleSortStockId = () => {
-        if (sortStockId === null) {
-            setSortStockId(true)
-            setListStocksView(sortCharacterAscending(listStocksView, "ticker"))
-        } else {
-            if (sortStockId === true) {
-                setListStocksView(sortCharacterDescending(listStocksView, "ticker"))
-                setSortStockId(!sortStockId)
-            } else {
-                setListStocksView(sortCharacterAscending(listStocksView, "ticker"))
-                setSortStockId(!sortStockId)
-            }
-        }
+        setSortColumn('StockName')
+        setSortDirection(!sortDirection)
     }
 
 
     //handle sort daily profits
     const handleSortDailyProfit = () => {
-        if (sortDailyProfit === null) {
-            setSortDailyProfit(true)
-            setListStocksView(sortNumerAscending(listStocksView, "dailyProfit"))
-        } else {
-            if (sortDailyProfit === true) {
-                setListStocksView(sortNumberDescending(listStocksView, "dailyProfit"))
-                setSortDailyProfit(!sortDailyProfit)
-            } else {
-                setListStocksView(sortNumerAscending(listStocksView, "dailyProfit"))
-                setSortDailyProfit(!sortDailyProfit)
-            }
-        }
+        setSortColumn('DailyProfit')
+        setSortDirection(!sortDirection)
     }
 
     useEffect(() => {
@@ -282,13 +278,12 @@ const PortofolioComponent = () => {
 
     //handle submit filter
     const handleSubmitFilter = () => {
-        setLoading(true)
-        filterStock()
-            .then(response => {
-                setListStocksView(response.data)
-                setLoading(false)
-            })
-            .catch(error => { console.log(error) });
+        setNameStock(stockIdFilter)
+        if (dateFilter === "") {
+            setDateRelease(dateFilter)
+        } else {
+            setDateRelease(formatDateToYYYYMMDD(dateFilter));
+        }
     }
     //handle clear filter
     const handleClearFilter = () => {
@@ -298,11 +293,8 @@ const PortofolioComponent = () => {
     }
     //handle reset filter
     const handleResetStockData = () => {
-        setListStocksView(dataStocksDefault)
-        setSortStockId(null)
-        setSortDailyProfit(null)
-        setSearching(false)
-        setDataToSearching('')
+        setNameStock("")
+        setDateRelease("")
     }
 
     //options for portofolio
@@ -319,10 +311,6 @@ const PortofolioComponent = () => {
         const data = listStockPortofolio.map((stock) => stock.ticker)
         return axiosInstance.post(`/api/Stocks/QuadraticForSelectStock?mathWithDailyOrMonth=${false}`, data);
     }
-    //api portofolio of system
-    // const portofolioOfSystems = (choose) => {
-    //     return axiosInstance.post(`/api/Stocks/QuadraticForSystemChose?mathWithDailyOrMonth=${choose}`)
-    // }
 
     //api get stock from system
     const getStockFromSystem = () => {
@@ -403,7 +391,7 @@ const PortofolioComponent = () => {
                     getStockFromSystem()
                         .then((response) => {
                             setLoadingStockInvestmentPortofolio(false)
-                            setListStockPortofolio(response.data)
+                            setListStockPortofolio([...listStockPortofolio, ...response.data])
                         }).catch(error => console.log(error))
                     setMessageError('')
                 }
@@ -414,33 +402,10 @@ const PortofolioComponent = () => {
     }
     //handle search
     const handleSearch = () => {
-        if (searching === false) {
-            setSearching(true)
-            setDataToSearching(listStocksView)
-            let dataSearch = listStocksView.filter((stock) => {
-                return stock.ticker.includes(stockIdSeach.toUpperCase())
-            })
-            setListStocksView(dataSearch)
-            setPageCurrent(0)
-        } else {
-            if (stockIdSeach === '') {
-                setListStocksView(dataToSearching)
-                // setCurrentItems(dataToSearching.slice(0, itemsPerPage));
-                setSearching(false)
-                setPageCurrent(0)
-            } else {
-                let dataSearch = dataToSearching.filter((stock) => {
-                    return stock.ticker.includes(stockIdSeach.toUpperCase())
-                })
-                console.log(dataSearch.slice(0, ITEMS_PER_PAGE))
-                setListStocksView(dataSearch)
-                // setCurrentItems(dataSearch.slice(0, itemsPerPage));
-                setPageCurrent(0)
-            }
-        }
-
+        setNameStock(stockIdSeach)
     }
     const isNotFound = !currentItems?.length
+    let stockDraw = { stockName: stockNameDraw, date: dateDraw }
     return (
         <>
             <div className="row">
@@ -524,19 +489,19 @@ const PortofolioComponent = () => {
                                                         <th>
                                                             <Link><strong onClick={() => {
                                                                 handleSortStockId();
-                                                                setSortDailyProfit(null)
+                                                                // setSortDailyProfit(null)
                                                             }}>STOCK CODE
-                                                                {sortStockId && <i class="bi bi-arrow-up"></i>}
-                                                                {(!sortStockId && sortStockId !== null) && <i class="bi bi-arrow-down"></i>}
+                                                                {(sortColumn === 'StockName' && sortDirection === true) && <i class="bi bi-arrow-up"></i>}
+                                                                {(sortColumn === 'StockName' && sortDirection === false) && <i class="bi bi-arrow-down"></i>}
                                                             </strong></Link>
                                                         </th>
                                                         <th>
                                                             <Link><strong onClick={() => {
                                                                 handleSortDailyProfit();
-                                                                setSortStockId(null)
+                                                                // setSortStockId(null)
                                                             }}>DAILY PROFIT
-                                                                {sortDailyProfit && <i class="bi bi-arrow-up"></i>}
-                                                                {(!sortDailyProfit && sortDailyProfit !== null) && <i class="bi bi-arrow-down"></i>}
+                                                                {(sortColumn === 'DailyProfit' && sortDirection === true) && <i class="bi bi-arrow-up"></i>}
+                                                                {(sortColumn === 'DailyProfit' && sortDirection === false) && <i class="bi bi-arrow-down"></i>}
                                                             </strong></Link>
                                                         </th>
                                                         <th>
@@ -563,8 +528,11 @@ const PortofolioComponent = () => {
                                                             currentItems.map((stock, index) => {
                                                                 return (
                                                                     <tr key={index}>
-                                                                        <td>
-                                                                            <strong>{stock.ticker}</strong>
+                                                                        <td title={
+                                                                            `Stock: ${stock.ticker}\nDate: ${stock.dtyyyymmdd}\nOpen: ${stock.open}\nHigh: ${stock.high}\nLow: ${stock.low}\nClose: ${stock.close}\nVolume: ${stock.volume} 
+                                                                        `
+                                                                        }>
+                                                                            <Link><strong>{stock.ticker}</strong></Link>
                                                                         </td>
                                                                         {stock.dailyProfit >= 0 ?
                                                                             <td className='positive-numbers'>{stock.dailyProfit}</td>
@@ -579,11 +547,12 @@ const PortofolioComponent = () => {
                                                                         <td>{stock.dtyyyymmdd}</td>
 
                                                                         <td>
-                                                                            <span className="d-flex justify-content-end">
+                                                                            <span className="d-flex justify-content-center">
                                                                                 <Link className="me-2 shadow btn-xs sharp"
                                                                                     onClick={() => {
                                                                                         setShowChart(!showChart);
                                                                                         setStockNameDraw(stock.ticker)
+                                                                                        setDateDraw(stock.dtyyyymmdd)
                                                                                     }}
                                                                                 ><i class="bi bi-bar-chart-fill"></i></Link>
                                                                                 {listStockPortofolio.length < 25 ?
@@ -676,16 +645,8 @@ const PortofolioComponent = () => {
 
                                         </div>
 
-                                        <div className="card-body loadmore-content  recent-activity-wrapper p-4" id="RecentActivityContent">
-                                            {/* <Dropdown className='suggestion-system'>
-                                                <Dropdown.Toggle variant="primary">
-                                                    Suggestion of system
-                                                </Dropdown.Toggle>
-                                                <Dropdown.Menu>
-                                                    <Dropdown.Item onClick={() => { handleSuggestions(true) }}>Daily</Dropdown.Item>
-                                                    <Dropdown.Item onClick={() => { handleSuggestions(false) }}>Month</Dropdown.Item>
-                                                </Dropdown.Menu>
-                                            </Dropdown> */}
+                                        <div id='stock-investment-portofolio-body' className="card-body loadmore-content  recent-activity-wrapper p-4" >
+
                                             <input className="form-control mb-xl-0 mb-3 input-field" type='text' placeholder='Desired quantity' value={desiredQuantity} onChange={(e) => setDesiredQuantity(e.target.value)}></input>
                                             {messageError && <div className='messageError'>{messageError}</div>}
                                             <Link className="btn btn-block btn-primary dlab-load-more btn-portofolio" onClick={(e) => { handleSuggestions(); console.log(messageError) }}>Suggestion stock of systems</Link>
@@ -719,13 +680,10 @@ const PortofolioComponent = () => {
                                                                 </div>
                                                             </div>
                                                         </div>
-
                                                     ))
                                             }
-
                                         </div>
                                         <div className="card-footer text-center border-0 pt-0">
-
                                             {listStockPortofolio.length < 1 ?
                                                 <>
                                                     <div>Or</div>
@@ -756,7 +714,7 @@ const PortofolioComponent = () => {
                         }>
                         </Button>
                     </div>
-                    <div className="modal-body portofolio">
+                    <div id='show-portofolio-modal-body' className="modal-body portofolio">
                         <div className="row">
                             <div className="col-xl-12">
                                 <div className='row main-card'>
@@ -767,7 +725,7 @@ const PortofolioComponent = () => {
                                                     <Card.Header className='portofolio'>
                                                         <Card.Title>STOCK</Card.Title>
                                                     </Card.Header>
-                                                    <Card.Body>
+                                                    <Card.Body id='show-portofolio-body'>
                                                         {loadingOptimizePortofolioView ?
                                                             <h4>Optimizing...</h4>
                                                             :
@@ -893,7 +851,7 @@ const PortofolioComponent = () => {
                         </Button>
                     </div>
                     <div className="modal-body portofolio">
-                        <DrawChart stockName={stockNameDraw} />
+                        <DrawChart stock={stockDraw} />
                     </div>
                 </div>
             </Modal>

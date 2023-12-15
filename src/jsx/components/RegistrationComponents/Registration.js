@@ -8,6 +8,8 @@ import "react-toastify/dist/ReactToastify.css";
 import CheckOtp from "../CheckOtpComponents/CheckOtp";
 import axios from "axios";
 import { Button } from "react-bootstrap";
+import { axiosInstance, axiosInstanceCookie, baseURL } from "../../../services/AxiosConfig";
+import Cookies from 'universal-cookie';
 // image
 // import logo from "../../images/logo-full.png";
 const messageDeafault = {
@@ -24,21 +26,7 @@ function Register(props) {
   const [otpSystem, setOtpSystem] = useState('');
   // const [otpInput,setOtpInput] = useState('');
   const navigate = useNavigate();
-  console.log('load lai tu dau')
-  useEffect(() => {
-    getListUser()
-
-  }, [])
-
-
-
-  const getListUser = () => {
-    return axios.get('https://localhost:7053/api/UsersAdmin')
-      .then((response) => {
-        setListUsers(response.data)
-      });
-  }
-
+// console.log(document.cookie)
   //Validate email
   const isValidEmail = (email) => {
     const emailPattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -46,66 +34,66 @@ function Register(props) {
     // const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailPattern.test(email);
   }
+  const [isDuplicate, setIsDuplicate] = useState(false)
 
-  const checkUsernameDuplicate = (username) => {
-    let check = false
-    listUsers.map((user) => {
-      if (user.username === username) {
-        check = true
-      }
-    })
-    return check
+  const checkUserName = (userName) => {
+    return axios.get(`${baseURL}/Users/CheckUserName?userName=${userName}`)
   }
 
+  // const test = checkUsernameDuplicate('nhan123')
+  // console.log(test)
+
   // check input in fields
-  const checkInput = (input) => {
+  const checkInput = async () => {
     let message = {}
-    if (input.username === undefined || input.username.trim() === '') {
+    if (username === undefined || username.trim() === '') {
       message = { ...message, userNameError: "Username is required" }
     } else {
-      if (checkUsernameDuplicate(input.username)) {
-        message = { ...message, userNameError: `Username ${input.username} is already taken` }
+      try {
+        let check = await checkUserName(username)
+        if (check.data) {
+          message = { ...message, userNameError: `Username ${username} is already taken` }
+        }
+      } catch (error) {
+        console.log(error)
       }
     }
-    if (input.password === undefined || input.password.trim() === '') {
+    if (password === undefined || password.trim() === '') {
       message = { ...message, passwordError: "Password is required" }
     }
-    if (input.fullName === undefined || input.fullName.trim() === '') {
+    if (fullName === undefined || fullName.trim() === '') {
       message = { ...message, fullNameError: "Fullname is required" }
     }
-    if (input.email === undefined || input.email.trim() === '') {
+    if (email === undefined || email.trim() === '') {
       message = { ...message, emailError: "Email is required" }
     } else {
-      if (!isValidEmail(input.email)) {
+      if (!isValidEmail(email)) {
         message = { ...message, emailError: "Email entered is not valid" }
       }
     }
-    return message;
+
+    return message
   }
 
   // Handle sign up
-  const handleSignUp = () => {
-    const data = {
-      username: username,
-      password: password,
-      fullName: fullName,
-      email: email
-    }
+  const handleSignUp = async () => {
     setMessageOtp("")
-    setMessage(checkInput(data));
-    // console.log(checkInput(data))
-    if (username.trim() && message==={} && password.trim() && isValidEmail(email) && fullName.trim()) {
+    let newCheck = await checkInput();
+    setMessage(newCheck)
+    // console.log(checkdata))
+    if (!!username.trim() && !!password.trim() && !!isValidEmail(email) && !!fullName.trim() && JSON.stringify(newCheck) === "{}") {
+      console.log("OK")
       setMessage({})
       sendOtp()
       setShowComponent(!showComponent)
     } else {
-      setMessage(checkInput(data));
+      console.log("chua Ok")
     }
   }
 
   //Send otp to email
   const sendOtp = () => {
-    const res = axios.post(`https://localhost:7053/api/Email/SendOtp/?toEmail=${email}`)
+    const res = axiosInstanceCookie.post(`${baseURL}/api/Email/SendOtp/?toEmail=${email}`)
       .then((res) => {
         console.log('da gui otp')
         setOtpSystem(res.data)
@@ -122,17 +110,18 @@ function Register(props) {
       email: email
     }
     // console.log(`https://localhost:7053/Users/register?otp=${otp}`)
-    return axios.post(`https://localhost:7053/Users/register?otp=${otp}`, data)
+    return axiosInstanceCookie.post(`${baseURL}/Users/Register?otp=${otp}`, data)
   }
 
   //Handle submit of check otp component
   const handleSubmitOtpComponent = (otp) => {
-    console.log(otp)
+    console.log("Otp System: ",otpSystem)
+    console.log("Otp Input: ",otp)
     if (otpSystem === otp) {
       signUpWithOtp(otp)
         .then((res) => {
           console.log('Dang ky thanh cong')
-          getListUser()
+          // getListUser()
           console.log("reset lai field")
           resetField()
           swal({
@@ -163,7 +152,8 @@ function Register(props) {
           // navigate('/login')
         })
         .catch((err) => {
-          console.log(err.response.data)
+          console.log("loi o day nay")
+          console.log(err)
           setMessageOtp(err.response.data)
         })
     } else {

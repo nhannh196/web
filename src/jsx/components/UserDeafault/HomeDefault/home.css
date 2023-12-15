@@ -8,8 +8,8 @@
     padding: 0.6rem 0;
 }
 
-.td-action>a>i{
-    padding-left: 1.6rem;
+.td-action>a{
+    margin-left: 1.6rem;
 }
 
 .td-favorite{

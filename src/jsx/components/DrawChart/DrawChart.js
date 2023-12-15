@@ -3,8 +3,11 @@ import {
     TabContainer,
     TabContent,
     TabPane,
-    Nav
+    Nav,
+    Dropdown,
 } from 'react-bootstrap';
+import Select from "react-select";
+import '../../../css/page-load.css'
 
 import { useMemo, useState, useEffect } from "react";
 import { axiosInstance } from "../../../services/AxiosConfig";
@@ -15,24 +18,31 @@ import { isDate } from "lodash";
 
 const DrawChart = (props) => {
     //month of stock to draw chart
-    const [monthNeedDraw, setMonthNeedDraw] = useState(new Date());
+    console.log(props)
+    const [dateNeedDraw, setDateNeedDraw] = useState(new Date(props.stock.date));
     //data to draw chart
     const [dataToDraw, setDataToDraw] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
+const [selectedOption, setSelectedOption] = useState({
+        "value": "1",
+        "label": "1 month"
+    })
 
     useEffect(() => {
-        console.log(monthNeedDraw)
-        if (monthNeedDraw) {
-            handleGetDetail(parseDateToYYYYMM(monthNeedDraw));
+        // console.log(dateNeedDraw)
+        if (dateNeedDraw) {
+            handleGetDetail(parseDateToYYYYMM(dateNeedDraw));
         }
-    }, [monthNeedDraw])
+    }, [dateNeedDraw,selectedOption])
 
     const parseDateToYYYYMM = (dateString) => {
         const date = new Date(dateString);
         const year = date.getFullYear();
         const month = date.getMonth() + 1;
+const day = date.getDate();
         const formattedMonth = month < 10 ? `0${month}` : month;
-        const formattedDate = `${year}-${formattedMonth}`;
+        const formattedDay = day < 10 ? `0${day}` : day;
+        const formattedDate = `${year}-${formattedMonth}-${formattedDay}`;
         return formattedDate;
     }
 
@@ -54,7 +64,7 @@ const DrawChart = (props) => {
             series: [
                 {
                     name: "Daily Profit",
-                    data: dataDailyProfit,
+                    data: dataDailyProfit.reverse(),
                 },
             ],
             options: {
@@ -64,10 +74,10 @@ const DrawChart = (props) => {
                     group: "social",
                     background: '#fff',
                     toolbar: {
-                        show: false,
+                        show: true,
                     },
                     zoom: {
-                        enabled: false,
+                        enabled: true,
                     },
                 },
                 dataLabels: {
@@ -93,23 +103,23 @@ const DrawChart = (props) => {
                     },
                 },
                 markers: {
-                    size: 6,
+                    size: 2,
                     border: 0,
                     //strokeColor: "#fff",
                     colors: ["#1c9ef9", "#709fba"],
                     hover: {
-                        size: 6,
+                        size: 4,
                     },
                 },
 
                 xaxis: {
                     axisBorder: {
-                        show: false,
+                        show: true,
                     },
                     axisTicks: {
-                        show: false,
+                        show: true,
                     },
-                    categories: date,
+                    categories: date.reverse(),
                 },
                 yaxis: {
                     labels: {
@@ -124,7 +134,7 @@ const DrawChart = (props) => {
                 fill: {
                     colors: ["#1c9ef9", "#709fba"],
                     type: "solid",
-                    opacity: 0.07,
+                    opacity: 0.08,
                 },
                 grid: {
                     borderColor: '#ffffff1a',
@@ -133,7 +143,7 @@ const DrawChart = (props) => {
 
         }
         return obj
-    }, [monthNeedDraw, dataToDraw])
+    }, [dateNeedDraw, dataToDraw,selectedOption])
 
     //obj char
     const objTodrawChart = useMemo(() => {
@@ -151,7 +161,7 @@ const DrawChart = (props) => {
         let obj = {
             series: [{
                 name: 'candle',
-                data: dataDraw
+                data: dataDraw.reverse()
             }],
             options: {
                 chart: {
@@ -199,17 +209,17 @@ const DrawChart = (props) => {
 
         };
         return obj
-    }, [dataToDraw])
+    }, [dateNeedDraw,dataToDraw,selectedOption])
 
     //api get detail
-    const getDetailOnMonth = (date) => {
-        return axiosInstance.post(`/api/Stocks/GetStockChart?ticker=${props.stockName}&date=${date}`)
+    const getDetailtoDraw = (date) => {
+        return axiosInstance.post(`/api/Stocks/GetStockChart?ticker=${props.stock.stockName}&date=${date}&option=${selectedOption.value}`)
     }
 
     //get detail
     const handleGetDetail = (date) => {
         setIsLoading(true)
-        getDetailOnMonth(date)
+        getDetailtoDraw(date)
             .then(respone => {
                 setDataToDraw(respone.data)
                 console.log(respone.data)
@@ -219,22 +229,42 @@ const DrawChart = (props) => {
                 setIsLoading(false)
             })
     }
-    console.log({ dataToDraw })
+    
+    //option to draw
+    const options = [
+        { value: 1, label: "1 month" },
+        { value: 3, label: "3 months" },
+        { value: 6, label: "6 months" },
+        { value: 9, label: "9 months" },
+        { value: 12, label: "12 months" },
+    ];
+
+    console.log(props)
     return (
         <div className="row">
             <div className="col-xl-12">
                 <div className='row'>
-                    <div className="col-xl-4">
+                    <div className="col-xl-2 draw-chart">
                         <DatePicker
                             className="form-control mb-xxl-0 mb-3"
-                            dateFormat="yyyy/MM"
-                            selected={monthNeedDraw || null}
+                            dateFormat="yyyy/MM/dd"
+                            selected={dateNeedDraw || null}
                             onChange={(date) => {
-                                setMonthNeedDraw(date);
+                                setDateNeedDraw(date);
                                 // handleGetDetail(parseDateToYYYYMM(date)) 
                             }}
                             placeholderText='Choose a date'
-                            showMonthYearPicker
+                            
+                        />
+                        <Select
+                            defaultValue={selectedOption}
+                            onChange={setSelectedOption}
+                            options={options}
+                            style={{
+                                lineHeight: "40px",
+                                color: "#7e7e7e",
+                                paddingLeft: " 15px",
+                            }}
                         />
                     </div>
                 </div>
@@ -242,20 +272,13 @@ const DrawChart = (props) => {
                     <div className="col-xl-12">
                         <TabContainer defaultActiveKey="DailyProfitChart">
                             <Nav className="nav nav-tabs tab-auto" id="nav-tab" role="tablist">
-                                <Nav.Link className="nav-link nav-portofolio" eventKey="DailyProfitChart" onClick={() => { }}>DailyProfit Chart</Nav.Link>
-                                <Nav.Link className="nav-link nav-portofolio" eventKey="Chart" onClick={() => { }}>Chart</Nav.Link>
+                                <Nav.Link className="nav-link nav-portofolio" eventKey="DailyProfitChart" onClick={() => { }}>Daily Profit Chart</Nav.Link>
+                                <Nav.Link className="nav-link nav-portofolio" eventKey="Chart" onClick={() => { }}>Candlestick Chart</Nav.Link>
                             </Nav>
                             <TabContent>
                                 <TabPane eventKey="DailyProfitChart">
                                     {isLoading && (
                                         <div class="spinner-border" role="status"
-                                            style={{
-                                                position: 'absolute',
-                                                top: '50%',
-                                                left: '50%',
-                                                transform: 'translate(-50% -50%)',
-                                                zIndex: 100
-                                            }}
                                         >
                                             <span class="sr-only">Loading...</span>
                                         </div>
@@ -274,14 +297,7 @@ const DrawChart = (props) => {
                                 <TabPane eventKey="Chart" style={{ position: 'relative' }}>
                                     {isLoading && (
                                         <div class="spinner-border" role="status"
-                                            style={{
-                                                position: 'absolute',
-                                                top: '50%',
-                                                left: '50%',
-                                                transform: 'translate(-50% -50%)',
-                                                zIndex: 100
-                                            }}
-                                        >
+                                         style={{top:"50%"}}>
                                             <span class="sr-only">Loading...</span>
                                         </div>
                                     )}

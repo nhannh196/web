@@ -1,15 +1,14 @@
 import React, { useEffect, useState } from 'react'
 import { Nav, Tab, ProgressBar, Modal, Button } from 'react-bootstrap'
 import { Link } from 'react-router-dom';
-import copy from "copy-to-clipboard";
 import 'react-modal-video/scss/modal-video.scss';
-import { isLogin } from '../../../services/AuthService';
-import axios from 'axios';
+import { isLogin } from '../../../../services/AuthService';
 
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { axiosInstance } from '../../../services/AxiosConfig';
+import { axiosInstance } from '../../../../services/AxiosConfig';
 import { preventDefault } from '@fullcalendar/react';
-
+// import "../../../../css/icon-name.css"
+import './forum.css'
 
 function Forum() {
     const [socialModal, setSocialModal] = useState();
@@ -17,7 +16,6 @@ function Forum() {
 
     const [comment, setComment] = useState("");
     const [commentError, setCommentError] = useState(false);
-    const [commentblog, setCommentblog] = useState([]);
 
     //     const fakeData = (index, postQuality) => {
     //         let listPosts = []
@@ -60,7 +58,7 @@ function Forum() {
     }
     //get all posts
     const getPostData = () => {
-        return axiosInstance.get('/api/ForumPosts')
+        return axiosInstance.get('/api/ForumPosts/GetForumPostsAccept')
     }
 
 
@@ -76,33 +74,21 @@ function Forum() {
     }
 
     useEffect(() => {
-        // console.log('load danh sach lan dau')
-        // const loadData = async () => {
-        //     const response = await getPostData()
-        //     try {
-        //         let listPostsNeed = response.data.filter((post) => {
-        //             return post.accept === true && (post.baned === false || post.baned === null)
-        //         })
-        //         setListPosts(listPostsNeed)
-        //         setListPostsView(getPostByQuality(0, 3, listPostsNeed))
-        //     } catch (error) {
-        //         console.log(error)
-        //     }
-        // }
-        // loadData()
         getPostData()
             .then((response) => {
-                let listPostsNeed = response.data.filter((post) => {
-                    return post.accept === true && (post.baned === false || post.baned === null)
-                })
-                setListPosts(listPostsNeed)
-                setListPostsView(getPostByQuality(0, 3, listPostsNeed))
+                // let listPostsNeed = response.data.filter((post) => {
+                //     return post.accept === true && (post.baned === false || post.baned === null)
+                // })
+                setListPosts(response.data)
+                // setListPostsView(getPostByQuality(0, 3, listPostsNeed))
+                setListPostsView(response.data)
             })
     }, [])
 
     useEffect(() => {
+        console.log('load comment')
         getComment()
-    }, [commentsOfPost])
+    }, [])
 
 
     // console.log(listPosts[0])
@@ -150,23 +136,19 @@ function Forum() {
             setCommentError(true)
             return;
         }
-        try {
-            const data = {
-                postId: postId,
-                userId: userId,
-                content: comment
-            }
-            const response = axios.post('https://localhost:7053/api/Comments', data)
-                .then((response) => {
-                    setCommentsOfPost([...commentsOfPost, response.data])
-                    setComment('')
-                    setCommentError(false)
-                })
-
+        const data = {
+            postId: postId,
+            userId: userId,
+            content: comment,
         }
-        catch (e) {
-
-        }
+        const response = axiosInstance.post('/api/Comments', data)
+            .then((response) => {
+                // setCommentsOfPost([...commentsOfPost, response.data])
+                getComment()
+                setComment('')
+                setCommentError(false)
+            })
+            .catch(error => console.log(error))
     }
 
     const parseDate = (date) => {
@@ -175,8 +157,28 @@ function Forum() {
         return `${datePare[0]} ${timeParse[0]}:${timeParse[1]}`;
     }
 
-    
+    const convertFullName = (fullName) => {
+        // console.log(fullName.trim() === "")
+        if (fullName?.trim() === null || fullName?.trim() === "" || fullName?.trim() === undefined) {
+            // console.log('chay vo khong tu')
+            return ""
+        } else {
+            const nameSplit = fullName.trim().split(' ');
+            if (nameSplit.length > 1) {
+                // console.log('chay vo nhieu tu')
+                const firstLetterFirstName = nameSplit[0][0].toUpperCase()
+                const lastName = nameSplit[nameSplit.length - 1]
+                const firstLetterLastName = lastName[0].toUpperCase()
+                return firstLetterFirstName + firstLetterLastName
+            } else {
+                // console.log('chay vo 1 tu')
+                return nameSplit[0][0].toUpperCase()
+            }
+        }
+    }
 
+
+    console.log(listPostsView)
     return (
         <>
 
@@ -201,8 +203,11 @@ function Forum() {
                                 <div key={post.postId}>
                                     <div className="card">
                                         <div className="card-body">
-                                            <div className="course-content d-flex justify-content-between flex-wrap">
-                                                <div>
+                                            <div className="course-content d-flex flex-wrap">
+                                                <div class="initial-avatar-forum header-item">
+                                                    {convertFullName(post.fullName)}
+                                                </div>
+                                                <div className="forum-title">
                                                     <h4>{post.title}</h4>
                                                     <ul className="d-flex align-items-center raiting my-0 flex-wrap">
                                                         {/* <li><span className="font-w500">5.0</span><i className="fas fa-star text-orange ms-2"></i></li> */}
@@ -213,10 +218,10 @@ function Forum() {
                                                 </div>
                                             </div>
 
-                                            <div className="course-details-tab style-2 mt-4">
+                                            <div className="course-details-tab style-2">
                                                 {post.content.length < 100 ?
                                                     <>
-                                                        <div className="about-content">
+                                                        <div className="about-content forum">
                                                             <p>{post.content}</p>
                                                         </div>
                                                         <a href='#' onClick={(e) => { handleShowDetail(post.postId, e) }}><h5>{listShowDetail.includes(post.postId) ? "Hide" : "More..."}</h5></a>
@@ -257,16 +262,10 @@ function Forum() {
                                                                         <>
                                                                             <div className="user-pic2" key={ind}>
                                                                                 <div className="d-flex align-items-center">
-                                                                                    {/* <img src={data.image} alt="" /> */}
+
                                                                                     <div className="ms-3">
                                                                                         <h4>{data.fullName}</h4>
                                                                                         <ul className="d-flex align-items-center raiting my-0 flex-wrap">
-                                                                                            {/* <li><span className="font-w500">5.0</span><i className="fas fa-star star-orange ms-2"></i>
-                                                                                                <i className="fas fa-star star-orange me-1"></i>
-                                                                                                <i className="fas fa-star star-orange me-1"></i>
-                                                                                                <i className="fas fa-star star-orange me-1"></i>
-                                                                                                <i className="fas fa-star star-orange"></i>
-                                                                                            </li> */}
                                                                                             <li>{parseDate(data.commentDate)}</li>
                                                                                         </ul>
                                                                                     </div>

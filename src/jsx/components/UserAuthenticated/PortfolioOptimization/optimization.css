@@ -161,3 +161,17 @@ i:hover {
 .portofolio-body.card-body>.table-responsive>.table>tbody>tr{
     height: 36px;
 }
+
+#stock-investment-portofolio-body{
+    max-height: 390px;
+    overflow: auto;
+}
+
+#show-portofolio-body{
+    max-height: 468px;
+    overflow: auto;
+}
+
+#show-portofolio-modal-body{
+    padding-bottom: 0;
+}

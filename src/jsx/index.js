@@ -12,13 +12,13 @@ import Main from './layouts/Main';
 import WalletBar from './layouts/WalletBar';
 
 /// Dashboard
-import Home from "./components/UserDeafault/Home";
+import Home from "./components/UserDeafault/HomeDefault/Home";
 
 import Contact from "./components/Dashboard/Contact";
 
 
 //Course
-import Forum from "./components/UserDeafault/Forum";
+import Forum from "./components/UserDeafault/ForumDefault/Forum";
 
 /// Pages
 
@@ -45,12 +45,12 @@ import ManageMyPosts from "./components/UserAuthenticated/ManageMyPost/ManageMyP
 const Markup = () => {
   let routesDefault = [
     { url: "/", component: <Home /> },
-    { url: "home", component: <Home /> },
-    { url: "contact", component: <Contact /> },
+    { url: "/home", component: <Home /> },
+    // { url: "contact", component: <Contact /> },
     // { url: "login", component: <Login /> },
     // { url: "register", component: <Registration /> },
     { url: "forum", component: <Forum /> },
-    { url: "/check-otp", component: <CheckOtp /> },
+    { url: "check-otp", component: <CheckOtp /> },
   ];
 
 
@@ -102,7 +102,6 @@ const Markup = () => {
           <Route element={<Layout1 />}>
             <Route path='/login' exact element={<Login />} />
             <Route path='/register' exact element={<Registration />} />
-
           </Route>
         }
         <Route element={<Layout7 />}>

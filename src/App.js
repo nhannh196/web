@@ -9,30 +9,10 @@ import "./css/style.css";
 import axios from 'axios';
 
 function App(props) {
-    const getListStock = () => {
-        const data = {
-            nameStock: "",
-            dateRelease: ""
-        }
-        return axios.post(
-            `https://localhost:7053/api/Stocks/ViewPost`, data
-        )
-    }
-
-    getListStock()
-    .then((response) =>{
-        sessionStorage.setItem('dataStocksDefault', JSON.stringify(response.data))
-    })
-    .catch((error) =>{})
-
-// const test =JSON.parse(sessionStorage.getItem('dataStockDefault'))
-// console.log(test)
-
     return (
         <>
             <Index />
         </>
-
     )
 };
 

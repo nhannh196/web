@@ -61,6 +61,7 @@
     "sweetalert": "^2.1.2",
     "sweetalert2": "^11.6.15",
     "swiper": "^8.4.7",
+    "universal-cookie": "^6.1.1",
     "web-vitals": "^2.1.4",
     "yup": "^0.32.11"
   },

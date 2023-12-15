@@ -5,6 +5,7 @@ import DropdownMultiselect from "react-multiselect-dropdown-bootstrap";
 import CkEditorBlog from "../../Forms/CkEditor/CkEditorBlog";
 import axios from 'axios';
 import { useNavigate } from "react-router-dom";
+import { axiosInstance } from "../../../../services/AxiosConfig";
 
 const PostNew = () => {
     const [title, setTitle] = useState('');
@@ -12,8 +13,9 @@ const PostNew = () => {
     const userDetails = JSON.parse(localStorage.getItem('userDetails'));
     const navigate = useNavigate();
     const [titleError, setTitleError] = useState(false);
+    console.log(userDetails)
 
-    const handleSubmitPost = (userId, title, content) => {
+    const handleSubmitPost = (title, content) => {
         if (userDetails === null || userDetails === undefined) {
             navigate("/Login");
             return;
@@ -22,28 +24,27 @@ const PostNew = () => {
             setTitleError(true)
             return;
         }
-        try {
-            const data = {
-                userId: userId,
-                title: title,
-                content: content,
-            }
-            console.log(data);
-            const response = axios.post('https://localhost:7053/api/ForumPosts', data)
-            setTitle('')
-            setContent('')
-            setTitleError(false)
+        const data = {
+            userId: userDetails.userId,
+            title: title,
+            content: content,
+            fullName: userDetails.fullName
         }
-        catch (e) {
-
-        }
+        console.log(data)
+        axiosInstance.post('/api/ForumPosts', data)
+            .then(() => {
+                setTitle('')
+                setContent('')
+                setTitleError(false)
+                console.log("post success")
+            }).catch(error => console.log(error))
     }
     return (
         <Fragment>
             <div className="row">
                 <div className="card">
                     <div className="card-body">
-                    <h4 className="card-title">Title</h4>
+                        <h4 className="card-title">Title</h4>
                         <div className="basic-form">
                             <form onSubmit={(e) => e.preventDefault()}>
                                 <div className="form-group mb-3">
@@ -67,13 +68,13 @@ const PostNew = () => {
                         <textarea value={content} onChange={(e) => { setContent(e.target.value) }} className="form-control" id="exampleFormControlTextarea3" rows="3" placeholder="Input your content" />
                         <br />
                         <div>
-                            
-                        <button className="btn btn-primary"
-                            onClick={
-                                () => {
-                                    handleSubmitPost(userDetails.userId, title, content)
-                                }
-                            }>Post</button>
+
+                            <button className="btn btn-primary"
+                                onClick={
+                                    () => {
+                                        handleSubmitPost(title, content)
+                                    }
+                                }>Post</button>
                         </div>
                     </div>
 

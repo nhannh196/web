@@ -43,7 +43,7 @@ const ManageMyPosts = () => {
     useEffect(() => {
         getMyPosts()
             .then((response) => {
-                // console.log(response)
+                console.log(response.data)
                 setListMyPosts(response.data)
             })
             .catch((error) => {
@@ -138,7 +138,7 @@ const ManageMyPosts = () => {
                                                         }
                                                         <td >
                                                             <Link title="Detail of post" onClick={() => handleDetail(post)}>
-                                                                <i class="bi bi-card-list" ></i>Detail
+                                                                <i class="bi bi-card-list" ></i> Detail
                                                             </Link>
                                                         </td>
                                                     </tr>
