@@ -28,3 +28,58 @@
     margin-top: 0;
     font-size: 14px;
 }
+
+.react{
+    font-size: 16px;
+}
+.li-react{
+    padding: 0 5px;
+}
+.li-react>i{
+    padding-left: 5px;
+    padding-right: 5px;
+    padding-bottom: 2px;
+    padding-top: 3px;
+    border-radius: 50%;
+}
+
+.li-react.like>i:hover{
+    color: #fff;
+    background-color: #03a2fd;
+}
+.li-react.dislike>i:hover{
+    color: #fff;
+    background-color: #f94252;
+}
+
+.like.active>i{
+color: #03a2fd;
+}
+.dislike.active>i{
+    color: #f94252;
+    }
+/* .like.active>i:hover{
+    background-color: ;
+} */
+
+/* .react-button{
+    width: 48%;
+    height: 40px;
+    border-radius: 5px;
+    border-width: 4px;
+    border-color: #a098ae;
+    background-color: #fff;
+    font-size: 18px
+} */
+
+.react-like{
+    background-color: #03a2fd;
+    border-color: #03a2fd;
+    color: #fff;
+}
+
+.react-dislike{
+    background-color: #f94252;
+    border-color: #f94252;
+    color: #fff;
+}

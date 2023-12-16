@@ -6,9 +6,9 @@ import { isLogin } from '../../../../services/AuthService';
 
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { axiosInstance } from '../../../../services/AxiosConfig';
-import { preventDefault } from '@fullcalendar/react';
 // import "../../../../css/icon-name.css"
 import './forum.css'
+import { get } from 'lodash';
 
 function Forum() {
     const [socialModal, setSocialModal] = useState();
@@ -44,8 +44,57 @@ function Forum() {
     const [commentsOfPost, setCommentsOfPost] = useState([])
     const [listPostsView, setListPostsView] = useState([])
     const [startOffset, setStartOffset] = useState(0)
+    //list react
+    const [listReact, setListReact] = useState([])
 
 
+    //get list react
+    const getListReact = () => {
+        return axiosInstance.get(`/api/Reacts/getMyId`)
+    }
+    //load list react
+    const loadListReact = () => {
+        getListReact()
+            .then((response) => {
+                setListReact(response.data)
+            })
+            .catch(error => console.log(error))
+    }
+    useEffect(() => {
+        loadListReact()
+    }, [])
+    //like
+    const likeAction = (postId) => {
+        const data = {
+            postId: postId
+        }
+        return axiosInstance.post(`/api/Reacts/Like`, data)
+    }
+    // handle click like
+    const handleLikeClick = (postId) => {
+        likeAction(postId)
+            .then(response => { loadListReact(); loadPosts() })
+            .catch(error => console.log(error))
+    }
+    //dislike
+    const dislikeAction = (postId) => {
+        const data = {
+            postId: postId
+        }
+        return axiosInstance.post(`/api/Reacts/Dislike`, data)
+    }
+    // handle click like
+    const handleDislikeClick = (postId) => {
+        dislikeAction(postId)
+            .then(response => { loadListReact(); loadPosts() })
+            .catch(error => console.log(error))
+    }
+    //check react
+    const react = (postId) => {
+        return listReact.find((r) => {
+            return r.postId === postId
+        })
+    }
 
     //get post by quality
     const getPostByQuality = (startOffset, itemOnePage, listPosts) => {
@@ -61,6 +110,18 @@ function Forum() {
         return axiosInstance.get('/api/ForumPosts/GetForumPostsAccept')
     }
 
+    const loadPosts = () => {
+        getPostData()
+            .then((response) => {
+                // let listPostsNeed = response.data.filter((post) => {
+                //     return post.accept === true && (post.baned === false || post.baned === null)
+                // })
+                setListPosts(response.data)
+                // setListPostsView(getPostByQuality(0, 3, listPostsNeed))
+                setListPostsView(response.data)
+            })
+    }
+
 
     //get all comment
     const getComment = () => {
@@ -74,19 +135,10 @@ function Forum() {
     }
 
     useEffect(() => {
-        getPostData()
-            .then((response) => {
-                // let listPostsNeed = response.data.filter((post) => {
-                //     return post.accept === true && (post.baned === false || post.baned === null)
-                // })
-                setListPosts(response.data)
-                // setListPostsView(getPostByQuality(0, 3, listPostsNeed))
-                setListPostsView(response.data)
-            })
+        loadPosts()
     }, [])
 
     useEffect(() => {
-        console.log('load comment')
         getComment()
     }, [])
 
@@ -178,7 +230,6 @@ function Forum() {
     }
 
 
-    console.log(listPostsView)
     return (
         <>
 
@@ -209,10 +260,31 @@ function Forum() {
                                                 </div>
                                                 <div className="forum-title">
                                                     <h4>{post.title}</h4>
-                                                    <ul className="d-flex align-items-center raiting my-0 flex-wrap">
-                                                        {/* <li><span className="font-w500">5.0</span><i className="fas fa-star text-orange ms-2"></i></li> */}
-                                                        {/* <li>Review (1k)</li> */}
-                                                        {/* <li>10k Students</li> */}
+                                                    <ul className="d-flex align-items-center raiting my-0 flex-wrap react">
+                                                        {isLogin() ?
+                                                            !!react(post.postId) === true ?
+                                                                react(post.postId).status === "Like" ?
+                                                                    <>
+                                                                        <li className='li-react like active' onClick={() => handleLikeClick(post.postId)}><i class="bi bi-hand-thumbs-up-fill"></i> {post.likeCount}</li>
+                                                                        <li className='li-react dislike' onClick={() => handleDislikeClick(post.postId)}><i class="bi bi-hand-thumbs-down-fill"></i> {post.dislikeCount}</li>
+                                                                    </>
+                                                                    :
+                                                                    <>
+                                                                        <li className='li-react like' onClick={() => handleLikeClick(post.postId)}><i class="bi bi-hand-thumbs-up-fill"></i> {post.likeCount}</li>
+                                                                        <li className='li-react dislike active' onClick={() => handleDislikeClick(post.postId)}><i class="bi bi-hand-thumbs-down-fill"></i> {post.dislikeCount}</li>
+                                                                    </>
+
+                                                                :
+                                                                <>
+                                                                    <li className='li-react like' onClick={() => handleLikeClick(post.postId)}><i class="bi bi-hand-thumbs-up-fill"></i> {post.likeCount}</li>
+                                                                    <li className='li-react dislike' onClick={() => handleDislikeClick(post.postId)}><i class="bi bi-hand-thumbs-down-fill"></i> {post.dislikeCount}</li>
+                                                                </>
+                                                            :
+                                                            <>
+                                                                <li title='Login to use'><i class="bi bi-hand-thumbs-up-fill"></i> {post.likeCount}</li>
+                                                                <li title='Login to use'><i class="bi bi-hand-thumbs-down-fill"></i> {post.dislikeCount}</li>
+                                                            </>
+                                                        }
                                                     </ul>
 
                                                 </div>
@@ -253,7 +325,8 @@ function Forum() {
                                                 {listShowDetail.includes(post.postId) &&
                                                     <Tab.Container >
                                                         <Nav className="nav nav-tabs tab-auto" id="nav-tab" role="tablist">
-                                                            <Nav.Link className="nav-link" eventKey="Comments" >Commnets</Nav.Link>
+                                                            <Nav.Link className="nav-link" eventKey="Comments" ><i class="bi bi-chat-dots-fill"></i> Commnets</Nav.Link>
+                                                            <Nav.Link className="nav-link" eventKey="Report">Report</Nav.Link>
                                                         </Nav>
                                                         <Tab.Content>
                                                             <Tab.Pane eventKey="Comments">
@@ -262,7 +335,6 @@ function Forum() {
                                                                         <>
                                                                             <div className="user-pic2" key={ind}>
                                                                                 <div className="d-flex align-items-center">
-
                                                                                     <div className="ms-3">
                                                                                         <h4>{data.fullName}</h4>
                                                                                         <ul className="d-flex align-items-center raiting my-0 flex-wrap">
@@ -296,8 +368,57 @@ function Forum() {
                                                                         </div>
                                                                     </div></> :
                                                                         <><Button className="me-2" variant="primary" style={{ width: '100%' }}>
-                                                                            <Link to="/login">Login to comment</Link>
+                                                                            <Link to="/login">Login to use</Link>
                                                                         </Button></>
+                                                                    }
+
+                                                                </div>
+                                                            </Tab.Pane>
+                                                            <Tab.Pane eventKey="Report">
+                                                                <div>
+                                                                    {isLogin() ?
+                                                                        !!react(post.postId) === true ?
+                                                                            react(post.postId).status === "Like" ?
+                                                                                <div className="row">
+                                                                                    <div className="react">
+                                                                                        <button className='react-button react-like' onClick={() => handleLikeClick(post.postId)} title='Like'>
+                                                                                            <i class="bi bi-hand-thumbs-up-fill"></i>
+                                                                                        </button>
+                                                                                        <button className='react-button'
+                                                                                            onClick={() => handleDislikeClick(post.postId)} title='Dislike'>
+                                                                                            <i class="bi bi-hand-thumbs-down-fill"></i>
+                                                                                        </button>
+                                                                                    </div>
+                                                                                </div>
+                                                                                :
+                                                                                <div className="row">
+                                                                                    <div className="react">
+                                                                                        <button className='react-button' onClick={() => handleLikeClick(post.postId)} title='Like'>
+                                                                                            <i class="bi bi-hand-thumbs-up-fill"></i>
+                                                                                        </button>
+                                                                                        <button className='react-button react-dislike' onClick={() => handleDislikeClick(post.postId)} title='Dislike'>
+                                                                                            <i class="bi bi-hand-thumbs-down-fill"></i>
+                                                                                        </button>
+                                                                                    </div>
+                                                                                </div>
+
+                                                                            :
+                                                                            <div className="row">
+                                                                                <div className="react">
+                                                                                    <button className='react-button' onClick={() => handleLikeClick(post.postId)} title='Like'>
+                                                                                        <i class="bi bi-hand-thumbs-up-fill"></i>
+                                                                                    </button>
+                                                                                    <button className='react-button' onClick={() => handleDislikeClick(post.postId)} title='Dislike'>
+                                                                                        <i class="bi bi-hand-thumbs-down-fill"></i>
+                                                                                    </button>
+                                                                                </div>
+                                                                            </div>
+                                                                        :
+                                                                        <>
+                                                                            <Button className="me-2" variant="primary" style={{ width: '100%' }}>
+                                                                                <Link to="/login">Login to use</Link>
+                                                                            </Button>
+                                                                        </>
                                                                     }
 
                                                                 </div>
