@@ -339,6 +339,7 @@ const PortofolioComponent = () => {
                 let labels = []
                 let series = []
                 let data = []
+                let total=0
                 response.data.stockResults.map((stock) => {
                     let obj = {
                         ticker: stock.nameStock,
@@ -349,12 +350,13 @@ const PortofolioComponent = () => {
                     if (stock.xValue > 0) {
                         labels = [...labels, `${stock.nameStock} (${parseValuesTo4Decimal(stock.xValue * 100)} %)`]
                         series = [...series, parseValuesTo4Decimal(stock.xValue * 100)]
+                        total+=parseValuesTo4Decimal(stock.xValue * 100)
                     }
                 })
-
-                if (response.data.sum < 1) {
+                console.log(total)
+                if (total < 100) {
                     labels = [...labels, "Not investing"]
-                    series = [...series, parseValuesTo4Decimal(1 - response.data.sum)]
+                    series = [...series, 100-total]
                 }
                 setLabelsPieChart(labels)
                 setSeriesPieChart(series)
@@ -743,7 +745,7 @@ const PortofolioComponent = () => {
                                                                         <strong>DAILY PROFIT</strong>
                                                                     </th> */}
                                                                             <th>
-                                                                                <strong>INVESTMENT RATIO</strong>
+                                                                                <strong>CAPITAL ALLOCATION RATIO</strong>
                                                                             </th>
                                                                             {/* <th>
                                                                         <strong >STANDARD DEVIATION</strong>
