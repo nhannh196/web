@@ -114,6 +114,9 @@ const ManageMyPosts = () => {
                                                 <strong>POST DATE</strong>
                                             </th>
                                             <th>
+                                                <strong>REACT</strong>
+                                            </th>
+                                            <th>
                                                 <strong>STATUS</strong>
                                             </th>
                                             <th>
@@ -131,6 +134,7 @@ const ManageMyPosts = () => {
                                                         <td>{index + 1}</td>
                                                         <td>{post.title}</td>
                                                         <td>{parseDate(post.postDate)}</td>
+                                                        <td>{(post.likeCount||0)} likes| {(post.dislikeCount||0)} dislikes</td>
                                                         {post.accept === true ?
                                                             <td><span className="light badge-success badge">Aprroved</span></td>
                                                             :

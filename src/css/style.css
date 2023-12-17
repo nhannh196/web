@@ -13123,7 +13123,7 @@ Fixing Order => Base + Typography >> General Layout + Grid >> Page Layout + Comp
       padding-right: 12px; } }
 
 .wallet-open.active .content-body {
-  padding-right: calc(var(--right-space) - 1.75rem);
+  /* padding-right: calc(var(--right-space) - 1.75rem); */
   -webkit-transition: all 0.5s;
   -ms-transition: all 0.5s;
   transition: all 0.5s; }

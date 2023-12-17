@@ -9,35 +9,35 @@ import {
 
 const CheckOtp = (props) => {
     const [otp, setOtp] = useState("");
-    const [minutes, setMinutes] = useState(0);
-    const [seconds, setSeconds] = useState(5);
+    // const [minutes, setMinutes] = useState(0);
+    // const [seconds, setSeconds] = useState(5);
     const {show,changeShow,sendOtp,handleSubmit} = props.handleOtpComponent
     // const [messageOtp,setMessageOtp]=useState(message)
     // console.log(messageOtp)
-    useEffect(() => {
-        const interval = setInterval(() => {
-            if (seconds > 0) {
-                setSeconds(seconds - 1);
-            }
-            if (seconds === 0) {
-                if (minutes === 0) {
-                    clearInterval(interval);
-                } else {
-                    setSeconds(59);
-                    setMinutes(minutes - 1);
-                }
-            }
-        }, 1000);
-        return () => {
-            clearInterval(interval);
-        };
-    }, [seconds, minutes]);
+    // useEffect(() => {
+    //     const interval = setInterval(() => {
+    //         if (seconds > 0) {
+    //             setSeconds(seconds - 1);
+    //         }
+    //         if (seconds === 0) {
+    //             if (minutes === 0) {
+    //                 clearInterval(interval);
+    //             } else {
+    //                 setSeconds(59);
+    //                 setMinutes(minutes - 1);
+    //             }
+    //         }
+    //     }, 1000);
+    //     return () => {
+    //         clearInterval(interval);
+    //     };
+    // }, [seconds, minutes]);
 
     const handleResend = () => {
         setOtp("");
         sendOtp()
-        setMinutes(0);
-        setSeconds(2);
+        // setMinutes(0);
+        // setSeconds(2);
     };
 
     return (
@@ -73,7 +73,7 @@ const CheckOtp = (props) => {
                                                 <p>Didn't receive the OTP?</p>
                                                 <Button
                                                     variant="outline-primary btn-xs"
-                                                    disabled={seconds > 0 || minutes > 0}
+                                                    // disabled={seconds > 0 || minutes > 0}
                                                     onClick={handleResend}
                                                 >
                                                     Resend OTP

@@ -326,7 +326,7 @@ function Forum() {
                                                     <Tab.Container >
                                                         <Nav className="nav nav-tabs tab-auto" id="nav-tab" role="tablist">
                                                             <Nav.Link className="nav-link" eventKey="Comments" ><i class="bi bi-chat-dots-fill"></i> Commnets</Nav.Link>
-                                                            <Nav.Link className="nav-link" eventKey="Report">Report</Nav.Link>
+                                                            <Nav.Link className="nav-link" eventKey="Report"><i class="bi bi-exclamation-triangle-fill"></i> Report</Nav.Link>
                                                         </Nav>
                                                         <Tab.Content>
                                                             <Tab.Pane eventKey="Comments">
