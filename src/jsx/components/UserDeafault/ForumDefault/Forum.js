@@ -47,7 +47,7 @@ function Forum() {
     //list react
     const [listReact, setListReact] = useState([])
 
-
+    //test 
     //get list react
     const getListReact = () => {
         return axiosInstance.get(`/api/Reacts/getMyId`)
