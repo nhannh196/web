@@ -13112,7 +13112,8 @@ Fixing Order => Base + Typography >> General Layout + Grid >> Page Layout + Comp
 
 .wallet-open.active .header .page-titles,
 .wallet-open.active .header .header-content {
-  padding-right: var(--right-space); }
+  /* padding-right: var(--right-space);  */
+}
   @media only screen and (max-width: 106.25rem) {
     .wallet-open.active .header .page-titles,
     .wallet-open.active .header .header-content {

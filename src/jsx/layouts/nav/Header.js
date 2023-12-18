@@ -49,7 +49,7 @@ const Header = ({ onNote }) => {
 
 	const convertFullName = (fullName) => {
 		// console.log(fullName.trim() === "")
-		if (fullName.trim() === null || fullName.trim() === "" || fullName.trim() === undefined) {
+		if (fullName?.trim() === null || fullName?.trim() === "" || fullName?.trim() === undefined) {
 			// console.log('chay vo khong tu')
 			return ""
 		} else {

@@ -168,7 +168,8 @@ i:hover {
 }
 
 #show-portofolio-body{
-    max-height: 468px;
+    min-height: 468px;
+    max-height: 750px;
     overflow: auto;
 }
 
