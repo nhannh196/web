@@ -176,3 +176,13 @@ i:hover {
 #show-portofolio-modal-body{
     padding-bottom: 0;
 }
+
+::-webkit-scrollbar{
+background-color: #f9e3af !important;
+border-radius: 5px;
+opacity: 0.5;
+}
+
+::-webkit-scrollbar-thumb{
+    background-color: #ffc338 !important;
+}

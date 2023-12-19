@@ -22,6 +22,7 @@ import { axiosInstance } from '../../../../services/AxiosConfig';
 import DrawChart from '../../DrawChart/DrawChart';
 import "../../../../css/page-load.css"
 import { baseURL } from '../../../../services/AxiosConfig';
+import "./optimization.css"
 
 //Paging
 let ITEMS_PER_PAGE = 10
@@ -126,6 +127,7 @@ const PortofolioComponent = () => {
                 setListMyFavorite(respone.data)
                 setListStockNameFavorite(stocksName)
             })
+            .catch(error => console.log(error))
     }, [])
 
     //handle add favorite
@@ -158,6 +160,7 @@ const PortofolioComponent = () => {
                         setListMyFavorite(respone.data)
                         setListStockNameFavorite(stocksName)
                     })
+                    .catch(error => console.log(error))
             })
             .catch(error => console.log(error))
     }
@@ -339,7 +342,7 @@ const PortofolioComponent = () => {
                 let labels = []
                 let series = []
                 let data = []
-                let total=0
+                let total = 0
                 response.data.stockResults.map((stock) => {
                     let obj = {
                         ticker: stock.nameStock,
@@ -350,13 +353,13 @@ const PortofolioComponent = () => {
                     if (stock.xValue > 0) {
                         labels = [...labels, `${stock.nameStock} (${parseValuesTo4Decimal(stock.xValue * 100)} %)`]
                         series = [...series, parseValuesTo4Decimal(stock.xValue * 100)]
-                        total+=parseValuesTo4Decimal(stock.xValue * 100)
+                        total += parseValuesTo4Decimal(stock.xValue * 100)
                     }
                 })
                 console.log(total)
                 if (total < 100) {
                     labels = [...labels, "Not investing"]
-                    series = [...series, 100-total]
+                    series = [...series, 100 - total]
                 }
                 setLabelsPieChart(labels)
                 setSeriesPieChart(series)
@@ -652,7 +655,7 @@ const PortofolioComponent = () => {
 
                                             <input className="form-control mb-xl-0 mb-3 input-field" type='text' placeholder='Desired quantity' value={desiredQuantity} onChange={(e) => setDesiredQuantity(e.target.value)}></input>
                                             {messageError && <div className='messageError'>{messageError}</div>}
-                                            <Link className="btn btn-block btn-primary dlab-load-more btn-portofolio" onClick={(e) => { handleSuggestions(); console.log(messageError) }}>Suggestion stock of systems</Link>
+                                            <Link className="btn btn-block btn-primary dlab-load-more btn-portofolio" onClick={(e) => { handleSuggestions(); console.log(messageError) }}>Suggestion systems</Link>
 
                                             {
                                                 loadingStockInvestmentPortofolio ?
@@ -694,9 +697,14 @@ const PortofolioComponent = () => {
                                                 </>
                                                 :
                                                 listStockPortofolio.length < 2 ?
-                                                    <Link className="btn btn-block btn-danger dlab-load-more btn-portofolio" onClick={(e) => { setListStockPortofolio([]) }}>Clear All</Link>
+                                                    <>
+                                                        <div>Total: {listStockPortofolio.length}</div>
+                                                        <Link className="btn btn-block btn-danger dlab-load-more btn-portofolio" onClick={(e) => { setListStockPortofolio([]) }}>Clear All</Link>
+
+                                                    </>
                                                     :
                                                     <>
+                                                        <div>Total: {listStockPortofolio.length}</div>
                                                         <Link className="btn btn-block btn-primary dlab-load-more btn-portofolio" onClick={(e) => { handleSubmitOptimization(); console.log(messageError) }}>Start</Link>
                                                         <Link className="btn btn-block btn-danger dlab-load-more btn-portofolio" onClick={(e) => { setListStockPortofolio([]); console.log(messageError) }}>Clear All</Link>
                                                     </>
