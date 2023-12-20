@@ -37,7 +37,7 @@ const SideBar = () => {
   } = useContext(ThemeContext);
 
   const [state, setState] = useReducer(reducer, initialState);
-  const [menuList,setMenuList]=useState([])
+  const [menuList, setMenuList] = useState([])
   useEffect(() => {
     var btn = document.querySelector(".nav-control");
     var aaa = document.querySelector("#main-wrapper");
@@ -80,23 +80,25 @@ const SideBar = () => {
   path = path[path.length - 1];
 
 
- useEffect(()=>{
-  if (isLogin()) {
-    let roleId = JSON.parse(localStorage.getItem('userDetails')).roleId
-    if (roleId === 1) {
-      setMenuList(MenuAdmin) 
-    } else if (roleId === 2||roleId === null) {
-      setMenuList(MenuUser)
-    } else if (roleId === 3) {
-      setMenuList(MenuManage) 
+  useEffect(() => {
+    if (isLogin()) {
+      let roleId = JSON.parse(localStorage.getItem('userDetails')).roleId
+      if (roleId === 1) {
+        setMenuList(MenuAdmin)
+      } else if (roleId === 2 || roleId === null) {
+        setMenuList(MenuUser)
+      } else if (roleId === 3) {
+        setMenuList(MenuManage)
+      }
+    } else {
+      setMenuList(Menu)
     }
-  }else{
-    setMenuList(Menu)
-  }
- },[])
-// console.log('123')
+  }, [])
+  // console.log('123')
   // let MenuList = getMenu();
   // console.log(MenuList)
+  console.log(path)
+  // console.log(menuList)
   return (
     <div
       onMouseEnter={() => ChangeIconSidebar(true)}
@@ -116,14 +118,13 @@ const SideBar = () => {
             let menuClass = data.classsChange;
             if (menuClass === "menu-title") {
               return (
-                <li className={menuClass} key={index} >{data.title}</li>
+                <li className={menuClass} key={index}>{data.title}</li>
               )
             } else {
               return (
-                <li className={` ${state.active === data.title ? 'mm-active' : ''}`}
+                <li className={`${state.active === data.title ? 'mm-active' : ''}`}
                   key={index}
                 >
-
                   {data.content && data.content.length > 0 ?
                     <>
                       <Link to={"#"}
@@ -166,6 +167,7 @@ const SideBar = () => {
                                   <Link to={data.to}>
                                     {data.title}
                                   </Link>
+
                                 }
 
                               </li>
@@ -176,9 +178,16 @@ const SideBar = () => {
                       </Collapse>
                     </>
                     :
-                    <Link to={data.to} >
+                    // <Link to={data.to} >
+                    //   {data.iconStyle}
+                    //   <span className="nav-text">{data.title}</span>
+                    // </Link>
+                    <Link to={data.to}
+                      onClick={() => { handleMenuActive(data.title) }}
+                    >
                       {data.iconStyle}
                       <span className="nav-text">{data.title}</span>
+                      <span className="ms-1 badge badge-xs style-1 badge-danger">{data.update}</span>
                     </Link>
                   }
 

@@ -23,7 +23,7 @@ const DrawChart = (props) => {
     //data to draw chart
     const [dataToDraw, setDataToDraw] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
-const [selectedOption, setSelectedOption] = useState({
+    const [selectedOption, setSelectedOption] = useState({
         "value": "1",
         "label": "1 month"
     })
@@ -33,13 +33,13 @@ const [selectedOption, setSelectedOption] = useState({
         if (dateNeedDraw) {
             handleGetDetail(parseDateToYYYYMM(dateNeedDraw));
         }
-    }, [dateNeedDraw,selectedOption])
+    }, [dateNeedDraw, selectedOption])
 
     const parseDateToYYYYMM = (dateString) => {
         const date = new Date(dateString);
         const year = date.getFullYear();
         const month = date.getMonth() + 1;
-const day = date.getDate();
+        const day = date.getDate();
         const formattedMonth = month < 10 ? `0${month}` : month;
         const formattedDay = day < 10 ? `0${day}` : day;
         const formattedDate = `${year}-${formattedMonth}-${formattedDay}`;
@@ -143,7 +143,7 @@ const day = date.getDate();
 
         }
         return obj
-    }, [dateNeedDraw, dataToDraw,selectedOption])
+    }, [dateNeedDraw, dataToDraw, selectedOption])
 
     //obj char
     const objTodrawChart = useMemo(() => {
@@ -209,7 +209,7 @@ const day = date.getDate();
 
         };
         return obj
-    }, [dateNeedDraw,dataToDraw,selectedOption])
+    }, [dateNeedDraw, dataToDraw, selectedOption])
 
     //api get detail
     const getDetailtoDraw = (date) => {
@@ -229,7 +229,7 @@ const day = date.getDate();
                 setIsLoading(false)
             })
     }
-    
+
     //option to draw
     const options = [
         { value: 1, label: "1 month" },
@@ -254,7 +254,7 @@ const day = date.getDate();
                                 // handleGetDetail(parseDateToYYYYMM(date)) 
                             }}
                             placeholderText='Choose a date'
-                            
+
                         />
                         <Select
                             defaultValue={selectedOption}
@@ -272,8 +272,8 @@ const day = date.getDate();
                     <div className="col-xl-12">
                         <TabContainer defaultActiveKey="DailyProfitChart">
                             <Nav className="nav nav-tabs tab-auto" id="nav-tab" role="tablist">
-                                <Nav.Link className="nav-link nav-portofolio" eventKey="DailyProfitChart" onClick={() => { }}>Daily Profit Chart</Nav.Link>
-                                <Nav.Link className="nav-link nav-portofolio" eventKey="Chart" onClick={() => { }}>Candlestick Chart</Nav.Link>
+                                <Nav.Link className="nav-link nav-portfolio" eventKey="DailyProfitChart" onClick={() => { }}>Daily Profit Chart</Nav.Link>
+                                <Nav.Link className="nav-link nav-portfolio" eventKey="Chart" onClick={() => { }}>Candlestick Chart</Nav.Link>
                             </Nav>
                             <TabContent>
                                 <TabPane eventKey="DailyProfitChart">
@@ -297,7 +297,7 @@ const day = date.getDate();
                                 <TabPane eventKey="Chart" style={{ position: 'relative' }}>
                                     {isLoading && (
                                         <div class="spinner-border" role="status"
-                                         style={{top:"50%"}}>
+                                            style={{ top: "50%" }}>
                                             <span class="sr-only">Loading...</span>
                                         </div>
                                     )}

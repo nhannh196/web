@@ -27,7 +27,7 @@ import "./optimization.css"
 //Paging
 let ITEMS_PER_PAGE = 10
 
-const PortofolioComponent = () => {
+const PortfolioComponent = () => {
     const [open, setOpen] = useState(false);
     //date to draw
     const [dateDraw, setDateDraw] = useState('')
@@ -39,10 +39,10 @@ const PortofolioComponent = () => {
     const [listStockNameFavorite, setListStockNameFavorite] = useState([])
     //list my favorite
     const [listMyFavorite, setListMyFavorite] = useState([])
-    //loading Optimize portofolio view
-    const [loadingOptimizePortofolioView, setLoadingOptimizePortofolioView] = useState(false)
-    //loading Stock Investment Portofolio
-    const [loadingStockInvestmentPortofolio, setLoadingStockInvestmentPortofolio] = useState(false);
+    //loading Optimize portfolio view
+    const [loadingOptimizeportfolioView, setLoadingOptimizeportfolioView] = useState(false)
+    //loading Stock Investment portfolio
+    const [loadingStockInvestmentportfolio, setLoadingStockInvestmentportfolio] = useState(false);
     //Desired quantity
     const [desiredQuantity, setDesiredQuantity] = useState()
     //page current
@@ -53,16 +53,16 @@ const PortofolioComponent = () => {
     const [stockIdSeach, setStockIdSearch] = useState('');
     //data to search
     // const [dataToSearching, setDataToSearching] = useState('');
-    //list data portofolio view
-    const [listDataPortofolioView, setlistDataPortofolioView] = useState([])
+    //list data portfolio view
+    const [listDataportfolioView, setlistDataportfolioView] = useState([])
     //labels for pieChart
     const [labelsPieChart, setLabelsPieChart] = useState([])
     //series for pieChart
     const [seriesPieChart, setSeriesPieChart] = useState([])
-    //data after portofolio
-    const [dataPortofolio, setDataPortofolio] = useState({})
-    //show portofolio
-    const [showPortofolio, setShowPortofolio] = useState(false)
+    //data after portfolio
+    const [dataportfolio, setDataportfolio] = useState({})
+    //show portfolio
+    const [showportfolio, setShowportfolio] = useState(false)
     //Loaing
     const [loading, setLoading] = useState(false);
     //Profit margin
@@ -77,8 +77,8 @@ const PortofolioComponent = () => {
     const [dateFilter, setDateFilter] = useState('');
     //Stock id to dilter
     const [stockIdFilter, setStockIdFilter] = useState('')
-    //List Stock Portofolio
-    const [listStockPortofolio, setListStockPortofolio] = useState([]);
+    //List Stock portfolio
+    const [listStockportfolio, setListStockportfolio] = useState([]);
 
     //List stock view
     // const [listStocksView, setListStocksView] = useState([])
@@ -213,24 +213,24 @@ const PortofolioComponent = () => {
     //
     const checkStockTiker = (stockId) => {
         let result = false
-        if (listStockPortofolio !== null || listStockPortofolio !== undefined) {
-            result = listStockPortofolio.some((stock) => {
+        if (listStockportfolio !== null || listStockportfolio !== undefined) {
+            result = listStockportfolio.some((stock) => {
                 return stock.ticker === stockId
             })
         }
         return result
     }
 
-    //Add Stock Portofolio
-    const addStockPortofolio = (stock) => {
-        setListStockPortofolio([...listStockPortofolio, stock])
+    //Add Stock portfolio
+    const addStockportfolio = (stock) => {
+        setListStockportfolio([...listStockportfolio, stock])
     }
-    //Delete Stock Portofolio
-    const deleteStockPortofolio = (stock) => {
-        let result = listStockPortofolio.filter((s) => {
+    //Delete Stock portfolio
+    const deleteStockportfolio = (stock) => {
+        let result = listStockportfolio.filter((s) => {
             return s.ticker !== stock;
         })
-        setListStockPortofolio([...result])
+        setListStockportfolio([...result])
     }
 
     //function srot character ascending
@@ -273,10 +273,10 @@ const PortofolioComponent = () => {
     }
 
     useEffect(() => {
-        if (listStockPortofolio.length < 2) {
+        if (listStockportfolio.length < 2) {
             setMessageError(null)
         }
-    }, [listStockPortofolio])
+    }, [listStockportfolio])
 
 
 
@@ -301,7 +301,7 @@ const PortofolioComponent = () => {
         setDateRelease("")
     }
 
-    //options for portofolio
+    //options for portfolio
     const options = [
         { value: true, label: "Daily" },
         { value: false, label: "Month" },
@@ -310,9 +310,9 @@ const PortofolioComponent = () => {
     const [selectedOption, setSelectedOption] = useState(null);
     // const [selectedSuggestion, setSelectedSuggestion] = useState(null);
 
-    //api portofolio for select stock
-    const portofolioOfUsers = () => {
-        const data = listStockPortofolio.map((stock) => stock.ticker)
+    //api portfolio for select stock
+    const portfolioOfUsers = () => {
+        const data = listStockportfolio.map((stock) => stock.ticker)
         return axiosInstance.post(`/api/Stocks/QuadraticForSelectStock?mathWithDailyOrMonth=${false}`, data);
     }
 
@@ -326,7 +326,7 @@ const PortofolioComponent = () => {
     }
     const findDailyProfit = (stockId) => {
         let result = null;
-        listStockPortofolio.map((stock) => {
+        listStockportfolio.map((stock) => {
             if (stock.ticker === stockId) {
                 result = stock.dailyProfit
             }
@@ -335,10 +335,10 @@ const PortofolioComponent = () => {
     }
     //hande submit optimization
     const handleSubmitOptimization = () => {
-        setLoadingOptimizePortofolioView(true)
-        portofolioOfUsers()
+        setLoadingOptimizeportfolioView(true)
+        portfolioOfUsers()
             .then((response) => {
-                setDataPortofolio(response.data)
+                setDataportfolio(response.data)
                 let labels = []
                 let series = []
                 let data = []
@@ -363,14 +363,14 @@ const PortofolioComponent = () => {
                 }
                 setLabelsPieChart(labels)
                 setSeriesPieChart(series)
-                setlistDataPortofolioView(sortNumberDescending(data, "value"))
-                setLoadingOptimizePortofolioView(false)
+                setlistDataportfolioView(sortNumberDescending(data, "value"))
+                setLoadingOptimizeportfolioView(false)
                 // console.log(seriesPieChart)
             })
             .catch((error) => {
                 console.log(error)
             })
-        setShowPortofolio(!showPortofolio)
+        setShowportfolio(!showportfolio)
     }
 
     const validateNumber = (input) => {
@@ -393,11 +393,11 @@ const PortofolioComponent = () => {
                 } else if (desiredQuantity > 25) {
                     setMessageError('Please input desired quantity <= 25')
                 } else {
-                    setLoadingStockInvestmentPortofolio(true)
+                    setLoadingStockInvestmentportfolio(true)
                     getStockFromSystem()
                         .then((response) => {
-                            setLoadingStockInvestmentPortofolio(false)
-                            setListStockPortofolio([...listStockPortofolio, ...response.data])
+                            setLoadingStockInvestmentportfolio(false)
+                            setListStockportfolio([...listStockportfolio, ...response.data])
                         }).catch(error => console.log(error))
                     setMessageError('')
                 }
@@ -473,7 +473,7 @@ const PortofolioComponent = () => {
                             <div className='row>'>
                                 <Col lg={12}>
                                     <Card>
-                                        <Card.Header className='portofolio'>
+                                        <Card.Header className='portfolio'>
                                             <div className="col-xl-3 col-xxl-3 input-container">
                                                 {/* <i class="bi bi-search"></i>  */}
                                                 <input value={stockIdSeach}
@@ -488,7 +488,7 @@ const PortofolioComponent = () => {
                                             </div>
 
                                         </Card.Header >
-                                        <Card.Body className='portofolio-body'>
+                                        <Card.Body className='portfolio-body'>
                                             <Table responsive>
                                                 <thead>
                                                     <tr>
@@ -527,7 +527,10 @@ const PortofolioComponent = () => {
                                                     </tr>
                                                 </thead>
                                                 {loading ?
-                                                    <h5 className='loading'>Loading...</h5>
+                                                    <div class="spinner-border" role="status"
+                                                    >
+                                                        <span class="sr-only">Loading...</span>
+                                                    </div>
                                                     :
                                                     <tbody>
                                                         {!isNotFound && (
@@ -561,16 +564,16 @@ const PortofolioComponent = () => {
                                                                                         setDateDraw(stock.dtyyyymmdd)
                                                                                     }}
                                                                                 ><i class="bi bi-bar-chart-fill"></i></Link>
-                                                                                {listStockPortofolio.length < 25 ?
+                                                                                {listStockportfolio.length < 25 ?
                                                                                     checkStockTiker(stock.ticker) ?
-                                                                                        <Link title="Delete" className="me-2 btn btn-danger shadow btn-xs sharp" onClick={() => { deleteStockPortofolio(stock.ticker) }}>
+                                                                                        <Link title="Delete" className="me-2 btn btn-danger shadow btn-xs sharp" onClick={() => { deleteStockportfolio(stock.ticker) }}>
                                                                                             <i className="fa fa-close color-danger"></i>
                                                                                         </Link>
                                                                                         :
                                                                                         <Link
                                                                                             className="me-2 btn btn-primary shadow btn-xs sharp"
-                                                                                            title="Add to Stock Investment Portofolio"
-                                                                                            onClick={() => { addStockPortofolio(stock) }}
+                                                                                            title="Add to Stock Investment portfolio"
+                                                                                            onClick={() => { addStockportfolio(stock) }}
                                                                                         >
                                                                                             {/* <i className="fas fa-pencil-alt color-muted"></i> */}
                                                                                             {/* <i class="bi bi-plus-circle"></i> */}
@@ -578,7 +581,7 @@ const PortofolioComponent = () => {
                                                                                         </Link>
                                                                                     :
                                                                                     checkStockTiker(stock.ticker) ?
-                                                                                        <Link title="Delete" className="me-2 btn btn-danger shadow btn-xs sharp" onClick={() => { deleteStockPortofolio(stock.ticker) }}>
+                                                                                        <Link title="Delete" className="me-2 btn btn-danger shadow btn-xs sharp" onClick={() => { deleteStockportfolio(stock.ticker) }}>
                                                                                             <i className="fa fa-close color-danger"></i>
                                                                                         </Link>
                                                                                         :
@@ -646,22 +649,22 @@ const PortofolioComponent = () => {
                                     <div className="card messages ">
                                         <div className="card-header border-0 p-4 pb-0 ">
                                             <div>
-                                                <h3 className="heading">Stock Investment Portofolio</h3>
+                                                <h3 className="heading">Stock Investment portfolio</h3>
                                             </div>
 
                                         </div>
 
-                                        <div id='stock-investment-portofolio-body' className="card-body loadmore-content  recent-activity-wrapper p-4" >
+                                        <div id='stock-investment-portfolio-body' className="card-body loadmore-content  recent-activity-wrapper p-4" >
 
                                             <input className="form-control mb-xl-0 mb-3 input-field" type='text' placeholder='Desired quantity' value={desiredQuantity} onChange={(e) => setDesiredQuantity(e.target.value)}></input>
                                             {messageError && <div className='messageError'>{messageError}</div>}
-                                            <Link className="btn btn-block btn-primary dlab-load-more btn-portofolio" onClick={(e) => { handleSuggestions(); console.log(messageError) }}>Suggestion systems</Link>
+                                            <Link className="btn btn-block btn-primary dlab-load-more btn-portfolio" onClick={(e) => { handleSuggestions(); console.log(messageError) }}>Suggestion systems</Link>
 
                                             {
-                                                loadingStockInvestmentPortofolio ?
+                                                loadingStockInvestmentportfolio ?
                                                     <h5 style={{ padding: '4px 0' }}>Please wait...</h5>
                                                     :
-                                                    listStockPortofolio.map((stock, ind) => (
+                                                    listStockportfolio.map((stock, ind) => (
 
 
                                                         <div className="align-items-center student" key={ind}>
@@ -677,7 +680,7 @@ const PortofolioComponent = () => {
                                                                 <div className="justify-content-end">
                                                                     <span className="justify-content-end btn-xs sharp">
                                                                         <Link className="btn btn-danger shadow btn-xs sharp" title="Delete"
-                                                                            onClick={() => { deleteStockPortofolio(stock.ticker) }}
+                                                                            onClick={() => { deleteStockportfolio(stock.ticker) }}
                                                                         >
                                                                             <i className="fa fa-close color-danger"></i>
                                                                         </Link>
@@ -690,23 +693,23 @@ const PortofolioComponent = () => {
                                             }
                                         </div>
                                         <div className="card-footer text-center border-0 pt-0">
-                                            {listStockPortofolio.length < 1 ?
+                                            {listStockportfolio.length < 1 ?
                                                 <>
                                                     <div>Or</div>
                                                     <div>Please add 2 to 25 stock from left table</div>
                                                 </>
                                                 :
-                                                listStockPortofolio.length < 2 ?
+                                                listStockportfolio.length < 2 ?
                                                     <>
-                                                        <div>Total: {listStockPortofolio.length}</div>
-                                                        <Link className="btn btn-block btn-danger dlab-load-more btn-portofolio" onClick={(e) => { setListStockPortofolio([]) }}>Clear All</Link>
+                                                        <div>Total: {listStockportfolio.length}</div>
+                                                        <Link className="btn btn-block btn-danger dlab-load-more btn-portfolio" onClick={(e) => { setListStockportfolio([]) }}>Clear All</Link>
 
                                                     </>
                                                     :
                                                     <>
-                                                        <div>Total: {listStockPortofolio.length}</div>
-                                                        <Link className="btn btn-block btn-primary dlab-load-more btn-portofolio" onClick={(e) => { handleSubmitOptimization(); console.log(messageError) }}>Start</Link>
-                                                        <Link className="btn btn-block btn-danger dlab-load-more btn-portofolio" onClick={(e) => { setListStockPortofolio([]); console.log(messageError) }}>Clear All</Link>
+                                                        <div>Total: {listStockportfolio.length}</div>
+                                                        <Link className="btn btn-block btn-primary dlab-load-more btn-portfolio" onClick={(e) => { handleSubmitOptimization(); console.log(messageError) }}>Start</Link>
+                                                        <Link className="btn btn-block btn-danger dlab-load-more btn-portfolio" onClick={(e) => { setListStockportfolio([]); console.log(messageError) }}>Clear All</Link>
                                                     </>
                                             }
                                         </div>
@@ -717,15 +720,15 @@ const PortofolioComponent = () => {
                     </div>
                 </div>
             </div>
-            <Modal className="modal container-fluid modal-portofolio" show={showPortofolio} >
+            <Modal className="modal container-fluid modal-portfolio" show={showportfolio} >
                 <div className="modal-content">
                     <div className="modal-header">
                         {/* <h6 className="modal-title">View</h6> */}
-                        <Button variant="" type="button" className="btn-close" data-dismiss="modal" onClick={() => { setShowPortofolio(!showPortofolio); setLabelsPieChart([]); setSeriesPieChart([]); setlistDataPortofolioView([]); setLoadingOptimizePortofolioView(false) }//dispatch({ type: 'addNewAdmin' })
+                        <Button variant="" type="button" className="btn-close" data-dismiss="modal" onClick={() => { setShowportfolio(!showportfolio); setLabelsPieChart([]); setSeriesPieChart([]); setlistDataportfolioView([]); setLoadingOptimizeportfolioView(false) }//dispatch({ type: 'addNewAdmin' })
                         }>
                         </Button>
                     </div>
-                    <div id='show-portofolio-modal-body' className="modal-body portofolio">
+                    <div id='show-portfolio-modal-body' className="modal-body portfolio">
                         <div className="row">
                             <div className="col-xl-12">
                                 <div className='row main-card'>
@@ -733,16 +736,16 @@ const PortofolioComponent = () => {
                                         <div className='row>'>
                                             <Col lg={12}>
                                                 <Card>
-                                                    <Card.Header className='portofolio'>
+                                                    <Card.Header className='portfolio'>
                                                         <Card.Title>STOCK</Card.Title>
                                                     </Card.Header>
-                                                    <Card.Body id='show-portofolio-body'>
-                                                        {loadingOptimizePortofolioView ?
+                                                    <Card.Body id='show-portfolio-body'>
+                                                        {loadingOptimizeportfolioView ?
                                                             <h4>Optimizing...</h4>
                                                             :
                                                             <>
-                                                                {dataPortofolio.rr > 0 && <h6>Estimated profit: {dataPortofolio.rr.toFixed(4)}%</h6>}
-                                                                {dataPortofolio.sum > 0 && <h6>Sum of rate: {parseValuesTo4Decimal(dataPortofolio.sum) * 100}%</h6>}
+                                                                {dataportfolio.rr > 0 && <h6>Estimated profit: {dataportfolio.rr.toFixed(4)}%</h6>}
+                                                                {dataportfolio.sum > 0 && <h6>Sum of rate: {parseValuesTo4Decimal(dataportfolio.sum) * 100}%</h6>}
                                                                 <Table responsive>
                                                                     <thead>
                                                                         <tr>
@@ -764,7 +767,7 @@ const PortofolioComponent = () => {
                                                                         <h5 className='loading'>Loading...</h5>
                                                                         :
                                                                         <tbody>
-                                                                            {listDataPortofolioView.map((stock, index) => {
+                                                                            {listDataportfolioView.map((stock, index) => {
                                                                                 return (
                                                                                     <tr key={index}>
                                                                                         <td>
@@ -772,7 +775,7 @@ const PortofolioComponent = () => {
                                                                                         </td>
                                                                                         {/* <td>{stock.dailyProfit}</td> */}
                                                                                         <td>{stock.value} %</td>
-                                                                                        {/* {dataPortofolio?.stockResults.map((s, index) => {
+                                                                                        {/* {dataportfolio?.stockResults.map((s, index) => {
                                                                                     stock.ticker === s.nameStock &&
                                                                                         <td>
                                                                                             <strong>{parseValuesTo4Decimal(s.xValue)}</strong>
@@ -853,7 +856,7 @@ const PortofolioComponent = () => {
                     </div>
                 </div>
             </Modal>
-            <Modal className="modal container-fluid modal-portofolio" show={showChart}>
+            <Modal className="modal container-fluid modal-portfolio" show={showChart}>
                 <div className="modal-content">
                     <div className="modal-header">
                         <h4 className="modal-title">{`Stock code: ${stockNameDraw}`}</h4>
@@ -861,7 +864,7 @@ const PortofolioComponent = () => {
                         }>
                         </Button>
                     </div>
-                    <div className="modal-body portofolio">
+                    <div className="modal-body portfolio">
                         <DrawChart stock={stockDraw} />
                     </div>
                 </div>
@@ -870,4 +873,4 @@ const PortofolioComponent = () => {
     )
 }
 
-export default PortofolioComponent;
+export default PortfolioComponent;

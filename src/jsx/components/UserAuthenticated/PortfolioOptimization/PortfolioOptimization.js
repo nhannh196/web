@@ -8,23 +8,23 @@ import {
 } from 'react-bootstrap';
 import '../../../../css/datepicker.css';
 import "./optimization.css"
-import PortofolioComponent from './PortofolioComponent';
+import PortfolioComponent from './PortfolioComponent';
 
-const PortofolioOptimization = () => {
+const PortfolioOptimization = () => {
 
     // console.log(formatDateToYYYYMMDD(startDate))
     return (
         <>
             <div className="row">
                 <div className="col-xl-12">
-                    <TabContainer defaultActiveKey="PortofolioComponent">
+                    <TabContainer defaultActiveKey="PortfolioComponent">
                         <Nav className="nav nav-tabs tab-auto" id="nav-tab" role="tablist">
-                            <Nav.Link className="nav-link nav-portofolio" eventKey="PortofolioComponent" onClick={() => { }}>Portofolio optimization</Nav.Link>
-                            <Nav.Link className="nav-link nav-portofolio" eventKey="Chart" onClick={() => { }}>My Favorite</Nav.Link>
+                            <Nav.Link className="nav-link nav-portfolio" eventKey="PortfolioComponent" onClick={() => { }}>Portfolio optimization</Nav.Link>
+                            <Nav.Link className="nav-link nav-portfolio" eventKey="Chart" onClick={() => { }}>My Favorite</Nav.Link>
                         </Nav>
                         <TabContent>
-                            <TabPane eventKey="PortofolioComponent">
-                                <PortofolioComponent />
+                            <TabPane eventKey="PortfolioComponent">
+                                <PortfolioComponent />
                             </TabPane>
                             <TabPane eventKey="MyFavorite">
 
@@ -38,4 +38,4 @@ const PortofolioOptimization = () => {
     )
 }
 
-export default PortofolioOptimization;
+export default PortfolioOptimization;

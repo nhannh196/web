@@ -100,10 +100,12 @@ const Home = () => {
 	useEffect(() => {
 		getListMyFavorite()
 			.then((respone) => {
+				console.log(respone)
 				let stocksName = respone.data.map((stock) => stock.stockName)
 				setListMyFavorite(respone.data)
 				setListStockNameFavorite(stocksName)
 			}).catch(error => {
+				console.log("loi o day")
 				console.log(error)
 				setListMyFavorite([])
 				setListStockNameFavorite([])
@@ -446,7 +448,7 @@ const Home = () => {
 					</Col >
 				</div>
 			</div>
-			<Modal className="modal container-fluid modal-portofolio" show={showChart}>
+			<Modal className="modal container-fluid modal-portfolio" show={showChart}>
 				<div className="modal-content">
 					<div className="modal-header">
 						<h4 className="modal-title">{`Stock code: ${stockNameDraw}`}</h4>
@@ -454,7 +456,7 @@ const Home = () => {
 						}>
 						</Button>
 					</div>
-					<div className="modal-body portofolio">
+					<div className="modal-body portfolio">
 						<DrawChart stock={stockDraw} />
 					</div>
 				</div>

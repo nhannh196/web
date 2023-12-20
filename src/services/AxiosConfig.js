@@ -6,7 +6,8 @@ import axios from "axios";
 // }
 // const accessToken=getTokenForAxios()
 
-export const baseURL = 'https://localhost:7053'
+export const baseURL = 'https://559e-2402-800-6370-54b0-d8d1-fd37-8f4b-d4f3.ngrok-free.app'
+// export const baseURL = 'https://localhost:7053'
 export const axiosInstance = axios.create(
   {
     baseURL: baseURL,

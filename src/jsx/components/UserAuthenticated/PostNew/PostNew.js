@@ -13,7 +13,7 @@ const PostNew = () => {
     const userDetails = JSON.parse(localStorage.getItem('userDetails'));
     const navigate = useNavigate();
     const [titleError, setTitleError] = useState(false);
-    console.log(userDetails)
+    // console.log(userDetails)
 
     const handleSubmitPost = (title, content) => {
         if (userDetails === null || userDetails === undefined) {

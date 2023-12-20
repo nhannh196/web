@@ -39,7 +39,7 @@ import ApexChart from "./components/charts/apexcharts";
 import ListUsers from "./components/AdminComponents/ListUsers/ListUsers";
 import ListManagers from "./components/AdminComponents/ListManagers/ListManagers";
 import CheckOtp from "./components/CheckOtpComponents/CheckOtp";
-import PortofolioOptimization from "./components/UserAuthenticated/PortfolioOptimization/PortfolioOptimization";
+import PortfolioOptimization from "./components/UserAuthenticated/PortfolioOptimization/PortfolioOptimization";
 import { getUserDetails, userLocalStorage } from "../services/AuthService";
 import ManageMyPosts from "./components/UserAuthenticated/ManageMyPost/ManageMyPosts";
 const Markup = () => {
@@ -66,7 +66,7 @@ const Markup = () => {
       let routes = [
         { url: "post-new", component: <PostNew /> },
         { url: "chart-apexchart", component: <ApexChart /> },
-        { url: "portofolio-optimization", component: <PortofolioOptimization /> },
+        { url: "portfolio-optimization", component: <PortfolioOptimization /> },
         { url: "manage-my-posts", component: <ManageMyPosts /> },
 
       ]
@@ -119,14 +119,11 @@ const Markup = () => {
 function Layout1() {
   const { menuToggle, sidebariconHover } = useContext(ThemeContext);
   return (
-
     <div id="main-wrapper" className={`wallet-open active show ${sidebariconHover ? "iconhover-toggle" : ""} ${menuToggle ? "menu-toggle" : ""}`}>
-
       <Nav />
       <div className="content-body" style={{ minHeight: window.screen.height + 20 }}>
         <div className="container-fluid">
           <Outlet />
-
         </div>
       </div>
       {/* <WalletBar /> */}
