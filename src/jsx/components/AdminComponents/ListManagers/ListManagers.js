@@ -15,6 +15,7 @@ import { Link } from "react-router-dom";
 import './filtering.css';
 import axios from 'axios';
 import { axiosInstance } from '../../../../services/AxiosConfig';
+import { getUserDetails } from '../../../../services/AuthService';
 
 const init = false;
 const initialState = false;
@@ -251,8 +252,19 @@ const ListManagers = () => {
 		</svg>
 	);
 
-	const userIdOfAdmin = JSON.parse(localStorage.getItem('userDetails')).userId;
-
+	// const userIdOfAdmin = JSON.parse(localStorage.getItem('userDetails')).userId;
+	const [userIdOfAdmin,setUserIdOfAdmin] =useState('')
+	useEffect( () => {
+		const getUserId = async () => {
+			try {
+				let respone = await getUserDetails();
+				setUserIdOfAdmin(respone.data.userId)
+			} catch (error) {
+				console.log(error)
+			}
+		}
+		getUserId()
+	},[])
 
 	return (
 		<>

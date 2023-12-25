@@ -12,13 +12,13 @@ import Main from './layouts/Main';
 import WalletBar from './layouts/WalletBar';
 
 /// Dashboard
-import Home from "./components/UserDeafault/HomeDefault/Home";
+import Home from "./components/UserDefaultComponents/HomeDefault/Home";
 
 import Contact from "./components/Dashboard/Contact";
 
 
 //Course
-import Forum from "./components/UserDeafault/ForumDefault/Forum";
+import Forum from "./components/UserDefaultComponents/ForumDefault/Forum";
 
 /// Pages
 
@@ -34,25 +34,44 @@ import Registration from "./components/RegistrationComponents/Registration";
 import { ThemeContext } from "../context/ThemeContext";
 import { isLogin } from "../services/AuthService";
 
-import PostNew from "./components/UserAuthenticated/PostNew/PostNew";
+import PostNew from "./components/UserAuthenticatedComponents/PostNew/PostNew";
 import ApexChart from "./components/charts/apexcharts";
 import ListUsers from "./components/AdminComponents/ListUsers/ListUsers";
 import ListManagers from "./components/AdminComponents/ListManagers/ListManagers";
 import CheckOtp from "./components/CheckOtpComponents/CheckOtp";
-import PortfolioOptimization from "./components/UserAuthenticated/PortfolioOptimization/PortfolioOptimization";
+import PortfolioOptimization from "./components/UserAuthenticatedComponents/PortfolioOptimization/PortfolioOptimization";
 import { getUserDetails, userLocalStorage } from "../services/AuthService";
-import ManageMyPosts from "./components/UserAuthenticated/ManageMyPost/ManageMyPosts";
+import ManageMyPosts from "./components/UserAuthenticatedComponents/ManageMyPost/ManageMyPosts";
+import ChangePassword from "./components/ChangePasswordComponents/ChangePassword";
+import ForgotPassword from "./components/ForgotPasswordComponents/ForgotPassword";
 const Markup = () => {
   let routesDefault = [
     { url: "/", component: <Home /> },
-    { url: "/home", component: <Home /> },
+    { url: "home", component: <Home /> },
     // { url: "contact", component: <Contact /> },
     // { url: "login", component: <Login /> },
     // { url: "register", component: <Registration /> },
     { url: "forum", component: <Forum /> },
     { url: "check-otp", component: <CheckOtp /> },
+    { url: "forgot-password", component: <ForgotPassword /> },
   ];
 
+  const accessToken = localStorage.getItem('accessToken')
+  // get user details
+  const [userDetails, setUserDetails] = useState('')
+  useEffect(() => {
+    const getUserDetailsData = async () => {
+      try {
+        let respone = await getUserDetails();
+        setUserDetails(respone.data)
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    if (isLogin()) {
+      getUserDetailsData()
+    }
+  }, [])
 
   const [allRoutes, setAllRoutes] = useState(routesDefault);
 
@@ -68,7 +87,7 @@ const Markup = () => {
         { url: "chart-apexchart", component: <ApexChart /> },
         { url: "portfolio-optimization", component: <PortfolioOptimization /> },
         { url: "manage-my-posts", component: <ManageMyPosts /> },
-
+        { url: "change-password", component: <ChangePassword /> }
       ]
       setAllRoutes([...routesDefault, ...routes])
     }
@@ -78,13 +97,14 @@ const Markup = () => {
       let routes = [
         { url: "list-users", component: <ListUsers /> },
         { url: "list-managers", component: <ListManagers /> },
+        { url: "change-password", component: <ChangePassword /> }
       ]
       setAllRoutes([...routesDefault, ...routes])
     }
   }
-  const user = JSON.parse(localStorage.getItem('userDetails'))
-  const [userDetails, setUserDetails] = useState(user)
-  const accessToken = localStorage.getItem('accessToken')
+  // const user = JSON.parse(localStorage.getItem('userDetails'))
+
+
   useEffect(() => {
     if (accessToken === undefined || accessToken === null) {
       console.log('chua dang nhap')
@@ -93,15 +113,15 @@ const Markup = () => {
       console.log('da dang nhap')
       routeAuthor(userDetails.roleId)
     }
-  }, [])
+  }, [userDetails])
 
   return (
     <>
       <Routes>
         {!isLogin() &&
           <Route element={<Layout1 />}>
-            <Route path='/login' exact element={<Login />} />
-            <Route path='/register' exact element={<Registration />} />
+            <Route path='login' exact element={<Login />} />
+            <Route path='register' exact element={<Registration />} />
           </Route>
         }
         <Route element={<Layout7 />}>

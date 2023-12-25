@@ -34,15 +34,7 @@ export function login(username, password) {
 }
 
 export function getUserDetails(accessToken) {
-    return axios.get(
-        `${baseURL}/Users/GetById`,
-        {
-            headers: {
-                'Authorization': `Bearer ${accessToken}`,
-                'Content-Type': 'application/json' // Có thể thay đổi tùy theo API yêu cầu
-            }
-        }
-    )
+    return axiosInstance.get(`/Users/GetById`)
 }
 
 

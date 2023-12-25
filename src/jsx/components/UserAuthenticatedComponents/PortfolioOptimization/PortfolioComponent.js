@@ -15,12 +15,10 @@ import '../../../../css/datepicker.css';
 import Select from 'react-select';
 import ReactPaginate from 'react-paginate';
 import axios from 'axios';
-import "./optimization.css"
 import "../../../../css/number-ratio.css";
 import ReactApexChart from "react-apexcharts";
 import { axiosInstance } from '../../../../services/AxiosConfig';
 import DrawChart from '../../DrawChart/DrawChart';
-import "../../../../css/page-load.css"
 import { baseURL } from '../../../../services/AxiosConfig';
 import "./optimization.css"
 
@@ -343,7 +341,9 @@ const PortfolioComponent = () => {
                 let series = []
                 let data = []
                 let total = 0
-                response.data.stockResults.map((stock) => {
+                let responseStockResults=sortNumberDescending(response.data.stockResults,"xValue")
+                console.log(responseStockResults)
+                responseStockResults.map((stock) => {
                     let obj = {
                         ticker: stock.nameStock,
                         dailyProfit: findDailyProfit(stock.nameStock),
@@ -356,6 +356,19 @@ const PortfolioComponent = () => {
                         total += parseValuesTo4Decimal(stock.xValue * 100)
                     }
                 })
+                // response.data.stockResults.map((stock) => {
+                //     let obj = {
+                //         ticker: stock.nameStock,
+                //         dailyProfit: findDailyProfit(stock.nameStock),
+                //         value: parseValuesTo4Decimal(stock.xValue * 100),
+                //     }
+                //     data = [...data, obj]
+                //     if (stock.xValue > 0) {
+                //         labels = [...labels, `${stock.nameStock} (${parseValuesTo4Decimal(stock.xValue * 100)} %)`]
+                //         series = [...series, parseValuesTo4Decimal(stock.xValue * 100)]
+                //         total += parseValuesTo4Decimal(stock.xValue * 100)
+                //     }
+                // })
                 console.log(total)
                 if (total < 100) {
                     labels = [...labels, "Not investing"]
@@ -363,7 +376,7 @@ const PortfolioComponent = () => {
                 }
                 setLabelsPieChart(labels)
                 setSeriesPieChart(series)
-                setlistDataportfolioView(sortNumberDescending(data, "value"))
+                setlistDataportfolioView(data)
                 setLoadingOptimizeportfolioView(false)
                 // console.log(seriesPieChart)
             })
@@ -409,6 +422,7 @@ const PortfolioComponent = () => {
     //handle search
     const handleSearch = () => {
         setNameStock(stockIdSeach)
+        setPageCurrent(0)
     }
     const isNotFound = !currentItems?.length
     let stockDraw = { stockName: stockNameDraw, date: dateDraw }
@@ -702,14 +716,14 @@ const PortfolioComponent = () => {
                                                 listStockportfolio.length < 2 ?
                                                     <>
                                                         <div>Total: {listStockportfolio.length}</div>
-                                                        <Link className="btn btn-block btn-danger dlab-load-more btn-portfolio" onClick={(e) => { setListStockportfolio([]) }}>Clear All</Link>
+                                                        <Link className="btn btn-block btn-danger dlab-load-more btn-portfolio" onClick={(e) => { setListStockportfolio([]); setDesiredQuantity('')}}>Clear All</Link>
 
                                                     </>
                                                     :
                                                     <>
                                                         <div>Total: {listStockportfolio.length}</div>
                                                         <Link className="btn btn-block btn-primary dlab-load-more btn-portfolio" onClick={(e) => { handleSubmitOptimization(); console.log(messageError) }}>Start</Link>
-                                                        <Link className="btn btn-block btn-danger dlab-load-more btn-portfolio" onClick={(e) => { setListStockportfolio([]); console.log(messageError) }}>Clear All</Link>
+                                                        <Link className="btn btn-block btn-danger dlab-load-more btn-portfolio" onClick={(e) => { setListStockportfolio([]); setDesiredQuantity('') }}>Clear All</Link>
                                                     </>
                                             }
                                         </div>
@@ -745,7 +759,7 @@ const PortfolioComponent = () => {
                                                             :
                                                             <>
                                                                 {dataportfolio.rr > 0 && <h6>Estimated profit: {dataportfolio.rr.toFixed(4)}%</h6>}
-                                                                {dataportfolio.sum > 0 && <h6>Sum of rate: {parseValuesTo4Decimal(dataportfolio.sum) * 100}%</h6>}
+                                                                {dataportfolio.sum > 0 && <h6>Sum of rate: {parseValuesTo4Decimal(dataportfolio.sum*100) }%</h6>}
                                                                 <Table responsive>
                                                                     <thead>
                                                                         <tr>

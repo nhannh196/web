@@ -12,6 +12,7 @@ import { MenuAdmin } from './MenuAdmin';
 import { useScrollPosition } from "@n8tb1t/use-scroll-position";
 import { ThemeContext } from "../../../context/ThemeContext";
 import { isLogin } from "../../../services/AuthService";
+import { getUserDetails } from "../../../services/AuthService";
 
 
 const reducer = (previousState, updatedState) => ({
@@ -79,10 +80,25 @@ const SideBar = () => {
   path = path.split("/");
   path = path[path.length - 1];
 
+  //get user details
+  const [userDetails, setUserDetails] = useState('')
+  useEffect(() => {
+    const getUserDetailsData = async () => {
+      try {
+        let respone = await getUserDetails();
+        setUserDetails(respone.data)
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    if (isLogin()) {
+      getUserDetailsData()
+    }
+  }, [])
 
   useEffect(() => {
     if (isLogin()) {
-      let roleId = JSON.parse(localStorage.getItem('userDetails')).roleId
+      let roleId = userDetails.roleId
       if (roleId === 1) {
         setMenuList(MenuAdmin)
       } else if (roleId === 2 || roleId === null) {
@@ -93,11 +109,37 @@ const SideBar = () => {
     } else {
       setMenuList(Menu)
     }
-  }, [])
+  }, [userDetails])
+  // console.log(menuList)
+  // console.log(state)
+  // console.log(path)
+  useEffect(() => {
+    if (path === '') {
+      setState({ active: "Home" })
+      return
+    } else {
+      menuList.map((data) => {
+        if (data.to === path) {
+          setState({ active: data.title })
+          return
+        } else {
+          if (data.content?.length > 0) {
+            data.content.map((content) => {
+              if (content.to === path) {
+                setState({ active: data.title, activeSubmenu: content.title})
+                return
+              }
+            })
+          }
+        }
+      })
+    }
+
+  }, [menuList, path])
   // console.log('123')
   // let MenuList = getMenu();
   // console.log(MenuList)
-  console.log(path)
+  // console.log(path)
   // console.log(menuList)
   return (
     <div
@@ -142,14 +184,14 @@ const SideBar = () => {
                               <li key={index}
                                 className={`${state.activeSubmenu === data.title ? "mm-active" : ""}`}
                               >
-                                {data.content && data.content.length > 0 ?
+                              
                                   <>
-                                    <Link to={data.to} className={data.hasMenu ? 'has-arrow' : ''}
+                                    <Link to={data.to} className={`${state.activeSubmenu === data.title ? "mm-active" : ""}`}
                                       onClick={() => { handleSubmenuActive(data.title) }}
                                     >
                                       {data.title}
                                     </Link>
-                                    <Collapse in={state.activeSubmenu === data.title ? true : false}>
+                                    {/* <Collapse in={state.activeSubmenu === data.title ? true : false}>
                                       <ul className={`${menuClass === "mm-collapse" ? "mm-show" : ""}`}>
                                         {data.content && data.content.map((data, index) => {
                                           return (
@@ -161,27 +203,17 @@ const SideBar = () => {
                                           )
                                         })}
                                       </ul>
-                                    </Collapse>
+                                    </Collapse> */}
                                   </>
-                                  :
-                                  <Link to={data.to}>
-                                    {data.title}
-                                  </Link>
-
-                                }
-
+                                 
                               </li>
-
                             )
                           })}
                         </ul>
                       </Collapse>
                     </>
                     :
-                    // <Link to={data.to} >
-                    //   {data.iconStyle}
-                    //   <span className="nav-text">{data.title}</span>
-                    // </Link>
+                    
                     <Link to={data.to}
                       onClick={() => { handleMenuActive(data.title) }}
                     >

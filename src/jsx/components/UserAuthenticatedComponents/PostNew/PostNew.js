@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useState,useEffect } from "react";
 import { ButtonGroup, Dropdown, SplitButton } from "react-bootstrap";
 import DropdownMultiselect from "react-multiselect-dropdown-bootstrap";
 // import PageTItle from "../../../layouts/PageTitle";
@@ -6,14 +6,27 @@ import CkEditorBlog from "../../Forms/CkEditor/CkEditorBlog";
 import axios from 'axios';
 import { useNavigate } from "react-router-dom";
 import { axiosInstance } from "../../../../services/AxiosConfig";
+import { getUserDetails } from "../../../../services/AuthService";
 
 const PostNew = () => {
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
-    const userDetails = JSON.parse(localStorage.getItem('userDetails'));
+    // const userDetails = JSON.parse(localStorage.getItem('userDetails'));
     const navigate = useNavigate();
     const [titleError, setTitleError] = useState(false);
     // console.log(userDetails)
+    const [userDetails, setUserDetails] = useState('')
+	useEffect( () => {
+		const getUserDetailsData = async () => {
+			try {
+				let respone = await getUserDetails();
+				setUserDetails(respone.data)
+			} catch (error) {
+				console.log(error)
+			}
+		}
+		getUserDetailsData()
+	},[])
 
     const handleSubmitPost = (title, content) => {
         if (userDetails === null || userDetails === undefined) {

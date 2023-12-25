@@ -20,7 +20,7 @@ import {
 } from "react-bootstrap";
 import loadable from "@loadable/component";
 import pMinDelay from "p-min-delay";
-import "../../UserAuthenticated/PortfolioOptimization/optimization.css"
+import "../../UserAuthenticatedComponents/PortfolioOptimization/optimization.css"
 import "./home.css"
 import "../../../../css/number-ratio.css"
 import DrawChart from '../../DrawChart/DrawChart';
@@ -35,6 +35,7 @@ import { ThemeContext } from "../../../../context/ThemeContext";
 import DropdownMenu from 'react-bootstrap/esm/DropdownMenu';
 import axios from 'axios';
 import { axiosInstance } from '../../../../services/AxiosConfig';
+// import { getUserDetails } from '../../../../services/AuthService';
 
 //Paging
 let ITEMS_PER_PAGE = 10
@@ -68,12 +69,21 @@ const Home = () => {
 	const [dateRelease, setDateRelease] = useState('')
 	// item in a view page
 	const [currentItems, setCurrentItems] = useState([])
-	let roleID = '';
-	const dataStocksDefault = JSON.parse(sessionStorage.getItem('dataStocksDefault'));
 
-	if (isLogin()) {
-		roleID = JSON.parse(localStorage.getItem('userDetails')).roleId
-	}
+	const [roleID, setRoleID] = useState('')
+	// get role
+	useEffect(() => {
+		const getRole = async () => {
+			try {
+				let respone = await getUserDetails();
+				setRoleID(respone.data.roleId)
+			} catch (error) {
+				console.log(error)
+			}
+		}
+		getRole()
+	}, [])
+
 
 	//api load stock
 	const loadData = () => {
@@ -100,7 +110,6 @@ const Home = () => {
 	useEffect(() => {
 		getListMyFavorite()
 			.then((respone) => {
-				console.log(respone)
 				let stocksName = respone.data.map((stock) => stock.stockName)
 				setListMyFavorite(respone.data)
 				setListStockNameFavorite(stocksName)

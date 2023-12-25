@@ -177,6 +177,14 @@ i:hover {
     padding-bottom: 0;
 }
 
+.spinner-border{
+    position: absolute;
+    top: 18rem;
+    left: 50%;
+    /* transform:translate(-50%,-50%); */
+    z-index: 100;
+}
+
 ::-webkit-scrollbar {
     background-color: #f9e3af !important;
     border-radius: 5px;

@@ -110,14 +110,14 @@ function Login(props) {
 									{errors.password && <div className="text-danger fs-12">{errors.password}</div>}
 								</div>
 								<div className="row d-flex justify-content-between mt-4 mb-2">
-									<div className="mb-3">
+									{/* <div className="mb-3">
 										<div className="form-check custom-checkbox ms-1">
 											<input type="checkbox" className="form-check-input" id="basic_checkbox_1" />
 											<label className="form-check-label" htmlFor="basic_checkbox_1">Remember my preference</label>
 										</div>
-									</div>
+									</div> */}
 									<div className="mb-3">
-										<Link to="/register">Sign up</Link>
+										<Link to="/register">Create account</Link>
 									</div>
 									<div className="mb-3">
 										<Link to="/forgot-password">Forgot password</Link>

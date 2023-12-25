@@ -43,7 +43,7 @@ const ManageMyPosts = () => {
     useEffect(() => {
         getMyPosts()
             .then((response) => {
-                console.log(response.data)
+                // console.log(response.data)
                 setListMyPosts(response.data)
             })
             .catch((error) => {

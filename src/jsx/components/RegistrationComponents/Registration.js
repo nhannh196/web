@@ -26,7 +26,7 @@ function Register(props) {
   const [otpSystem, setOtpSystem] = useState('');
   // const [otpInput,setOtpInput] = useState('');
   const navigate = useNavigate();
-// console.log(document.cookie)
+  // console.log(document.cookie)
   //Validate email
   const isValidEmail = (email) => {
     const emailPattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -114,8 +114,8 @@ function Register(props) {
 
   //Handle submit of check otp component
   const handleSubmitOtpComponent = (otp) => {
-    console.log("Otp System: ",otpSystem)
-    console.log("Otp Input: ",otp)
+    console.log("Otp System: ", otpSystem)
+    console.log("Otp Input: ", otp)
     if (otpSystem === otp) {
       signUpWithOtp(otp)
         .then((res) => {

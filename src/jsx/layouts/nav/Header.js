@@ -14,6 +14,7 @@ import LogoutPage from './Logout';
 /// Image
 import profile from "../../../images/user.jpg";
 import alb from '../../../images/svg/albania.svg';
+import { getUserDetails } from "../../../services/AuthService";
 
 
 
@@ -44,8 +45,21 @@ const Header = ({ onNote }) => {
 
 	//end
 	//Data user
-	const userDetails = JSON.parse(localStorage.getItem('userDetails'));
-	// console.log(userDetails);
+	//get user details
+	const [userDetails, setUserDetails] = useState('')
+	useEffect(() => {
+		const getUserDetailsData = async () => {
+			try {
+				let respone = await getUserDetails();
+				setUserDetails(respone.data)
+			} catch (error) {
+				console.log(error)
+			}
+		}
+		if (isLogin()) {
+			getUserDetailsData()
+		}
+	}, [])
 
 	const convertFullName = (fullName) => {
 		// console.log(fullName.trim() === "")
@@ -107,8 +121,8 @@ const Header = ({ onNote }) => {
 												</div>
 											</Dropdown.Toggle>
 											<Dropdown.Menu align="right" className="mt-3 dropdown-menu dropdown-menu-end">
-												{/* <Dropdown.Item>
-													<Link to="/app-profile" className="dropdown-item ai-icon">
+												<Dropdown.Item>
+													<Link to="/change-password" className="dropdown-item ai-icon">
 														<svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" className="svg-main-icon">
 															<g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
 																<polygon points="0 0 24 0 24 24 0 24" />
@@ -116,9 +130,9 @@ const Header = ({ onNote }) => {
 																<path d="M3.00065168,20.1992055 C3.38825852,15.4265159 7.26191235,13 11.9833413,13 C16.7712164,13 20.7048837,15.2931929 20.9979143,20.2 C21.0095879,20.3954741 20.9979143,21 20.2466999,21 C16.541124,21 11.0347247,21 3.72750223,21 C3.47671215,21 2.97953825,20.45918 3.00065168,20.1992055 Z" fill="var(--primary)" fillRule="nonzero" />
 															</g>
 														</svg>
-														<span className="ms-2">Profile </span>
+														<span className="ms-2">Change password</span>
 													</Link>
-												</Dropdown.Item> */}
+												</Dropdown.Item>
 												<Dropdown.Item>
 													<LogoutPage />
 												</Dropdown.Item>

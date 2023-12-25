@@ -65,16 +65,8 @@ export function loginAction(email, password, navigate) {
             .then((response) => {
                 //userDetails   
                 saveTokenInLocalStorage(response.data.token)
-                getUserDetails(response.data.token)
-                    .then((user) => {
-                        localStorage.setItem('userDetails', JSON.stringify(user.data))
-                        navigate('/home');
+                navigate('/home');
                         window.location.reload();
-                    }).catch((error) => {
-                        console.log(error)
-                    })
-                // navigate('/home');
-                //         window.location.reload();
             })
             .catch((error) => {
                 console.log(error);

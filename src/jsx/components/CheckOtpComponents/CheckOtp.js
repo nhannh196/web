@@ -11,7 +11,7 @@ const CheckOtp = (props) => {
     const [otp, setOtp] = useState("");
     // const [minutes, setMinutes] = useState(0);
     // const [seconds, setSeconds] = useState(5);
-    const {show,changeShow,sendOtp,handleSubmit} = props.handleOtpComponent
+    const { show, changeShow, sendOtp, handleSubmit } = props.handleOtpComponent
     // const [messageOtp,setMessageOtp]=useState(message)
     // console.log(messageOtp)
     // useEffect(() => {
@@ -56,7 +56,7 @@ const CheckOtp = (props) => {
                             <div className="col-lg-12">
                                 <div className="form-group mb-3">
                                     {/* <label htmlFor="author" className="text-black font-w600">  Username  </label> */}
-                                    <input onChange={(e) => {setOtp(e.target.value)}} type="text" className="form-control" defaultValue={otp} name="otp" placeholder="Input otp send to your email" />
+                                    <input onChange={(e) => { setOtp(e.target.value) }} type="text" className="form-control" defaultValue={otp} name="otp" placeholder="Input otp send to your email" />
                                     {props.handleOtpComponent.message && <p style={{ color: 'red' }}>{props.handleOtpComponent.message}</p>}
                                 </div>
                             </div>
@@ -69,16 +69,16 @@ const CheckOtp = (props) => {
                                                 {seconds < 10 ? `0${seconds}` : seconds}
                                             </p> */}
                                         {/* // ) : ( */}
-                                            <>
-                                                <p>Didn't receive the OTP?</p>
-                                                <Button
-                                                    variant="outline-primary btn-xs"
-                                                    // disabled={seconds > 0 || minutes > 0}
-                                                    onClick={handleResend}
-                                                >
-                                                    Resend OTP
-                                                </Button>
-                                            </>
+                                        <>
+                                            <p>Didn't receive the OTP?</p>
+                                            <Button
+                                                variant="outline-primary btn-xs"
+                                                // disabled={seconds > 0 || minutes > 0}
+                                                onClick={handleResend}
+                                            >
+                                                Resend OTP
+                                            </Button>
+                                        </>
                                         {/* // )} */}
 
                                     </div>
@@ -86,7 +86,7 @@ const CheckOtp = (props) => {
                             </div>
                             <div className="col-lg-12">
                                 <div className="form-group mb-3">
-                                <input type="submit" value="Submit" className="submit btn btn-primary btn-block" name="submit" onClick={() => {handleSubmit(otp);console.log(otp);}} />
+                                    <input type="submit" value="Submit" className="submit btn btn-primary btn-block" name="submit" onClick={() => { handleSubmit(otp); console.log(otp); }} />
                                 </div>
                             </div>
                         </div>
