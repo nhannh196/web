@@ -135,29 +135,36 @@ function Forum() {
         getComment()
     }, [])
 
-
+    const reactNavLink = document.querySelectorAll('.react-nav-link');
+    const menuReact = document.querySelectorAll('.menu-react');
     useEffect(() => {
-        const reactNavLink = document.querySelector('.react-nav-link');
-        const menuReact = document.querySelector('.menu-react');
-        console.log(reactNavLink)
-        console.log(menuReact)
+        
+       
         let timeout;
-        if(reactNavLink&&menuReact){
-            reactNavLink.addEventListener('mouseenter', function () {
-                timeout = setTimeout(function () {
-                    menuReact.style.display = 'flex';
-                }, 500); // 0.5s
-            });
-    
-            reactNavLink.addEventListener('mouseleave', function () {
-                clearTimeout(timeout); 
-                menuReact.style.display = 'none';
-            });
+        if(reactNavLink!==null&&menuReact!==null){
+            for(let i = 0; i < reactNavLink.length; i++){
+                console.log(reactNavLink[i])
+                console.log(menuReact[i])
 
-            menuReact.addEventListener('click',function () {
-                clearTimeout(timeout); 
-                menuReact.style.display = 'none';
-            })
+                reactNavLink[i].addEventListener('mouseenter', function () {
+                    timeout = setTimeout(function () {
+                        menuReact[i].style.display = 'flex';
+                    }, 800); // 0.5s
+                });
+    
+                reactNavLink[i].addEventListener('mouseleave', function () {
+                    clearTimeout(timeout); 
+                    menuReact[i].style.display = 'none';
+                });
+    
+                menuReact[i].addEventListener('click',function () {
+                    clearTimeout(timeout); 
+                    menuReact[i].style.display = 'none';
+                })
+            }
+            
+        }else{
+            return;
         }
     }, [listPosts])
 
@@ -347,12 +354,12 @@ function Forum() {
                                                 <Nav.Link className="forum-nav-link react-nav-link" eventKey="React">
                                                     {isLogin() ?
                                                         <>
-                                                            <div className='menu-react'>
-                                                                        <>
-                                                                            <div className='react like active' onClick={(e) => { handleLikeClick(post.postId); e.preventDefault() }}><i class="bi bi-hand-thumbs-up-fill"></i></div>
-                                                                            <div className='react dislike active' onClick={() => handleDislikeClick(post.postId)}><i class="bi bi-hand-thumbs-down-fill"></i></div>
-                                                                        </>
-                                                            </div>
+                                                                <div className='menu-react'>
+                                                                    <>
+                                                                        <div className=' like active' onClick={(e) => { handleLikeClick(post.postId); e.preventDefault() }}><i class="bi bi-hand-thumbs-up-fill"></i></div>
+                                                                        <div className=' dislike active' onClick={() => handleDislikeClick(post.postId)}><i class="bi bi-hand-thumbs-down-fill"></i></div>
+                                                                    </>
+                                                                </div>
                                                             {!!react(post.postId) === true ?
                                                                 react(post.postId).status === "Like" ?
                                                                     <>
@@ -368,7 +375,6 @@ function Forum() {
                                                                 :
                                                                 <>
                                                                     <div className='like' onClick={() => handleLikeClick(post.postId)}><i class="bi bi-hand-thumbs-up-fill"></i> Like</div>
-
                                                                 </>}
                                                         </>
                                                         :
@@ -383,7 +389,7 @@ function Forum() {
                                                 <Tab.Pane eventKey="Comments" className='tab-comments'>
                                                     {commentsOfPost.map((data, ind) => (
                                                         data.postId === post.postId && (
-                                                            <div className='d-flex'>
+                                                            <div className='d-flex' key={ind}>
                                                                 <div class="initial-avatar-comment">
                                                                     {convertFullName(post.fullName)}
                                                                 </div>

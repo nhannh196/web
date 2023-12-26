@@ -82,10 +82,10 @@ const ManageMyPosts = () => {
             .then(response => {
                 setListComments(response.data)
             })
-            .catch((error)=>{
+            .catch((error) => {
                 // setListComments('')
                 console.log(error)
-                if(error.data?.status===404){
+                if (error.data?.status === 404) {
                     setListComments('')
                 }
             })
@@ -132,9 +132,13 @@ const ManageMyPosts = () => {
                                                 return (
                                                     <tr key={index}>
                                                         <td>{index + 1}</td>
-                                                        <td>{post.title}</td>
+                                                        {post.title.length < 60 ?
+                                                            <td>{post.title}</td>
+                                                            :
+                                                            <td>{`${post.title.slice(0,59)} ...`}</td>
+                                                        }
                                                         <td>{parseDate(post.postDate)}</td>
-                                                        <td>{(post.likeCount||0)} likes| {(post.dislikeCount||0)} dislikes</td>
+                                                        <td>{(post.likeCount || 0)} likes| {(post.dislikeCount || 0)} dislikes</td>
                                                         {post.accept === true ?
                                                             <td><span className="light badge-success badge">Aprroved</span></td>
                                                             :
@@ -179,7 +183,7 @@ const ManageMyPosts = () => {
             <Modal show={showDetail} className="fade modal-manage-post" centered>
                 <ModalHeader>
                     <Modal.Title>Detail</Modal.Title>
-                    <Button onClick={() => {setShowDetail(!showDetail);setListComments('')}} variant="" className="btn-close"></Button>
+                    <Button onClick={() => { setShowDetail(!showDetail); setListComments('') }} variant="" className="btn-close"></Button>
                 </ModalHeader>
                 <ModalBody>
                     <div className="card">
@@ -207,26 +211,26 @@ const ManageMyPosts = () => {
                                     </Nav>
                                     <Tab.Content>
                                         <Tab.Pane eventKey="Comments">
-                                            {listComments?
-                                            listComments.map((comment, index) => (
-                                                <>
-                                                    <div className="user-pic2" key={index}>
-                                                        <div className="d-flex align-items-center">
+                                            {listComments ?
+                                                listComments.map((comment, index) => (
+                                                    <>
+                                                        <div className="user-pic2" key={index}>
+                                                            <div className="d-flex align-items-center">
 
-                                                            <div className="ms-3">
-                                                                {comment?.fullName && <h4>{comment.fullName}</h4>}
-                                                                <ul className="d-flex align-items-center raiting my-0 flex-wrap">
-                                                                    {comment?.commentDate && <li>{parseDate(comment.commentDate)}</li>}
-                                                                </ul>
+                                                                <div className="ms-3">
+                                                                    {comment?.fullName && <h4>{comment.fullName}</h4>}
+                                                                    <ul className="d-flex align-items-center raiting my-0 flex-wrap">
+                                                                        {comment?.commentDate && <li>{parseDate(comment.commentDate)}</li>}
+                                                                    </ul>
+                                                                </div>
                                                             </div>
+                                                            {comment?.content && <p className="ms-3">{comment.content}</p>}
                                                         </div>
-                                                        {comment?.content&&<p className="ms-3">{comment.content}</p>}
-                                                    </div>
-                                                </>
-                                            ))
-                                            :<><h5>No comment</h5></>
+                                                    </>
+                                                ))
+                                                : <><h5>No comment</h5></>
                                             }
-                                            
+
                                         </Tab.Pane>
                                     </Tab.Content>
                                 </Tab.Container>

@@ -1,0 +1,12 @@
+.post-new-title{
+   margin-top: 16px;
+}
+
+.post-new-content{
+margin-bottom: 16px;
+}
+
+.post-new-content-input{
+    width: auto;
+    height: 1000px !important;
+}

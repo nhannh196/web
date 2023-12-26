@@ -64,24 +64,15 @@
     font-size: 14px;
 }
 
-/* .react {
-    font-size: 20px;
-} */
+
 
 .react>i {
-    padding: 5px 8px;
+    font-size: 12px !important;
+    padding: 1px 4px;
     border-radius: 50%;
 }
 
-/* .like>i:hover {
-    color: #fff;
-    background-color: #03a2fd;
-}
 
-.dislike>i:hover {
-    color: #fff;
-    background-color: #f94252;
-} */
 
 .like.active>i {
     background-color: #03a2fd;
@@ -89,35 +80,10 @@
 }
 
 .dislike.active>i {
-    background-color:  #f94252;
+    background-color: #f94252;
     color: #ffffff;
 }
 
-/* .like.active>i:hover{
-    background-color: ;
-} */
-
-/* .react-button{
-    width: 48%;
-    height: 40px;
-    border-radius: 5px;
-    border-width: 4px;
-    border-color: #a098ae;
-    background-color: #fff;
-    font-size: 18px
-} */
-
-/* .react-like {
-    background-color: #03a2fd;
-    border-color: #03a2fd;
-    color: #fff;
-}
-
-.react-dislike {
-    background-color: #f94252;
-    border-color: #f94252;
-    color: #fff;
-} */
 
 .count-total-post {
     margin-bottom: 10px;
@@ -143,7 +109,7 @@
 }
 
 .forum-nav-link i {
-    font-size: 18px;
+    font-size: 15px;
 }
 
 .forum-nav-link:hover {
@@ -199,21 +165,17 @@
 
 }
 
-.react-nav-link>.menu-react {}
-
-/* .react-nav-link:hover>.menu-react {
-    display: flex;
-} */
 
 .menu-react {
     display: none;
     position: absolute;
-    bottom: 80%;
- width: 90px;
+    bottom: 60%;
+    width: 86px;
+    left: -10%;
     /* left: -30%; */
-    left: 0;
+    /* left: 0; */
     padding: 8px;
-    margin-bottom: 12px;
+    margin-bottom: 19px;
     background-color: #ffffff;
     justify-content: space-between;
     align-items: center;
@@ -224,3 +186,8 @@
     /* transition: opacity 1s linear; */
 }
 
+.menu-react i{
+    font-size: 18px;
+    padding: 2px 6px;
+    border-radius: 50%;
+}
