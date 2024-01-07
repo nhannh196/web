@@ -44,6 +44,9 @@ import { getUserDetails, userLocalStorage } from "../services/AuthService";
 import ManageMyPosts from "./components/UserAuthenticatedComponents/ManageMyPost/ManageMyPosts";
 import ChangePassword from "./components/ChangePasswordComponents/ChangePassword";
 import ForgotPassword from "./components/ForgotPasswordComponents/ForgotPassword";
+import ListNewPosts from "./components/ManagerComponents/ListNewPosts/ListNewPosts";
+import ManagePosts from "./components/ManagerComponents/ManagePosts/ManagePosts";
+import DataStocks from "./components/AdminComponents/DataStocks/DataStocks";
 const Markup = () => {
   let routesDefault = [
     { url: "/", component: <Home /> },
@@ -97,7 +100,16 @@ const Markup = () => {
       let routes = [
         { url: "list-users", component: <ListUsers /> },
         { url: "list-managers", component: <ListManagers /> },
-        { url: "change-password", component: <ChangePassword /> }
+        { url: "change-password", component: <ChangePassword /> },
+        { url: 'data-stocks', component: <DataStocks /> }
+      ]
+      setAllRoutes([...routesDefault, ...routes])
+    }
+
+    if (role === 3) {
+      let routes = [
+        { url: "list-new-posts", component: <ListNewPosts /> },
+        { url: 'manage-posts', component: <ManagePosts /> },
       ]
       setAllRoutes([...routesDefault, ...routes])
     }
@@ -111,10 +123,11 @@ const Markup = () => {
       setAllRoutes(routesDefault)
     } else {
       console.log('da dang nhap')
+      
       routeAuthor(userDetails.roleId)
     }
   }, [userDetails])
-
+  // console.log(allRoutes)
   return (
     <>
       <Routes>

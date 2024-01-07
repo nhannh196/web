@@ -4,8 +4,11 @@
 
 .apexcharts-canvas {
     background: '#fff'
+    
 }
+
 
 .col-xl-2.draw-chart{
     margin-bottom: 14px;
+    /* background-color: #00FF00; */
 }

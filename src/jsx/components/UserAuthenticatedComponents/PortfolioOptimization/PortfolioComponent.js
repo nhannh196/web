@@ -331,6 +331,256 @@ const PortfolioComponent = () => {
         })
         return result
     }
+    const [listDataToDrawDailyProfit, setListDataToDrawDailyProfit] = useState([])
+    //api get stock chart
+    const getChart = (stockName) => {
+        return axiosInstance.post(`/api/Stocks/GetStockChart?ticker=${stockName}&option=1`)
+    }
+    useEffect(() => {
+        // setListDataToDrawDailyProfit([])
+        let dataStock = []
+        Promise.all(
+            listStockportfolio.map(async (stock) => {
+                let stockData = await getChart(stock.ticker)
+                let dailyProfitChart = []
+                let dateChart = []
+                stockData.data.listChart.map((data) => {
+                    dailyProfitChart = [...dailyProfitChart, data.dailyProfit]
+                    dateChart = [...dateChart, data.dtyyyymmdd]
+                })
+                let obj = {
+                    stockName: stock.ticker,
+                    profitAverage: stockData.data.profitAverage,
+                    standardDeviation: stockData.data.standardDeviation,
+                    dailyProfitChart: dailyProfitChart.reverse(),
+                    dateChart: dateChart.reverse()
+                }
+                dataStock = [...dataStock, obj]
+                //    setListDataToDrawDailyProfit([...listDataToDrawDailyProfit,stockData.data])
+            })
+        ).then(() => setListDataToDrawDailyProfit(dataStock))
+            .catch(error => console.log(error))
+    }, [listStockportfolio])
+    console.log(listDataToDrawDailyProfit)
+
+    const [showZoom, setShowZoom] = useState('')
+    //handle show zoom
+    const handleShowZoom = (stockName) => {
+        if (showZoom === stockName) {
+            setShowZoom('')
+        } else {
+            setShowZoom(stockName)
+        }
+    }
+    // chart default
+    const chartDefault = (stockName) => {
+        let dataDailyProfit = []
+        let date = []
+        const dataToDraw = listDataToDrawDailyProfit.find((stock) => {
+            return stock.stockName === stockName
+        })
+
+        let obj = {
+            series: [
+                {
+                    name: "Daily Profit",
+                    data: dataToDraw.dailyProfitChart,
+                },
+            ],
+            options: {
+
+                chart: {
+                    type: "area",
+                    group: "social",
+                    background: '#fff',
+                    toolbar: {
+                        show: false,
+                    },
+                    zoom: {
+                        enabled: false,
+                    },
+                },
+                tooltip: {
+                    enabled: false,
+                    marker: {
+                        show: true,
+                        fillColors: true,
+                    },
+                },
+                dataLabels: {
+                    enabled: false,
+                },
+                stroke: {
+                    width: [2, 2],
+                    // colors: ["#1c9ef9", "#709fba"],
+                    curve: "smooth",
+                },
+                // legend: {
+                //     tooltipHoverFormatter: function (val, opts) {
+                //         return (
+                //             val +
+                //             " - " +
+                //             opts.w.globals.series[opts.seriesIndex][opts.dataPointIndex] +
+                //             ""
+                //         );
+                //     },
+                //     labels: {
+                //         colors: "#787878",
+                //     },
+                // },
+                // markers: {
+                //     size: 2,
+                //     border: 0,
+                //     //strokeColor: "#fff",
+                //     // colors: ["#1c9ef9", "#709fba"],
+
+                //     hover: {
+                //         size: 4,
+                //     },
+                // },
+
+                xaxis: {
+                    labels: {
+                        show: false,
+                    },
+
+                    axisBorder: {
+                        show: true,
+                    },
+                    axisTicks: {
+                        show: true,
+                    },
+                    categories: dataToDraw.dateChart,
+                },
+                yaxis: {
+
+                    labels: {
+                        show: false,
+                        style: {
+                            colors: "#3e4954",
+                            fontSize: "12px",
+                            fontFamily: "Poppins",
+                            fontWeight: 80,
+                        },
+
+
+
+                    },
+                },
+                fill: {
+                    // colors: ["#1c9ef9", "#709fba"],
+                    // type: "solid",
+                    // opacity: 0.08,
+                    // type: 'gradient',
+                },
+                grid: {
+                    borderColor: '#ffffff1a',
+                },
+            },
+
+        }
+        return obj
+    }
+
+    const chartZoom = (stockName) => {
+        let dataDailyProfit = []
+        let date = []
+        const dataToDraw = listDataToDrawDailyProfit.find((stock) => {
+            return stock.stockName === stockName
+        })
+
+        let obj = {
+            series: [
+                {
+                    name: "Daily Profit",
+                    data: dataToDraw.dailyProfitChart,
+                },
+            ],
+            options: {
+                chart: {
+                    height: 350,
+                    type: "area",
+                    group: "social",
+                    background: '#fff',
+                    toolbar: {
+                        show: true,
+                    },
+                    zoom: {
+                        enabled: true,
+                    },
+                },
+                tooltip: {
+                    // enabled: false,
+                    marker: {
+                        show: true,
+                        fillColors: true,
+                    },
+                },
+                dataLabels: {
+                    enabled: false,
+                },
+                stroke: {
+                    width: [2, 2],
+                    // colors: ["#1c9ef9", "#709fba"],
+                    curve: "smooth",
+                },
+
+                markers: {
+                    size: 4,
+                    border: 0,
+                    //strokeColor: "#fff",
+                    // colors: ["#1c9ef9", "#709fba"],
+
+                    hover: {
+                        size: 5,
+                    },
+                },
+
+                xaxis: {
+                    // labels:{
+                    //     show: false,
+                    // },
+
+                    axisBorder: {
+                        show: true,
+                    },
+                    axisTicks: {
+                        show: true,
+                    },
+                    categories: dataToDraw.dateChart,
+                },
+                yaxis: {
+
+                    labels: {
+                        style: {
+                            colors: "#3e4954",
+                            fontSize: "12px",
+                            fontFamily: "Poppins",
+                            fontWeight: 80,
+                        },
+
+
+
+                    },
+                },
+                fill: {
+                    // colors: ["#1c9ef9", "#709fba"],
+                    // type: "solid",
+                    // opacity: 0.08,
+                    // type: 'gradient',
+                },
+                grid: {
+                    borderColor: '#ffffff1a',
+                },
+            },
+            profitAverage: dataToDraw.profitAverage,
+            standardDeviation: dataToDraw.standardDeviation,
+        }
+        return obj
+    }
+
+
+
     //hande submit optimization
     const handleSubmitOptimization = () => {
         setLoadingOptimizeportfolioView(true)
@@ -340,20 +590,23 @@ const PortfolioComponent = () => {
                 let labels = []
                 let series = []
                 let data = []
-                let total = 0
-                let responseStockResults=sortNumberDescending(response.data.stockResults,"xValue")
-                console.log(responseStockResults)
+                // let total = 0
+                let responseStockResults = sortNumberDescending(response.data.stockResults, "xValue")
+                // console.log(responseStockResults)
                 responseStockResults.map((stock) => {
                     let obj = {
                         ticker: stock.nameStock,
-                        dailyProfit: findDailyProfit(stock.nameStock),
+                        // dailyProfit: findDailyProfit(stock.nameStock),
                         value: parseValuesTo4Decimal(stock.xValue * 100),
+                        expectedReturn: parseValuesTo4Decimal(stock.expectedReturn),
+                        standardDeviation: parseValuesTo4Decimal(stock.standardDeviation)
+
                     }
                     data = [...data, obj]
                     if (stock.xValue > 0) {
                         labels = [...labels, `${stock.nameStock} (${parseValuesTo4Decimal(stock.xValue * 100)} %)`]
                         series = [...series, parseValuesTo4Decimal(stock.xValue * 100)]
-                        total += parseValuesTo4Decimal(stock.xValue * 100)
+                        // total += parseValuesTo4Decimal(stock.xValue * 100)
                     }
                 })
                 // response.data.stockResults.map((stock) => {
@@ -369,11 +622,12 @@ const PortfolioComponent = () => {
                 //         total += parseValuesTo4Decimal(stock.xValue * 100)
                 //     }
                 // })
-                console.log(total)
-                if (total < 100) {
-                    labels = [...labels, "Not investing"]
-                    series = [...series, 100 - total]
-                }
+
+                // if (total < 100) {
+                //     labels = [...labels, "Not investing"]
+                //     series = [...series, 100 - total]
+                // }
+                console.log(data)
                 setLabelsPieChart(labels)
                 setSeriesPieChart(series)
                 setlistDataportfolioView(data)
@@ -424,6 +678,7 @@ const PortfolioComponent = () => {
         setNameStock(stockIdSeach)
         setPageCurrent(0)
     }
+
     const isNotFound = !currentItems?.length
     let stockDraw = { stockName: stockNameDraw, date: dateDraw }
     return (
@@ -570,7 +825,7 @@ const PortfolioComponent = () => {
                                                                         <td>{stock.dtyyyymmdd}</td>
 
                                                                         <td>
-                                                                            <span className="d-flex justify-content-center">
+                                                                            <div className="action-table">
                                                                                 <Link className="me-2 shadow btn-xs sharp"
                                                                                     onClick={() => {
                                                                                         setShowChart(!showChart);
@@ -599,9 +854,9 @@ const PortfolioComponent = () => {
                                                                                             <i className="fa fa-close color-danger"></i>
                                                                                         </Link>
                                                                                         :
-                                                                                        <></>
+                                                                                        <div></div>
                                                                                 }
-                                                                            </span>
+                                                                            </div>
                                                                         </td>
                                                                         {listStockNameFavorite.includes(stock.ticker) ?
                                                                             <td className='td-favorite'>
@@ -679,8 +934,6 @@ const PortfolioComponent = () => {
                                                     <h5 style={{ padding: '4px 0' }}>Please wait...</h5>
                                                     :
                                                     listStockportfolio.map((stock, ind) => (
-
-
                                                         <div className="align-items-center student" key={ind}>
                                                             <div className='d-flex justify-content-space-between'>
                                                                 <div className="d-flex">
@@ -716,7 +969,7 @@ const PortfolioComponent = () => {
                                                 listStockportfolio.length < 2 ?
                                                     <>
                                                         <div>Total: {listStockportfolio.length}</div>
-                                                        <Link className="btn btn-block btn-danger dlab-load-more btn-portfolio" onClick={(e) => { setListStockportfolio([]); setDesiredQuantity('')}}>Clear All</Link>
+                                                        <Link className="btn btn-block btn-danger dlab-load-more btn-portfolio" onClick={(e) => { setListStockportfolio([]); setDesiredQuantity('') }}>Clear All</Link>
 
                                                     </>
                                                     :
@@ -738,7 +991,7 @@ const PortfolioComponent = () => {
                 <div className="modal-content">
                     <div className="modal-header">
                         {/* <h6 className="modal-title">View</h6> */}
-                        <Button variant="" type="button" className="btn-close" data-dismiss="modal" onClick={() => { setShowportfolio(!showportfolio); setLabelsPieChart([]); setSeriesPieChart([]); setlistDataportfolioView([]); setLoadingOptimizeportfolioView(false) }//dispatch({ type: 'addNewAdmin' })
+                        <Button variant="" type="button" className="btn-close" data-dismiss="modal" onClick={() => { setShowportfolio(!showportfolio); setShowZoom('');setLabelsPieChart([]); setSeriesPieChart([]); setlistDataportfolioView([]); setLoadingOptimizeportfolioView(false) }//dispatch({ type: 'addNewAdmin' })
                         }>
                         </Button>
                     </div>
@@ -746,7 +999,7 @@ const PortfolioComponent = () => {
                         <div className="row">
                             <div className="col-xl-12">
                                 <div className='row main-card'>
-                                    <div className='col-xxl-7 col-xl-9'>
+                                    <div className='col-xxl-12 col-xl-12'>
                                         <div className='row>'>
                                             <Col lg={12}>
                                                 <Card>
@@ -758,23 +1011,29 @@ const PortfolioComponent = () => {
                                                             <h4>Optimizing...</h4>
                                                             :
                                                             <>
-                                                                {dataportfolio.rr > 0 && <h6>Estimated profit: {dataportfolio.rr.toFixed(4)}%</h6>}
-                                                                {dataportfolio.sum > 0 && <h6>Sum of rate: {parseValuesTo4Decimal(dataportfolio.sum*100) }%</h6>}
+                                                                {
+                                                                    // dataportfolio.rr > 0 && 
+                                                                    <h6>Estimated profit: {dataportfolio.rr?.toFixed(4)}%</h6>}
+                                                                {dataportfolio.sum > 0 && <h6>Sum of rate: {parseValuesTo4Decimal(dataportfolio.sum * 100)}%</h6>}
                                                                 <Table responsive>
                                                                     <thead>
                                                                         <tr>
                                                                             <th>
                                                                                 <strong>STOCK CODE</strong>
                                                                             </th>
-                                                                            {/* <th>
-                                                                        <strong>DAILY PROFIT</strong>
-                                                                    </th> */}
                                                                             <th>
-                                                                                <strong>CAPITAL ALLOCATION RATIO</strong>
+                                                                                <strong>EXPECTED RETURN</strong>
                                                                             </th>
-                                                                            {/* <th>
-                                                                        <strong >STANDARD DEVIATION</strong>
-                                                                    </th> */}
+                                                                            <th>
+                                                                                <strong >STANDARD DEVIATION</strong>
+                                                                            </th>
+                                                                            <th>
+                                                                                <strong>ALLOCATION RATIO</strong>
+                                                                            </th>
+                                                                            <th>
+                                                                                <strong>DAILY PROFIT</strong>
+                                                                            </th>
+
                                                                         </tr>
                                                                     </thead>
                                                                     {loading ?
@@ -787,7 +1046,9 @@ const PortfolioComponent = () => {
                                                                                         <td>
                                                                                             <strong>{stock.ticker}</strong>
                                                                                         </td>
-                                                                                        {/* <td>{stock.dailyProfit}</td> */}
+                                                                                        <td>{stock.expectedReturn}</td>
+                                                                                        <td>{stock.standardDeviation}</td>
+
                                                                                         <td>{stock.value} %</td>
                                                                                         {/* {dataportfolio?.stockResults.map((s, index) => {
                                                                                     stock.ticker === s.nameStock &&
@@ -795,6 +1056,41 @@ const PortfolioComponent = () => {
                                                                                             <strong>{parseValuesTo4Decimal(s.xValue)}</strong>
                                                                                         </td>
                                                                                 })} */}
+                                                                                        <td className='chart'>
+                                                                                            <div className={showZoom === stock.ticker ? "chart-default zoom" : "chart-default"} onClick={() => handleShowZoom(stock.ticker)}>
+                                                                                                <ReactApexChart
+                                                                                                    options={chartDefault(stock.ticker).options}
+                                                                                                    series={chartDefault(stock.ticker).series}
+                                                                                                    type="area"
+                                                                                                    width={200}
+                                                                                                    height={100}
+
+                                                                                                />
+                                                                                            </div>
+                                                                                            {showZoom === stock.ticker &&
+                                                                                                <div className='chart-zoom'>
+                                                                                                    <div className='chart-title'>
+                                                                                                        <div className='name-chart'>{stock.ticker}</div>
+                                                                                                        <div className='close' onClick={e => {
+                                                                                                            handleShowZoom(stock.ticker)
+                                                                                                        }}>x</div>
+                                                                                                    </div>
+                                                                                                    <div className='chart-body'>
+                                                                                                        <div className='chart-body_detail'>
+                                                                                                            <div><strong>Profit average:</strong>{` ${Number(chartZoom(stock.ticker).profitAverage).toFixed(4)}`}</div>
+                                                                                                            <div><strong>Standard deviation:</strong>{` ${Number(chartZoom(stock.ticker).standardDeviation).toFixed(4)}`}</div>
+                                                                                                        </div>
+                                                                                                        <ReactApexChart
+                                                                                                            options={chartZoom(stock.ticker).options}
+                                                                                                            series={chartZoom(stock.ticker).series}
+                                                                                                            type="area"
+                                                                                                            width={1000}
+                                                                                                            height={689}
+                                                                                                        />
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            }
+                                                                                        </td>
                                                                                     </tr>
                                                                                 )
                                                                             })}
@@ -808,7 +1104,7 @@ const PortfolioComponent = () => {
                                             </Col >
                                         </div>
                                     </div>
-                                    <div className='col-xxl-5 col-xl-3 wow fadeInUp' data-wow-delay="1s">
+                                    {/* <div className='col-xxl-5 col-xl-3 wow fadeInUp' data-wow-delay="1s">
                                         <div className="card">
                                             <div className="card-header border-0">
                                             </div>
@@ -863,13 +1159,14 @@ const PortfolioComponent = () => {
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
+                                    </div> */}
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </Modal>
+
             <Modal className="modal container-fluid modal-portfolio" show={showChart}>
                 <div className="modal-content">
                     <div className="modal-header">

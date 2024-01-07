@@ -18,7 +18,7 @@ import { isDate } from "lodash";
 
 const DrawChart = (props) => {
     //month of stock to draw chart
-    console.log(props)
+    // console.log(props)
     const [dateNeedDraw, setDateNeedDraw] = useState(new Date(props.stock.date));
     //data to draw chart
     const [dataToDraw, setDataToDraw] = useState([]);
@@ -55,7 +55,7 @@ const DrawChart = (props) => {
     const objToDrawDailyProfit = useMemo(() => {
         let dataDailyProfit = []
         let date = []
-        dataToDraw.map((data) => {
+        dataToDraw?.listChart?.map((data) => {
             dataDailyProfit = [...dataDailyProfit, data.dailyProfit];
             date = [...date, data.dtyyyymmdd]
         })
@@ -68,6 +68,7 @@ const DrawChart = (props) => {
                 },
             ],
             options: {
+
                 chart: {
                     height: 350,
                     type: "area",
@@ -80,14 +81,20 @@ const DrawChart = (props) => {
                         enabled: true,
                     },
                 },
+                tooltip: {
+                    // enabled: false,
+                    marker: {
+                        show: true,
+                        fillColors: true,
+                    },
+                },
                 dataLabels: {
                     enabled: false,
-
                 },
                 stroke: {
                     width: [2, 2],
-                    colors: ["#1c9ef9", "#709fba"],
-                    curve: "straight",
+                    // colors: ["#1c9ef9", "#709fba"],
+                    curve: "smooth",
                 },
                 legend: {
                     tooltipHoverFormatter: function (val, opts) {
@@ -106,13 +113,18 @@ const DrawChart = (props) => {
                     size: 2,
                     border: 0,
                     //strokeColor: "#fff",
-                    colors: ["#1c9ef9", "#709fba"],
+                    // colors: ["#1c9ef9", "#709fba"],
+
                     hover: {
                         size: 4,
                     },
                 },
 
                 xaxis: {
+                    // labels:{
+                    //     show: false,
+                    // },
+
                     axisBorder: {
                         show: true,
                     },
@@ -122,19 +134,26 @@ const DrawChart = (props) => {
                     categories: date.reverse(),
                 },
                 yaxis: {
+
                     labels: {
                         style: {
                             colors: "#3e4954",
-                            fontSize: "14px",
+                            fontSize: "12px",
                             fontFamily: "Poppins",
-                            fontWeight: 100,
+                            fontWeight: 80,
                         },
+
+
+
                     },
                 },
                 fill: {
-                    colors: ["#1c9ef9", "#709fba"],
-                    type: "solid",
-                    opacity: 0.08,
+                    // colors: ["#1c9ef9", "#709fba"],
+                    // type: "solid",
+                    // opacity: 0.08,
+                    // type: 'gradient',
+
+
                 },
                 grid: {
                     borderColor: '#ffffff1a',
@@ -145,12 +164,12 @@ const DrawChart = (props) => {
         return obj
     }, [dateNeedDraw, dataToDraw, selectedOption])
 
-    //obj char
+    //obj chart cadlestick
     const objTodrawChart = useMemo(() => {
         let dataDraw = []
         let dataX = ''
         let dataY = []
-        dataToDraw.map((data) => {
+        dataToDraw?.listChart?.map((data) => {
             dataX = data.dtyyyymmdd
             dataY = [data.openPrice, data.high, data.low, data.closePrice]
             dataDraw = [...dataDraw, {
@@ -222,7 +241,7 @@ const DrawChart = (props) => {
         getDetailtoDraw(date)
             .then(respone => {
                 setDataToDraw(respone.data)
-                console.log(respone.data)
+
             }).catch(err => {
                 console.log(err)
             }).finally(() => {
@@ -239,15 +258,15 @@ const DrawChart = (props) => {
         { value: 12, label: "12 months" },
     ];
 
-    console.log(props)
+    // console.log(dataToDraw)
     return (
         <div className="row">
             <div className="col-xl-12">
-                <div className='row'>
+                <div className='detail-chart'>
                     <div className="col-xl-2 draw-chart">
                         <DatePicker
                             className="form-control mb-xxl-0 mb-3"
-                            dateFormat="yyyy/MM/dd"
+                            dateFormat="dd/MM/yyyy"
                             selected={dateNeedDraw || null}
                             onChange={(date) => {
                                 setDateNeedDraw(date);
@@ -267,6 +286,10 @@ const DrawChart = (props) => {
                             }}
                         />
                     </div>
+                    <div className="detail-chart_view">
+                        <div><strong>Profit average:</strong>{` ${Number(dataToDraw?.profitAverage).toFixed(4)}`}</div>
+                        <div><strong>Standard deviation:</strong>{` ${Number(dataToDraw?.standardDeviation).toFixed(4)}`}</div>
+                    </div>
                 </div>
                 <div className="row">
                     <div className="col-xl-12">
@@ -284,12 +307,13 @@ const DrawChart = (props) => {
                                         </div>
                                     )}
                                     <div id="chart" className="line-chart-style bar-chart">
-                                        {dataToDraw?.length ?
+                                        {dataToDraw?.listChart?.length ?
                                             <ReactApexChart
                                                 options={objToDrawDailyProfit.options}
                                                 series={objToDrawDailyProfit.series}
                                                 type="area"
-                                                height={350}
+                                                height={400}
+                                            // width={200}
                                             /> : <h4>No data</h4>
                                         }
                                     </div>
@@ -302,13 +326,14 @@ const DrawChart = (props) => {
                                         </div>
                                     )}
                                     <div>
-                                        {dataToDraw?.length ?
+                                        {dataToDraw?.listChart?.length ?
                                             <ReactApexChart
                                                 options={objTodrawChart.options}
                                                 series={objTodrawChart.series}
                                                 type="candlestick"
                                                 // width={600}
                                                 height={350}
+
                                             /> : <h4>No data</h4>
                                         }
                                     </div>

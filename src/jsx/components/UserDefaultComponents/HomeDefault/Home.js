@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect, useMemo } from 'react';
+import React, { useState, useContext, useEffect} from 'react';
 import ReactPaginate from 'react-paginate';
 import { Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
@@ -114,7 +114,6 @@ const Home = () => {
 				setListMyFavorite(respone.data)
 				setListStockNameFavorite(stocksName)
 			}).catch(error => {
-				console.log("loi o day")
 				console.log(error)
 				setListMyFavorite([])
 				setListStockNameFavorite([])
@@ -436,8 +435,8 @@ const Home = () => {
 							<ReactPaginate
 								nextLabel=">"
 								onPageChange={handlePageClick}
-								pageRangeDisplayed={2}
-								marginPagesDisplayed={2}
+								pageRangeDisplayed={5}
+								marginPagesDisplayed={5}
 								pageCount={pageCount}
 								previousLabel="<"
 								pageClassName="page-item"

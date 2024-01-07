@@ -1,0 +1,92 @@
+.layout-upload{
+    background-color: #ffffff;
+    padding: 18px;
+border-radius: 10px;
+margin-bottom: 6px;
+}
+
+.choose-file{
+font-size: 16px;
+cursor: pointer;
+/* color: #00a529; */
+}
+
+.stock-name{
+    font-weight: 650;
+}
+
+.btn-edit{
+    color: #717579;
+    padding: 5px;
+    border: 1px solid #717579;
+    border-radius: 6px;
+}
+
+.btn-edit:hover{
+    background-color: #ffc338;
+    color:  #ffffff;
+}
+
+/* .btn-edit>i{
+    color: red;
+    font-size: 10px;
+} */
+.btn-save{
+    padding: 10px;
+    border: 0.1px solid;
+    border-radius: 6px;
+    background-color:  #00d636;
+    color: #ffffff;
+}
+
+.btn-save:hover{
+    background-color:  #00a529;
+}
+
+.message-error{
+    color: red;
+}
+
+.edit-stock{
+    background-color:   #0589fd;
+    color: #ffffff;
+}
+.delete-stock{
+    background-color: #f94252 ;
+    color: #ffffff;
+
+}
+.btn-upload-file{
+    margin: 5px 0;
+    padding: 6px 8px;
+    font-size: 16px;
+    border: 1px solid ;
+    border-radius: 2px;
+}
+.btn-upload-file:hover{
+    background-color: #d3d3d3;
+}
+.header-data-stocks{
+    display: flex;
+    
+    /* align-content: center; */
+    flex-direction: row;
+}
+.search-data-stocks{
+    font-size: 16px;
+    padding: 4px 8px;
+    border: 1px solid ;
+    border-radius: 8px;
+}
+.message-system{
+    width:800px;
+    height: 50px;
+    font-size: 15px;
+    border: 1px solid ;
+    border-radius: 8px;
+    padding-left: 6px;
+    color: #0f0f0f;
+    /* text-align: center; */
+/* background-color: red */
+}
+

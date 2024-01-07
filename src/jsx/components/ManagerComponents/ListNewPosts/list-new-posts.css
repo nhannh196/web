@@ -1,0 +1,44 @@
+.btn-review{
+    color: #717579;
+    padding: 5px;
+    border: 1px solid #717579;
+    border-radius: 6px;
+}
+
+.btn-review:hover{
+    background-color: #ffc338;
+    color:  #ffffff;
+}
+
+.review-post .modal-dialog{
+    min-width: 800px ;
+}
+
+.approve{
+    padding: 10px;
+    border: 0.1px solid;
+    border-radius: 6px;
+    background-color:  #00d636;
+    color: #ffffff;
+}
+
+.approve:hover{
+    background-color:  #00a529;
+}
+
+.disapprove{
+    padding: 10px;
+    border: 0.1px solid;
+    border-radius: 6px;
+    background-color:  #ff0000;
+    color: #ffffff;
+}
+
+.disapprove:hover{
+    background-color:  #d70000;
+}
+
+.notify-newpost{
+    cursor: default;
+    pointer-events: none;
+}
