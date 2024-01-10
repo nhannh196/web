@@ -325,12 +325,14 @@ const DataStocks = () => {
                 }
             }).then((res) => {
                 if (res) {
+                    setLoading(true)
                     apiSaveStocks()
                         .then((result) => {
                             console.log(result)
                             setFileData(result.data)
                             setMessageSystem('Saved successfully, this is your data saved successfully')
                             setFile(null)
+
                         })
                         .catch((err) => {
                             console.log(err.message)
@@ -338,7 +340,7 @@ const DataStocks = () => {
                                 notifyFailure("Save Failured!", 8000)
                                 setMessageSystem('System had data with this date, please check your file!')
                             }
-                        });
+                        }).finally(() => { setLoading(false) })
                 } else {
                     console.log("ko save")
                     return;

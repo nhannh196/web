@@ -68,6 +68,19 @@ const PostNew = () => {
                 notifySusscess('Post successfully')
             }).catch(error => console.log(error))
     }
+
+    const columContent = () => {
+        let result;
+        if (window.innerHeight >= 900) {
+            result = 24
+        } else if (window.innerHeight >=750 && window.innerHeight < 900){
+            result = 19
+        }else{
+            result =12
+        }
+            return result
+    }
+    
     return (
         <Fragment>
             <div className="row">
@@ -94,7 +107,7 @@ const PostNew = () => {
 
                     <div className="post-new-content">
                         <h4 >Content</h4>
-                        <textarea value={content} onChange={(e) => { setContent(e.target.value) }} className="form-control post-new-content-input" id="exampleFormControlTextarea3" rows="12" placeholder="Input your content" />
+                        <textarea value={content} onChange={(e) => { setContent(e.target.value) }} className="form-control post-new-content-input" id="exampleFormControlTextarea3" rows={columContent()} placeholder="Input your content" />
                         <br />
                         <div>
 

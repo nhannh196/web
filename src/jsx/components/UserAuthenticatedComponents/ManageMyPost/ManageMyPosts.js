@@ -127,37 +127,51 @@ const ManageMyPosts = () => {
                                             </th>
                                         </tr>
                                     </thead>
-                                    {loading ?
-                                        <h5 className='loading'>Loading...</h5>
-                                        :
-                                        <tbody>
-                                            {currentItems.map((post, index) => {
-                                                return (
-                                                    <tr key={index}>
-                                                        <td>{index + 1}</td>
-                                                        {post.title.length < 40 ?
-                                                            <td><h6>{post.title}</h6></td>
-                                                            :
-                                                            <td><h6>{`${post.title.slice(0,39)} ...`}</h6></td>
-                                                        }
-                                                        <td>{parseDate(post.postDate)}</td>
-                                                        <td>{(post.likeCount || 0)} likes| {(post.dislikeCount || 0)} dislikes</td>
-                                                        <td>{post.commentCount||0} comments</td>
-                                                        {post.accept === true ?
-                                                            <td><span className="light badge-success badge">Aprroved</span></td>
-                                                            :
-                                                            <td ><span className="light badge-warning badge">Waiting</span></td>
-                                                        }
-                                                        <td >
-                                                            <Link title="Detail of post" onClick={() => handleDetail(post)}>
-                                                                <i class="bi bi-card-list" ></i> Detail
-                                                            </Link>
+
+                                    <tbody>
+                                        {loading ?
+                                            <div class="spinner-border" role="status"
+                                            >
+                                                <span class="sr-only">Loading...</span>
+                                            </div>
+                                            :
+                                            currentItems.length > 0 ?
+                                                currentItems.map((post, index) => {
+                                                    return (
+                                                        <tr key={index}>
+                                                            <td>{index + 1}</td>
+                                                            {post.title.length < 40 ?
+                                                                <td><h6>{post.title}</h6></td>
+                                                                :
+                                                                <td><h6>{`${post.title.slice(0, 39)} ...`}</h6></td>
+                                                            }
+                                                            <td>{parseDate(post.postDate)}</td>
+                                                            <td>{(post.likeCount || 0)} likes| {(post.dislikeCount || 0)} dislikes</td>
+                                                            <td>{post.commentCount || 0} comments</td>
+                                                            {post.accept === true ?
+                                                                <td><span className="light badge-success badge">Aprroved</span></td>
+                                                                :
+                                                                <td ><span className="light badge-warning badge">Waiting</span></td>
+                                                            }
+                                                            <td >
+                                                                <Link title="Detail of post" onClick={() => handleDetail(post)}>
+                                                                    <i class="bi bi-card-list" ></i> Detail
+                                                                </Link>
+                                                            </td>
+                                                        </tr>
+                                                    )
+                                                })
+                                                :
+                                                <tr className='notify-newpost'>
+                                                        <td colSpan={8}>
+                                                            <div className='d-flex flex-column py-2 align-items-center justify-content-center'>
+                                                                <h4>No posts</h4>
+                                                            </div>
                                                         </td>
                                                     </tr>
-                                                )
-                                            })}
-                                        </tbody>
-                                    }
+                                        }
+                                    </tbody>
+
                                 </Table>
                             </Card.Body>
                             {/* <ReactPaginate

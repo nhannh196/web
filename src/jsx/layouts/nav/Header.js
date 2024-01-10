@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 
 import { Link } from "react-router-dom";
 import { Button } from "react-bootstrap";
-import { Login } from "../../pages/Login"
+import { Login } from "../../components/LoginComponents/Login"
 import { isLogin } from "../../../services/AuthService";
 import "../../../css/icon-name.css"
 /// Scroll

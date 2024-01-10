@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect} from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import ReactPaginate from 'react-paginate';
 import { Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
@@ -38,7 +38,7 @@ import { axiosInstance } from '../../../../services/AxiosConfig';
 // import { getUserDetails } from '../../../../services/AuthService';
 
 //Paging
-let ITEMS_PER_PAGE = 10
+let ITEMS_PER_PAGE = 13
 
 const Home = () => {
 	const [dateDraw, setDateDraw] = useState('')
@@ -82,6 +82,16 @@ const Home = () => {
 			}
 		}
 		getRole()
+	}, [])
+
+	useEffect(() => {
+		if (window.innerHeight >= 900) {
+			ITEMS_PER_PAGE = 13
+		} else if (window.innerHeight >= 750 && window.innerHeight < 900) {
+			ITEMS_PER_PAGE = 11
+		} else {
+			ITEMS_PER_PAGE = 7
+		}
 	}, [])
 
 
@@ -267,21 +277,23 @@ const Home = () => {
 						<Collapse in={open}>
 							<div className="cm-content-body form excerpt">
 								<div className="card-body">
-									<div className="row filter-row">
-										<div className="col-xl-3 col-xxl-6">
-											<input value={stockIdFilter} onChange={(e) => { setStockIdFilter(e.target.value) }} type="text" className="form-control mb-xl-0 mb-3" id="exampleFormControlInput1" placeholder="STOCK ID" />
-										</div>
+									<div className="row filter-form">
+										<div className='filter-form_input'>
+											<div>
+												<input value={stockIdFilter} onChange={(e) => { setStockIdFilter(e.target.value) }} type="text" className="form-control mb-xl-0 mb-3" id="exampleFormControlInput1" placeholder="STOCK ID" />
+											</div>
 
-										<div className="col-xl-3 col-xxl-6">
-											<DatePicker
-												className="form-control mb-xxl-0 mb-3"
-												dateFormat="yyyy-MM-dd"
-												selected={dateFilter}
-												onChange={(date) => setDateFilter(date)}
-												placeholderText='Choose a date'
-											/>
+											<div>
+												<DatePicker
+													className="form-control"
+													dateFormat="yyyy-MM-dd"
+													selected={dateFilter}
+													onChange={(date) => setDateFilter(date)}
+													placeholderText='Choose a date'
+												/>
+											</div>
 										</div>
-										<div className="col-xl-3 col-xxl-6">
+										<div className="">
 											<Button className="me-2" variant="warning" title="Click here to Search" onClick={() => { handleSubmitFilter() }}><i className="fa fa-search me-1"></i>
 												Filter
 											</Button>

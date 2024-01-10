@@ -59,7 +59,6 @@ const DrawChart = (props) => {
             dataDailyProfit = [...dataDailyProfit, data.dailyProfit];
             date = [...date, data.dtyyyymmdd]
         })
-
         let obj = {
             series: [
                 {
@@ -68,9 +67,8 @@ const DrawChart = (props) => {
                 },
             ],
             options: {
-
                 chart: {
-                    height: 350,
+                    height: 100,
                     type: "area",
                     group: "social",
                     background: '#fff',
@@ -258,7 +256,18 @@ const DrawChart = (props) => {
         { value: 12, label: "12 months" },
     ];
 
-    // console.log(dataToDraw)
+
+    const heightChart = () => {
+        let result;
+        if (window.innerHeight >= 900) {
+            result = 620
+        } else if (window.innerHeight >=750 && window.innerHeight < 900){
+            result = 440
+        }else{
+            result =300
+        }
+            return result
+    }
     return (
         <div className="row">
             <div className="col-xl-12">
@@ -312,7 +321,7 @@ const DrawChart = (props) => {
                                                 options={objToDrawDailyProfit.options}
                                                 series={objToDrawDailyProfit.series}
                                                 type="area"
-                                                height={400}
+                                                height={heightChart()}
                                             // width={200}
                                             /> : <h4>No data</h4>
                                         }
@@ -332,7 +341,7 @@ const DrawChart = (props) => {
                                                 series={objTodrawChart.series}
                                                 type="candlestick"
                                                 // width={600}
-                                                height={350}
+                                                height={heightChart()}
 
                                             /> : <h4>No data</h4>
                                         }

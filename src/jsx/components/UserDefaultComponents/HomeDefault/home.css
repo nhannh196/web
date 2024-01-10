@@ -22,3 +22,18 @@ i:hover{
 .home-action{
     padding: 0 !important;
 }
+
+.filter-form{
+    display: flex;
+    flex-direction: column;
+}
+.filter-form_input{
+    display: flex;
+    flex-direction: row;
+    /* justify-content: space-between; */
+    padding: 10px;
+    gap: 10px;
+}
+.filter-form_input>div{
+    flex: 1 1 auto;
+}

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import swal from "sweetalert";
-import './myswal.css';
+import './registration.css';
 import { connect, useDispatch } from 'react-redux';
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -194,7 +194,7 @@ function Register(props) {
       <div className="row">
         <div className="row justify-content-center h-100 align-items-center">
           <div className="col-md-6">
-            <div className="authincation-content">
+            <div id="sign-up-form" className="authincation-content">
               <div className="row no-gutters">
                 <div className="col-xl-12">
                   <div className="auth-form">

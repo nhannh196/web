@@ -28,7 +28,7 @@ import Forum from "./components/UserDefaultComponents/ForumDefault/Forum";
 // import Error404 from "./pages/Error404";
 // import Error500 from "./pages/Error500";
 // import Error503 from "./pages/Error503";
-import Login from "./pages/Login";
+import Login from "./components/LoginComponents/Login";
 import Registration from "./components/RegistrationComponents/Registration";
 
 import { ThemeContext } from "../context/ThemeContext";
@@ -47,6 +47,7 @@ import ForgotPassword from "./components/ForgotPasswordComponents/ForgotPassword
 import ListNewPosts from "./components/ManagerComponents/ListNewPosts/ListNewPosts";
 import ManagePosts from "./components/ManagerComponents/ManagePosts/ManagePosts";
 import DataStocks from "./components/AdminComponents/DataStocks/DataStocks";
+import FavoriteStocks from "./components/UserAuthenticatedComponents/FavoriteStocks/FavoriteStocks";
 const Markup = () => {
   let routesDefault = [
     { url: "/", component: <Home /> },
@@ -90,7 +91,9 @@ const Markup = () => {
         { url: "chart-apexchart", component: <ApexChart /> },
         { url: "portfolio-optimization", component: <PortfolioOptimization /> },
         { url: "manage-my-posts", component: <ManageMyPosts /> },
-        { url: "change-password", component: <ChangePassword /> }
+        { url: "change-password", component: <ChangePassword /> },
+        { url: "favorite-stocks", component: <FavoriteStocks /> }
+
       ]
       setAllRoutes([...routesDefault, ...routes])
     }
@@ -123,7 +126,7 @@ const Markup = () => {
       setAllRoutes(routesDefault)
     } else {
       console.log('da dang nhap')
-      
+
       routeAuthor(userDetails.roleId)
     }
   }, [userDetails])

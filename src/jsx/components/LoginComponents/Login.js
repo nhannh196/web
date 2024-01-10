@@ -3,15 +3,17 @@ import { connect, useDispatch } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom'
 import {
 	loadingToggleAction, loginAction,
-} from '../../store/actions/AuthActions';
-import axios from 'axios';
-
+} from '../../../store/actions/AuthActions';
+import "./login.css"
 // image
 
-import BgImage from "../../images/bg.png";
-import logo from "../../images/logo-full.png";
-import logolight from "../../images/logo-full-light.png";
-import pol from "../../images/pol.jpg";
+// import BgImage from "../../images/bg.png";
+import BgImage from "../../../images/bg.png";
+
+// import logo from "../../../images/logo-full.png";
+
+// import logolight from "../../images/logo-full-light.png";
+import pol from "../../../images/pol.jpg";
 import { ToastContainer } from 'react-toastify';
 
 
@@ -50,7 +52,7 @@ function Login(props) {
 	return (
 		<div className="card">
 			<div className="card-body p-0">
-				<div className="row m-0">
+				<div className="row m-0 login-body">
 					<div className="col-xl-6 col-md-6 sign text-center sign-bg" style={{ backgroundImage: 'url(' + pol + ')' }}>
 						<div>
 							<div className="text-center my-5">
@@ -68,9 +70,9 @@ function Login(props) {
 						</div>
 					</div>
 					<div className="col-xl-6 col-md-6" >
-						<div className="sign-in-your px-2">
+						<div id="sign-in-form">
 							<h4 className="fs-20 ">Sign in your account</h4>
-							<span>Welcome back! Login with your data that you entered<br /> during registration</span>
+							<span>Welcome back! Login with your data that you entered during registration</span>
 							{/* <div className="login-social">
 											<Link to={"#"} className="btn btn-primary  d-block my-3"><i className="fab fa-google me-2"></i>Login with Google</Link>
 											<Link to={"#"} className="btn btn-secondary  d-block my-3"><i className="fab fa-facebook-f me-2 facebook-log"></i>Login with Facebook</Link>
@@ -131,8 +133,8 @@ function Login(props) {
 					</div>
 				</div>
 			</div>
-			<ToastContainer/>
-		</div>	
+			<ToastContainer />
+		</div>
 	);
 };
 
