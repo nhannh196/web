@@ -432,64 +432,64 @@ const DataStocks = () => {
                                             </th>
                                         </tr>
                                     </thead>
-                                    {loading ?
-                                        <div class="spinner-border" role="status"
-                                        >
-                                            <span class="sr-only">Loading...</span>
-                                        </div>
-                                        :
-                                        <tbody>
-                                            {
-                                                !isNotFound && (
-                                                    currentItems.map((data, index) => {
-                                                        return (
-                                                            <tr key={index}>
-                                                                <td className="stock-name">
-                                                                    {data.stockName}
-                                                                </td>
-                                                                <td>
-                                                                    {(parseDate(data.date))}
-                                                                </td>
-                                                                <td>
-                                                                    {data.volume}
-                                                                </td>
-                                                                <td>
-                                                                    {data.openPrice}
-                                                                </td>
-                                                                <td>
-                                                                    {data.high}
-                                                                </td>
-                                                                <td>
-                                                                    {data.low}
-                                                                </td>
-                                                                <td>
-                                                                    {data.closePrice}
-                                                                </td>
-                                                                <td className="action-table">
-                                                                    <Link className="me-2 shadow btn-xs sharp edit-stock" title="Edit" onClick={() => { setShowEdit(!showEdit); setStockEdit(data) }}><i class="bi bi-pencil-fill"></i></Link>
-                                                                    <Link className="me-2 shadow btn-xs sharp delete-stock" title="Delete" onClick={() => { handleDelete(data.stockCode) }}><i className="fa fa-close color-danger"></i></Link>
 
-                                                                </td>
-                                                            </tr>
-                                                        )
-                                                    })
-                                                )
-                                            }
-                                            {
-                                                isNotFound && (
-                                                    <tr style={{ cursor: 'default', pointerEvents: 'none' }}>
-                                                        <td colSpan={8}>
-                                                            <div className='d-flex flex-column py-2 align-items-center justify-content-center'>
-                                                                <h4>No Result Found</h4>
-                                                                <span>Please try again with another keywords</span>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                )
-                                            }
+                                    <tbody>
+                                        {loading ?
+                                            <div class="spinner-border" role="status"
+                                            >
+                                                <span class="sr-only">Loading...</span>
+                                            </div>
+                                            :
+                                            !isNotFound && (
+                                                currentItems.map((data, index) => {
+                                                    return (
+                                                        <tr key={index}>
+                                                            <td className="stock-name">
+                                                                {data.stockName}
+                                                            </td>
+                                                            <td>
+                                                                {(parseDate(data.date))}
+                                                            </td>
+                                                            <td>
+                                                                {data.volume}
+                                                            </td>
+                                                            <td>
+                                                                {data.openPrice}
+                                                            </td>
+                                                            <td>
+                                                                {data.high}
+                                                            </td>
+                                                            <td>
+                                                                {data.low}
+                                                            </td>
+                                                            <td>
+                                                                {data.closePrice}
+                                                            </td>
+                                                            <td className="action-table">
+                                                                <Link className="me-2 shadow btn-xs sharp edit-stock" title="Edit" onClick={() => { setShowEdit(!showEdit); setStockEdit(data) }}><i class="bi bi-pencil-fill"></i></Link>
+                                                                <Link className="me-2 shadow btn-xs sharp delete-stock" title="Delete" onClick={() => { handleDelete(data.stockCode) }}><i className="fa fa-close color-danger"></i></Link>
 
-                                        </tbody>
-                                    }
+                                                            </td>
+                                                        </tr>
+                                                    )
+                                                })
+                                            )
+                                        }
+                                        {
+                                            isNotFound && (
+                                                <tr style={{ cursor: 'default', pointerEvents: 'none' }}>
+                                                    <td colSpan={8}>
+                                                        <div className='d-flex flex-column py-2 align-items-center justify-content-center'>
+                                                            <h4>No Result Found</h4>
+                                                            <span>Please try again with another keywords</span>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            )
+                                        }
+
+                                    </tbody>
+                                    
                                 </Table>
                             </Card.Body>
                             <ReactPaginate

@@ -82,6 +82,11 @@ const Markup = () => {
   const routeAuthor = (role) => {
     //Un Authentication
     if (role === null || role === undefined) {
+      // let routes = [
+      //   { url: "login", component: <Login /> },
+      //   { url: "register", component: <Registration /> },
+      // ]
+      // setAllRoutes([...routesDefault, ...routes])
       setAllRoutes(routesDefault)
     }
     //Users
@@ -136,8 +141,8 @@ const Markup = () => {
       <Routes>
         {!isLogin() &&
           <Route element={<Layout1 />}>
-            <Route path='login' exact element={<Login />} />
-            <Route path='register' exact element={<Registration />} />
+            <Route path='/login' exact element={<Login />} />
+            <Route path='/register' exact element={<Registration />} />
           </Route>
         }
         <Route element={<Layout7 />}>

@@ -115,7 +115,7 @@ const FavoriteStocks = () => {
             }).catch((err) => {
                 console.log(err)
             }).finally(() => setLoading(false))
-    },[])
+    }, [listMyFavorite])
 
     //load list favorite
     useEffect(() => {

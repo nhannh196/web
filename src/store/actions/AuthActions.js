@@ -51,7 +51,9 @@ export function signupAction(username, email, fullname, password, navigate) {
 export function Logout(navigate) {
     localStorage.removeItem('userDetails');
     localStorage.removeItem('accessToken');
-    navigate('/login');
+    // navigate('/login');
+    window.location.href="/login";
+
     //history.push('/login');
 
     return {
@@ -65,10 +67,11 @@ export function loginAction(email, password, navigate) {
             .then((response) => {
                 //userDetails   
                 saveTokenInLocalStorage(response.data.token)
-                const navigateLoginSuccess=document.getElementById('login-success')
-                navigateLoginSuccess.click()
+                // const navigateLoginSuccess = document.getElementById('login-success')
+                // navigateLoginSuccess.click()
                 // navigate('/');
-                window.location.reload();
+                // window.location.reload(false);
+                window.location.href = "/"
             })
             .catch((error) => {
                 console.log(error);

@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect, useDispatch } from 'react-redux';
-import { useLocation, useNavigate, useParams,Link } from 'react-router-dom';
+import { useLocation, useNavigate, useParams, Link } from 'react-router-dom';
 
 import { Logout } from '../../../store/actions/AuthActions';
 import { isAuthenticated } from '../../../store/selectors/AuthSelectors';
@@ -31,14 +31,18 @@ function LogoutPage(props) {
     // dispatch(loadingToggleAction(false));
     const navigateLogoutSuccess = document.getElementById('logout-success')
     // localStorage.removeItem('userDetails');
-    localStorage.removeItem('accessToken');
-    navigateLogoutSuccess.click();
-    //  dispatch(Logout(navigate));      
-    window.location.reload();
+    // localStorage.removeItem('accessToken');
+    // navigateLogoutSuccess.click();
+     dispatch(Logout(navigate));      
+    // window.location.href = `/login`
+    // window.location.reload()
   }
+
+  console.log(window.location)
+
   return (
     <>
-      <button className="dropdown-item ai-icon" onClick={()=>onLogout()}>
+      <button className="dropdown-item ai-icon" onClick={() => onLogout()}>
         <svg
           id="icon-logout" xmlns="http://www.w3.org/2000/svg"
           className="text-danger me-1" width={18} height={18} viewBox="0 0 24 24"
