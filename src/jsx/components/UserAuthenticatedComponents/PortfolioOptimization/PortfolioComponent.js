@@ -609,12 +609,13 @@ const PortfolioComponent = () => {
                     obj = {
                         ticker: stock.nameStock,
                         // dailyProfit: findDailyProfit(stock.nameStock),
-                        value: parseValuesTo4Decimal((stock.xValue / response.data.sum) )* 100,
+                        value: Number((parseValuesTo4Decimal((stock.xValue / response.data.sum))*100).toFixed(2)) ,
                         expectedReturn: parseValuesTo4Decimal(stock.expectedReturn),
                         standardDeviation: parseValuesTo4Decimal(stock.standardDeviation)
 
                     }
-
+                    console.log(obj.value)
+                    console.log(0.3702*100)
                     data = [...data, obj]
 
                 })
@@ -636,7 +637,7 @@ const PortfolioComponent = () => {
                 //     labels = [...labels, "Not investing"]
                 //     series = [...series, 100 - total]
                 // }
-                console.log(data)
+      
                 // setLabelsPieChart(labels)
                 // setSeriesPieChart(series)
                 setlistDataportfolioView(data)
@@ -675,7 +676,9 @@ const PortfolioComponent = () => {
                     getStockFromSystem()
                         .then((response) => {
                             setLoadingStockInvestmentportfolio(false)
+                            console.log(response.data)
                             setListStockportfolio([...listStockportfolio, ...response.data])
+                            console.log(listStockportfolio)
                         }).catch(error => console.log(error))
                     setMessageError('')
                 }
@@ -692,17 +695,17 @@ const PortfolioComponent = () => {
 
     const isNotFound = !currentItems?.length
     let stockDraw = { stockName: stockNameDraw, date: dateDraw }
-    console.log(window.innerHeight)
+
     const sizeChart = () => {
-        let result={};
+        let result = {};
         if (window.innerHeight >= 900) {
-            result = {width: 1000, height: 690}
-        } else if (window.innerHeight >=750 && window.innerHeight < 900){
-            result =  {width: 860, height: 502}
-        }else{
-            result =  {width: 800, height: 360}
+            result = { width: 1000, height: 690 }
+        } else if (window.innerHeight >= 750 && window.innerHeight < 900) {
+            result = { width: 860, height: 502 }
+        } else {
+            result = { width: 800, height: 360 }
         }
-            return result
+        return result
     }
     return (
         <>

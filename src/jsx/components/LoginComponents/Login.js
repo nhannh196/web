@@ -44,6 +44,7 @@ function Login(props) {
 		}
 		dispatch(loadingToggleAction(true));
 		dispatch(loginAction(username, password, navigate));
+		
 	}
 
 	const element = document.querySelector("body");
@@ -126,6 +127,7 @@ function Login(props) {
 									</div>
 								</div>
 								<div className="text-center">
+									<Link to="/home" id='login-success'></Link>
 									<button type="submit" className="btn btn-primary btn-block">Sign Me In</button>
 								</div>
 							</form>

@@ -107,14 +107,15 @@ const FavoriteStocks = () => {
 
     //load list stock detail to view
     useEffect(() => {
+        setLoading(true)
         apiGetDetailStockFavorite()
             .then((result) => {
                 console.log(result.data)
                 setListStockDetails(result.data)
             }).catch((err) => {
                 console.log(err)
-            });
-    })
+            }).finally(() => setLoading(false))
+    },[])
 
     //load list favorite
     useEffect(() => {
