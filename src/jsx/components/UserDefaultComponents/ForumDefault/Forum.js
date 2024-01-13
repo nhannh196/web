@@ -238,163 +238,162 @@ function Forum() {
     }
 
     return (
-        <>
-            {/* <div id="scrollableDiv" className="row"> */}
 
 
-
-            {
-                loading ?
-                    <div class="spinner-border" role="status"
-                    >
-                        <span class="sr-only">Loading...</span>
-                    </div>
-                    :
-                    listPostsView.length > 0 ?
-                        listPostsView.map((post, index) => {
-                            return (
-                                <div key={post.postId}>
-                                    <div className="card">
-                                        <div className="card-body">
-                                            <div className="course-content d-flex flex-wrap">
-                                                <div class="initial-avatar-forum header-item">
-                                                    {convertFullName(post.fullName)}
-                                                </div>
-                                                <div className="forum-details">
-                                                    <div className='forum-author'><strong>{post.fullName}</strong></div>
-                                                    <div className='forum-date' >{post.activationDateAgo}
-                                                        <div className='forum-date-details'>{parseDate(post.activationDate)}</div>
+        <div className="row">
+            <div className="col-xl-12">
+                {
+                    loading ?
+                        <div class="spinner-border" role="status"
+                        >
+                            <span class="sr-only">Loading...</span>
+                        </div>
+                        :
+                        listPostsView.length > 0 ?
+                            listPostsView.map((post, index) => {
+                                return (
+                                    <div key={post.postId}>
+                                        <div className="card">
+                                            <div className="card-body">
+                                                <div className="course-content d-flex flex-wrap">
+                                                    <div class="initial-avatar-forum header-item">
+                                                        {convertFullName(post.fullName)}
                                                     </div>
-                                                </div>
-                                            </div>
-
-                                            <div className="course-details-tab style-2">
-                                                <h6>{post.title}</h6>
-                                                {post.content.length < 100 ?
-                                                    <>
-                                                        <div className="forum">
-                                                            <p>{post.content}</p>
+                                                    <div className="forum-details">
+                                                        <div className='forum-author'><strong>{post.fullName}</strong></div>
+                                                        <div className='forum-date' >{post.activationDateAgo}
+                                                            <div className='forum-date-details'>{parseDate(post.activationDate)}</div>
                                                         </div>
-
-                                                    </>
-                                                    :
-                                                    <>
-                                                        {listShowDetail.includes(post.postId) ?
-                                                            <>
-                                                                <div className="">
-                                                                    <p>{post.content}</p>
-                                                                </div>
-                                                                <a href='#' onClick={(e) => { handleShowDetail(post.postId, e) }}><h5>Hide</h5></a>
-                                                            </>
-
-                                                            :
-
-                                                            <>
-                                                                <div className="">
-                                                                    <p>{post.content.slice(0, 200)}<strong><a href='#' onClick={(e) => { handleShowDetail(post.postId, e) }}> ... and more</a></strong></p>
-                                                                </div>
-                                                            </>
-
-                                                        }
-
-                                                    </>
-                                                }
-                                                <div className='d-flex justify-content-between count-total-post'>
-                                                    <div className='d-flex total-react-post'>
-                                                        <div><i class="bi bi-hand-thumbs-up-fill" title='Like'></i> {post.likeCount}</div>
-                                                        <div>|</div>
-                                                        <div><i class="bi bi-hand-thumbs-down-fill" title='Dislike'></i> {post.dislikeCount}</div>
                                                     </div>
-                                                    <div title='Comments'>{post.commentCount} <i class="bi bi-chat-dots-fill"></i></div>
                                                 </div>
-                                                {/* <a href='#' onClick={(e) => { handleShowDetail(post.postId, e) }}><h5>{listShowDetail.includes(post.postId) ? "Hide" : "More..."}</h5></a> */}
 
-                                                <Tab.Container activeKey={listShowComments.includes(post.postId) ? "Comments" : ""}>
-                                                    <Nav className="nav nav-tabs tab-auto forum-nav" id="nav-tab" role="tablist">
-                                                        <Nav.Link className="forum-nav-link" eventKey="Comments" onClick={e => handleShowCommentClick(post.postId)}><i class="bi bi-chat-dots-fill"></i> Commnets</Nav.Link>
-                                                        <Nav.Link className="forum-nav-link react-nav-link" eventKey="React">
-                                                            {isLogin() ?
+                                                <div className="course-details-tab style-2">
+                                                    <h6>{post.title}</h6>
+                                                    {post.content.length < 100 ?
+                                                        <>
+                                                            <div className="forum">
+                                                                <p>{post.content}</p>
+                                                            </div>
+
+                                                        </>
+                                                        :
+                                                        <>
+                                                            {listShowDetail.includes(post.postId) ?
                                                                 <>
-                                                                    <div className='menu-react'>
-                                                                        <>
-                                                                            <div className=' like active' onClick={(e) => { handleLikeClick(post.postId); e.preventDefault() }}><i class="bi bi-hand-thumbs-up-fill"></i></div>
-                                                                            <div className=' dislike active' onClick={() => handleDislikeClick(post.postId)}><i class="bi bi-hand-thumbs-down-fill"></i></div>
-                                                                        </>
+                                                                    <div className="">
+                                                                        <p>{post.content}</p>
                                                                     </div>
-                                                                    {!!react(post.postId) === true ?
-                                                                        react(post.postId).status === "Like" ?
-                                                                            <>
-                                                                                <div className='react like active' onClick={() => handleLikeClick(post.postId)}><i class="bi bi-hand-thumbs-up-fill"></i> Like</div>
+                                                                    <a href='#' onClick={(e) => { handleShowDetail(post.postId, e) }}><h5>Hide</h5></a>
+                                                                </>
 
+                                                                :
+
+                                                                <>
+                                                                    <div className="">
+                                                                        <p>{post.content.slice(0, 200)}<strong><a href='#' onClick={(e) => { handleShowDetail(post.postId, e) }}> ... and more</a></strong></p>
+                                                                    </div>
+                                                                </>
+
+                                                            }
+
+                                                        </>
+                                                    }
+                                                    <div className='d-flex justify-content-between count-total-post'>
+                                                        <div className='d-flex total-react-post'>
+                                                            <div><i class="bi bi-hand-thumbs-up-fill" title='Like'></i> {post.likeCount}</div>
+                                                            <div>|</div>
+                                                            <div><i class="bi bi-hand-thumbs-down-fill" title='Dislike'></i> {post.dislikeCount}</div>
+                                                        </div>
+                                                        <div title='Comments'>{post.commentCount} <i class="bi bi-chat-dots-fill"></i></div>
+                                                    </div>
+                                                    {/* <a href='#' onClick={(e) => { handleShowDetail(post.postId, e) }}><h5>{listShowDetail.includes(post.postId) ? "Hide" : "More..."}</h5></a> */}
+
+                                                    <Tab.Container activeKey={listShowComments.includes(post.postId) ? "Comments" : ""}>
+                                                        <Nav className="nav nav-tabs tab-auto forum-nav" id="nav-tab" role="tablist">
+                                                            <Nav.Link className="forum-nav-link" eventKey="Comments" onClick={e => handleShowCommentClick(post.postId)}><i class="bi bi-chat-dots-fill"></i> Commnets</Nav.Link>
+                                                            <Nav.Link className="forum-nav-link react-nav-link" eventKey="React">
+                                                                {isLogin() ?
+                                                                    <>
+                                                                        <div className='menu-react'>
+                                                                            <>
+                                                                                <div className=' like active' onClick={(e) => { handleLikeClick(post.postId); e.preventDefault() }}><i class="bi bi-hand-thumbs-up-fill"></i></div>
+                                                                                <div className=' dislike active' onClick={() => handleDislikeClick(post.postId)}><i class="bi bi-hand-thumbs-down-fill"></i></div>
                                                                             </>
+                                                                        </div>
+                                                                        {!!react(post.postId) === true ?
+                                                                            react(post.postId).status === "Like" ?
+                                                                                <>
+                                                                                    <div className='react like active' onClick={() => handleLikeClick(post.postId)}><i class="bi bi-hand-thumbs-up-fill"></i> Like</div>
+
+                                                                                </>
+                                                                                :
+                                                                                <>
+                                                                                    <div className='react dislike active' onClick={() => handleDislikeClick(post.postId)}><i class="bi bi-hand-thumbs-down-fill"></i> Dislike</div>
+
+                                                                                </>
+
                                                                             :
                                                                             <>
-                                                                                <div className='react dislike active' onClick={() => handleDislikeClick(post.postId)}><i class="bi bi-hand-thumbs-down-fill"></i> Dislike</div>
-
-                                                                            </>
-
-                                                                        :
-                                                                        <>
-                                                                            <div className='like' onClick={() => handleLikeClick(post.postId)}><i class="bi bi-hand-thumbs-up-fill"></i> Like</div>
-                                                                        </>}
-                                                                </>
-                                                                :
-                                                                <>
-                                                                    <div title='Login to use'><i class="bi bi-hand-thumbs-up-fill"></i>Like</div>
-                                                                    {/* <div title='Login to use'><i class="bi bi-hand-thumbs-down-fill"></i> </div> */}
-                                                                </>
-                                                            }
-                                                        </Nav.Link>
-                                                    </Nav>
-                                                    <Tab.Content>
-                                                        <Tab.Pane eventKey="Comments" className='tab-comments'>
-                                                            {commentsOfPost.map((data, ind) => (
-                                                                data.postId === post.postId && (
-                                                                    <div className='d-flex' key={ind}>
-                                                                        <div class="initial-avatar-comment">
-                                                                            {convertFullName(post.fullName)}
-                                                                        </div>
-                                                                        <div className="comment-details" key={ind}>
-                                                                            <div>
-                                                                                <div className='comment-author'>{data.fullName}</div>
-                                                                                <div className='comment-date'>{parseDate(data.commentDate)}</div>
-                                                                            </div>
-                                                                            <div className="comment-content">{data.content}</div>
-                                                                        </div>
-
-                                                                    </div>
-
-                                                                )
-                                                            ))}
-
-                                                            <div className="comment">
-                                                                <h3 className="heading">Leave Comment</h3>
-                                                                {isLogin() ?
-                                                                    <> <div className="row">
-                                                                        <div className="col-xl-12">
-                                                                            <div className="mb-3">
-                                                                                {/* <label htmlFor="exampleFormControlTextarea3" className="form-label mb-2">Messasge</label> */}
-                                                                                <textarea value={comment} onChange={(e) => { setComment(e.target.value) }} className="form-control" id="exampleFormControlTextarea3" rows="3" placeholder="Messasge" />
-                                                                                {commentError && <p style={{ color: 'red' }}>Please input comment</p>}
-                                                                            </div>
-                                                                        </div>
-                                                                        <div>
-                                                                            <button onClick={() => {
-                                                                                handleSubmitComment(post.postId, userDetails.userId, comment)
-                                                                                console.log(userDetails)
-                                                                            }} className="btn btn-primary" type="submit">Submit Comment</button>
-                                                                        </div>
-                                                                    </div></>
+                                                                                <div className='like' onClick={() => handleLikeClick(post.postId)}><i class="bi bi-hand-thumbs-up-fill"></i> Like</div>
+                                                                            </>}
+                                                                    </>
                                                                     :
-                                                                    <><Button className="me-2" variant="primary" style={{ width: '100%' }}>
-                                                                        <Link to="/login">Login to use</Link>
-                                                                    </Button></>
+                                                                    <>
+                                                                        <div title='Login to use'><i class="bi bi-hand-thumbs-up-fill"></i>Like</div>
+                                                                        {/* <div title='Login to use'><i class="bi bi-hand-thumbs-down-fill"></i> </div> */}
+                                                                    </>
                                                                 }
+                                                            </Nav.Link>
+                                                        </Nav>
+                                                        <Tab.Content>
+                                                            <Tab.Pane eventKey="Comments" className='tab-comments'>
+                                                                {commentsOfPost.map((data, ind) => (
+                                                                    data.postId === post.postId && (
+                                                                        <div className='d-flex' key={ind}>
+                                                                            <div class="initial-avatar-comment">
+                                                                                {convertFullName(post.fullName)}
+                                                                            </div>
+                                                                            <div className="comment-details" key={ind}>
+                                                                                <div>
+                                                                                    <div className='comment-author'>{data.fullName}</div>
+                                                                                    <div className='comment-date'>{parseDate(data.commentDate)}</div>
+                                                                                </div>
+                                                                                <div className="comment-content">{data.content}</div>
+                                                                            </div>
 
-                                                            </div>
-                                                        </Tab.Pane>
-                                                        <Tab.Pane eventKey="Report">
-                                                            {/* <div>
+                                                                        </div>
+
+                                                                    )
+                                                                ))}
+
+                                                                <div className="comment">
+                                                                    <h3 className="heading">Leave Comment</h3>
+                                                                    {isLogin() ?
+                                                                        <> <div className="row">
+                                                                            <div className="col-xl-12">
+                                                                                <div className="mb-3">
+                                                                                    {/* <label htmlFor="exampleFormControlTextarea3" className="form-label mb-2">Messasge</label> */}
+                                                                                    <textarea value={comment} onChange={(e) => { setComment(e.target.value) }} className="form-control" id="exampleFormControlTextarea3" rows="3" placeholder="Messasge" />
+                                                                                    {commentError && <p style={{ color: 'red' }}>Please input comment</p>}
+                                                                                </div>
+                                                                            </div>
+                                                                            <div>
+                                                                                <button onClick={() => {
+                                                                                    handleSubmitComment(post.postId, userDetails.userId, comment)
+                                                                                    console.log(userDetails)
+                                                                                }} className="btn btn-primary" type="submit">Submit Comment</button>
+                                                                            </div>
+                                                                        </div></>
+                                                                        :
+                                                                        <><Button className="me-2" variant="primary" style={{ width: '100%' }}>
+                                                                            <Link to="/login">Login to use</Link>
+                                                                        </Button></>
+                                                                    }
+
+                                                                </div>
+                                                            </Tab.Pane>
+                                                            <Tab.Pane eventKey="Report">
+                                                                {/* <div>
                                                                     {isLogin() ?
                                                                         !!react(post.postId) === true ?
                                                                             react(post.postId).status === "Like" ?
@@ -441,23 +440,23 @@ function Forum() {
                                                                     }
 
                                                                 </div> */}
-                                                        </Tab.Pane>
-                                                    </Tab.Content>
-                                                </Tab.Container>
+                                                            </Tab.Pane>
+                                                        </Tab.Content>
+                                                    </Tab.Container>
 
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                            )
-                        })
-                        :
-                        <h4>No post in forum</h4>
-            }
+                                )
+                            })
+                            :
+                            <h4>No post in forum</h4>
+                }
+            </div>
+        </div>
 
 
-            {/* </div> */}
-        </>
     )
 }
 

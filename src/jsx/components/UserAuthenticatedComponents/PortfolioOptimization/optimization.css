@@ -204,7 +204,10 @@ i:hover {
     }
 }
 
-
+/* .tr-fixed{
+    z-index: 99;
+    position: fixed;
+} */
 
 #show-portfolio-modal-body {
     padding-bottom: 0;

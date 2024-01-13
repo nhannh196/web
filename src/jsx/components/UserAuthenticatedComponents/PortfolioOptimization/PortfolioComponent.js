@@ -77,7 +77,10 @@ const PortfolioComponent = () => {
     //Stock id to dilter
     const [stockIdFilter, setStockIdFilter] = useState('')
     //List Stock portfolio
-    const [listStockportfolio, setListStockportfolio] = useState([]);
+    const [listStockportfolio, setListStockportfolio] = useState(() => {
+        const result = JSON.parse(sessionStorage.getItem('listStockportfolio'))
+        return result || []
+    });
 
     //List stock view
     // const [listStocksView, setListStocksView] = useState([])
@@ -201,22 +204,7 @@ const PortfolioComponent = () => {
         return `${year}-${month}-${day}`;
     }
 
-    //Get stock data
-    const filterStock = () => {
-        let dateRelease = ""
-        if (dateFilter === "") {
-            dateRelease = ""
-        } else {
-            dateRelease = formatDateToYYYYMMDD(dateFilter);
-        }
-        const data = {
-            nameStock: stockIdFilter,
-            dateRelease: dateRelease
-        }
-        return axios.post(
-            `${baseURL}/api/Stocks/ViewPost`, data
-        )
-    }
+
 
     //
     const checkStockTiker = (stockId) => {
@@ -309,15 +297,6 @@ const PortfolioComponent = () => {
         setDateRelease("")
     }
 
-    //options for portfolio
-    const options = [
-        { value: true, label: "Daily" },
-        { value: false, label: "Month" },
-        // { value: "vanilla", label: "Vanilla" },
-    ];
-    const [selectedOption, setSelectedOption] = useState(null);
-    // const [selectedSuggestion, setSelectedSuggestion] = useState(null);
-
     //api portfolio for select stock
     const portfolioOfUsers = () => {
         const data = listStockportfolio.map((stock) => stock.ticker)
@@ -326,7 +305,7 @@ const PortfolioComponent = () => {
 
     //api get stock from system
     const getStockFromSystem = () => {
-        return axiosInstance.post(`/api/Stocks/GetListStockName?quantity=${desiredQuantity}`)
+        return axiosInstance.post(`/api/Stocks/GetListStockName?quantity=${25}`)
     }
     //method Round to four decimal places
     const parseValuesTo4Decimal = (value) => {
@@ -346,6 +325,7 @@ const PortfolioComponent = () => {
     const getChart = (stockName) => {
         return axiosInstance.post(`/api/Stocks/GetStockChart?ticker=${stockName}&option=1`)
     }
+
     useEffect(() => {
         // setListDataToDrawDailyProfit([])
         let dataStock = []
@@ -609,13 +589,13 @@ const PortfolioComponent = () => {
                     obj = {
                         ticker: stock.nameStock,
                         // dailyProfit: findDailyProfit(stock.nameStock),
-                        value: Number((parseValuesTo4Decimal((stock.xValue / response.data.sum))*100).toFixed(2)) ,
+                        value: Number((parseValuesTo4Decimal((stock.xValue / response.data.sum)) * 100).toFixed(2)),
                         expectedReturn: parseValuesTo4Decimal(stock.expectedReturn),
                         standardDeviation: parseValuesTo4Decimal(stock.standardDeviation)
 
                     }
                     console.log(obj.value)
-                    console.log(0.3702*100)
+                    console.log(0.3702 * 100)
                     data = [...data, obj]
 
                 })
@@ -637,7 +617,7 @@ const PortfolioComponent = () => {
                 //     labels = [...labels, "Not investing"]
                 //     series = [...series, 100 - total]
                 // }
-      
+
                 // setLabelsPieChart(labels)
                 // setSeriesPieChart(series)
                 setlistDataportfolioView(data)
@@ -661,25 +641,43 @@ const PortfolioComponent = () => {
         }
         return true;
     }
+    const checkStockInList = (stockFind, listStock) => {
+        return listStock.some((stock) => {
+            return stock.ticker === stockFind
+        })
+    }
     //handle submit suggestion
     const handleSuggestions = () => {
         if (desiredQuantity === null || desiredQuantity === undefined || desiredQuantity === '') {
             setMessageError('Please input desired quantity stock')
         } else {
             if (validateNumber(desiredQuantity)) {
-                if (desiredQuantity < 1) {
+                if (Number(desiredQuantity) < 1) {
                     setMessageError('Please input desired quantity > 0')
-                } else if (desiredQuantity > 25) {
+                } else if (Number(desiredQuantity) > 25) {
                     setMessageError('Please input desired quantity <= 25')
+                } else if ((Number(desiredQuantity) + listStockportfolio.length) > 25) {
+                    console.log(desiredQuantity)
+                    setMessageError(`Please input desired quantity <= ${25 - listStockportfolio.length}, system we only optimize max 25 stocks`)
                 } else {
                     setLoadingStockInvestmentportfolio(true)
                     getStockFromSystem()
                         .then((response) => {
-                            setLoadingStockInvestmentportfolio(false)
                             console.log(response.data)
-                            setListStockportfolio([...listStockportfolio, ...response.data])
-                            console.log(listStockportfolio)
+                            let quantity = Number(desiredQuantity)
+                            let listSystem = []
+                            response.data.map((stock) => {
+                                if (quantity > 0) {
+                                    if (!checkStockInList(stock.ticker, listStockportfolio)) {
+                                        listSystem = [...listSystem, { ...stock, system: true }]
+                                        quantity -= 1
+                                    }
+                                }
+                            })
+                            setListStockportfolio([...listStockportfolio, ...listSystem])
+                            // console.log(listStockportfolio)
                         }).catch(error => console.log(error))
+                        .finally(() => { setLoadingStockInvestmentportfolio(false) })
                     setMessageError('')
                 }
             } else {
@@ -707,6 +705,10 @@ const PortfolioComponent = () => {
         }
         return result
     }
+
+    useEffect(() => {
+        sessionStorage.setItem('listStockportfolio', JSON.stringify(listStockportfolio))
+    }, [listStockportfolio])
     return (
         <>
             <div className="row">
@@ -970,9 +972,14 @@ const PortfolioComponent = () => {
                                                                     <span className="me-3 me-lg-2">
                                                                         {ind + 1}
                                                                     </span>
-                                                                    <div className="user-info">
-                                                                        <h6 className="name">{stock.ticker}</h6>
-                                                                    </div>
+                                                                    {stock.system ?
+                                                                        <div className="user-info">
+                                                                            <h6 className="name">{stock.ticker}*</h6>
+                                                                        </div>
+                                                                        :
+                                                                        <div className="user-info">
+                                                                            <h6 className="name">{stock.ticker}</h6>
+                                                                        </div>}
                                                                 </div>
                                                                 <div className="justify-content-end">
                                                                     <span className="justify-content-end btn-xs sharp">
@@ -1052,8 +1059,8 @@ const PortfolioComponent = () => {
                                                                     <h6>Estimated profit: {dataportfolio.rr?.toFixed(4)}%</h6>}
                                                                 {dataportfolio.sum && <h6>Sum of rate: 100%</h6>}
                                                                 <Table responsive>
-                                                                    <thead>
-                                                                        <tr>
+                                                                    <thead >
+                                                                        <tr >
                                                                             <th>
                                                                                 <strong>STOCK CODE</strong>
                                                                             </th>
