@@ -65,7 +65,6 @@ const ManagePosts = () => {
     }
     //handle ban click
     const handleBanClick = (postId) => {
-
         swal({
             // title: "Do you want to report this post ?",
             text:
@@ -87,7 +86,45 @@ const ManagePosts = () => {
                 apiBan(postId)
                     .then((res) => {
                         console.log(res)
-                        notifySusscess("Baned successfully",3000)
+                        notifySusscess("Baned successfully", 3000)
+                        loadHistory()
+                    })
+                    .catch((err) => console.log(err))
+            } else {
+                console.log("no")
+                return;
+            }
+        })
+    }
+
+    //api unban
+    const apiUnBan = (postId) => {
+        return axiosInstance.put(`/api/ForumPosts/UnBanForumPost/${postId}`)
+    }
+    //handle ban click
+    const handleUnBanClick = (postId) => {
+        swal({
+            // title: "Do you want to report this post ?",
+            text:
+                `Do you want to unban post with post id is ${postId}?`,
+            buttons:
+            {
+                Yes: {
+                    text: 'Yes',
+                    value: true
+                },
+                No: {
+                    text: 'No',
+                    value: false
+                },
+            }
+        }).then((res) => {
+            if (res) {
+                console.log("ban")
+                apiUnBan(postId)
+                    .then((res) => {
+                        console.log(res)
+                        notifySusscess("Unbaned successfully", 3000)
                         loadHistory()
                     })
                     .catch((err) => console.log(err))
@@ -181,7 +218,7 @@ const ManagePosts = () => {
 
                                                                 {post.baned ?
                                                                     <td className='btn-action-manage' title='UnBan'>
-                                                                        <Link><i class="bi bi-unlock-fill"></i> UnBan</Link>
+                                                                        <Link onClick={() => handleUnBanClick(post.postId)}><i class="bi bi-unlock-fill" ></i> UnBan</Link>
                                                                     </td>
                                                                     :
                                                                     <td className='btn-action-manage' title='Ban'>
