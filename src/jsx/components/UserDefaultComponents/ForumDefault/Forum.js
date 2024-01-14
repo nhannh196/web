@@ -10,23 +10,26 @@ import { axiosInstance } from '../../../../services/AxiosConfig';
 import './forum.css'
 import { getUserDetails } from '../../../../services/AuthService';
 import { get } from 'lodash';
+import { compareNumbers } from '@fullcalendar/react';
+import swal from "sweetalert";
+import { ToastContainer, toast } from "react-toastify";
 
 function Forum() {
-    const [socialModal, setSocialModal] = useState();
-    const [isOpen, setOpen] = useState(false);
     const [loading, setLoading] = useState(false);
-
+    const [loadingReport, setLoadingReport] = useState(false)
     const [comment, setComment] = useState("");
-    const [commentError, setCommentError] = useState(false);
+    const [commentError, setCommentError] = useState({});
     const [listPosts, setListPosts] = useState([])
-    const [hasMore, setHasMore] = useState(true)
     const [listShowDetail, setListShowDetail] = useState([])
-    const [listShowComments, setListShowComments] = useState([])
+    const [listShowTab, setListShowTab] = useState([])
     const [commentsOfPost, setCommentsOfPost] = useState([])
     const [listPostsView, setListPostsView] = useState([])
-    const [startOffset, setStartOffset] = useState(0)
     //list react
     const [listReact, setListReact] = useState([])
+    //report contetn
+    const [report, setReport] = useState({})
+    //messages report
+    const [reportError, setReportError] = useState({})
 
     //test 
     //get list react
@@ -175,25 +178,33 @@ function Forum() {
         e.preventDefault();
     }
 
+    //handle submit coment
     const handleSubmitComment = (postId, userId, comment) => {
-        if (comment.trim().length == 0) {
-            setCommentError(true)
-            return;
+        if (comment[postId]?.trim() === '' || comment[postId]?.trim() === undefined) {
+            setCommentError({ ...commentError, [postId]: true })
+        } else {
+            const data = {
+                postId: postId,
+                userId: userId,
+                content: comment[postId],
+            }
+            const response = axiosInstance.post('/api/Comments', data)
+                .then((response) => {
+                    // setCommentsOfPost([...commentsOfPost, response.data])
+                    getComment()
+                    setComment({ ...comment, [postId]: "" })
+                    setCommentError({ ...commentError, [postId]: false })
+
+                })
+                .catch(error => console.log(error))
         }
-        const data = {
-            postId: postId,
-            userId: userId,
-            content: comment,
-        }
-        const response = axiosInstance.post('/api/Comments', data)
-            .then((response) => {
-                // setCommentsOfPost([...commentsOfPost, response.data])
-                getComment()
-                setComment('')
-                setCommentError(false)
-            })
-            .catch(error => console.log(error))
     }
+
+    //handle get comment change
+    const getCommentOnchange = (postId) => {
+        return comment[postId]
+    }
+
 
     const parseDate = (date) => {
         let dateParse = date.split('T');
@@ -223,23 +234,112 @@ function Forum() {
         }
     }
 
-    //handle show comment 
-    const handleShowCommentClick = (postId) => {
-        if (listShowComments.includes(postId)) {
-            let newList = listShowComments.filter((data) => {
-                return data !== postId
-            })
-            setListShowComments(newList)
-            console.log(newList)
-        } else {
-
-            setListShowComments([...listShowComments, postId])
+    const handleShowTabClick = (postId, tabView) => {
+        let tabExists = false;
+        const newListTab = listShowTab.map((tab) => {
+            if (tab?.postId === postId) {
+                tabExists = true;
+                return {
+                    ...tab,
+                    tabView: tab.tabView === tabView ? "" : tabView
+                };
+            }
+            return tab;
+        });
+        if (!tabExists) {
+            newListTab.push({ postId: postId, tabView: tabView });
         }
+        setListShowTab(newListTab);
+    };
+
+    const tabKey = (postId) => {
+        let tab = listShowTab.find((tab) => tab.postId === postId)
+        return tab?.tabView || ""
+    }
+
+    //api report
+    const apiReport = (data) => {
+        return axiosInstance.post(`/api/Reports`, data)
+    }
+
+    //handle submit report
+    const handleSubmitReport = (postId) => {
+        if (report[postId]?.trim() === '' || report[postId]?.trim() === undefined) {
+            setReportError({ ...reportError, [postId]: "Please enter content report!" })
+        } else {
+            swal({
+                // title: "Do you want to report this post ?",
+                text:
+                    "Do you really want to report this post?",
+                buttons:
+                {
+                    Yes: {
+                        text: 'Yes',
+                        value: true
+                    },
+                    No: {
+                        text: 'No',
+                        value: false
+                    },
+                }
+            }).then((res) => {
+                if (res) {
+                    const data = {
+                        postId: postId,
+                        userId: userDetails.userId,
+                        content: report[postId],
+                    }
+                    console.log("report success")
+                    setLoadingReport(true)
+                    apiReport(data)
+                        .then((response) => {
+                            setReport({ ...report, [postId]: "" })
+                            setReportError({ ...reportError, [postId]: '' })
+                            notifySusscess("Reported successfully", 2000)
+                        })
+                        .catch(error => {
+                            console.log(error.message)
+                            if (error.message === "Request failed with status code 400") {
+                                setReportError({ ...reportError, [postId]:'You have reported this post before.' })
+                                notifyFailure("Reported failed", 3000)
+                            }
+
+                        })
+                        .finally(() => setLoadingReport(false))
+                } else {
+                    return;
+                }
+            })
+
+        }
+    }
+    console.log(report)
+
+    const notifySusscess = (message, timeClose) => {
+        toast.success(`✔️ ${message} !`, {
+            position: "top-center",
+            autoClose: timeClose,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+        });
+    };
+
+    const notifyFailure = (message, timeClose) => {
+        toast.error(`❌ ${message} !`, {
+            position: "top-center",
+            autoClose: timeClose,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+        });
     }
 
     return (
-
-
         <div className="row">
             <div className="col-xl-12">
                 {
@@ -308,9 +408,11 @@ function Forum() {
                                                     </div>
                                                     {/* <a href='#' onClick={(e) => { handleShowDetail(post.postId, e) }}><h5>{listShowDetail.includes(post.postId) ? "Hide" : "More..."}</h5></a> */}
 
-                                                    <Tab.Container activeKey={listShowComments.includes(post.postId) ? "Comments" : ""}>
+                                                    <Tab.Container
+                                                        activeKey={tabKey(post.postId)}
+                                                    >
                                                         <Nav className="nav nav-tabs tab-auto forum-nav" id="nav-tab" role="tablist">
-                                                            <Nav.Link className="forum-nav-link" eventKey="Comments" onClick={e => handleShowCommentClick(post.postId)}><i class="bi bi-chat-dots-fill"></i> Commnets</Nav.Link>
+                                                            <Nav.Link className="forum-nav-link" eventKey="Comments" onClick={e => handleShowTabClick(post.postId, "Comments")}><i class="bi bi-chat-dots-fill"></i> Commnets</Nav.Link>
                                                             <Nav.Link className="forum-nav-link react-nav-link" eventKey="React">
                                                                 {isLogin() ?
                                                                     <>
@@ -344,6 +446,8 @@ function Forum() {
                                                                     </>
                                                                 }
                                                             </Nav.Link>
+                                                            <Nav.Link className="forum-nav-link" eventKey="Report" onClick={e => handleShowTabClick(post.postId, "Report")}>
+                                                                <i class="bi bi-exclamation-triangle-fill"></i> Report</Nav.Link>
                                                         </Nav>
                                                         <Tab.Content>
                                                             <Tab.Pane eventKey="Comments" className='tab-comments'>
@@ -373,14 +477,15 @@ function Forum() {
                                                                             <div className="col-xl-12">
                                                                                 <div className="mb-3">
                                                                                     {/* <label htmlFor="exampleFormControlTextarea3" className="form-label mb-2">Messasge</label> */}
-                                                                                    <textarea value={comment} onChange={(e) => { setComment(e.target.value) }} className="form-control" id="exampleFormControlTextarea3" rows="3" placeholder="Messasge" />
-                                                                                    {commentError && <p style={{ color: 'red' }}>Please input comment</p>}
+                                                                                    <textarea value={comment[post.postId]}
+                                                                                        onChange={(e) => setComment({ ...comment, [post.postId]: e.target.value })} className="form-control" id="exampleFormControlTextarea3" rows="3" placeholder="Messasge" />
+                                                                                    {commentError[post.postId] && <p className='message-error'>Please input comment</p>}
                                                                                 </div>
                                                                             </div>
                                                                             <div>
                                                                                 <button onClick={() => {
                                                                                     handleSubmitComment(post.postId, userDetails.userId, comment)
-                                                                                    console.log(userDetails)
+
                                                                                 }} className="btn btn-primary" type="submit">Submit Comment</button>
                                                                             </div>
                                                                         </div></>
@@ -392,54 +497,30 @@ function Forum() {
 
                                                                 </div>
                                                             </Tab.Pane>
-                                                            <Tab.Pane eventKey="Report">
-                                                                {/* <div>
-                                                                    {isLogin() ?
-                                                                        !!react(post.postId) === true ?
-                                                                            react(post.postId).status === "Like" ?
-                                                                                <div className="row">
-                                                                                    <div className="react">
-                                                                                        <button className='react-button react-like' onClick={() => handleLikeClick(post.postId)} title='Like'>
-                                                                                            <i class="bi bi-hand-thumbs-up-fill"></i>
-                                                                                        </button>
-                                                                                        <button className='react-button'
-                                                                                            onClick={() => handleDislikeClick(post.postId)} title='Dislike'>
-                                                                                            <i class="bi bi-hand-thumbs-down-fill"></i>
-                                                                                        </button>
-                                                                                    </div>
-                                                                                </div>
-                                                                                :
-                                                                                <div className="row">
-                                                                                    <div className="react">
-                                                                                        <button className='react-button' onClick={() => handleLikeClick(post.postId)} title='Like'>
-                                                                                            <i class="bi bi-hand-thumbs-up-fill"></i>
-                                                                                        </button>
-                                                                                        <button className='react-button react-dislike' onClick={() => handleDislikeClick(post.postId)} title='Dislike'>
-                                                                                            <i class="bi bi-hand-thumbs-down-fill"></i>
-                                                                                        </button>
-                                                                                    </div>
-                                                                                </div>
+                                                            <Tab.Pane eventKey="Report" className='tab-comments'>
 
-                                                                            :
-                                                                            <div className="row">
-                                                                                <div className="react">
-                                                                                    <button className='react-button' onClick={() => handleLikeClick(post.postId)} title='Like'>
-                                                                                        <i class="bi bi-hand-thumbs-up-fill"></i>
-                                                                                    </button>
-                                                                                    <button className='react-button' onClick={() => handleDislikeClick(post.postId)} title='Dislike'>
-                                                                                        <i class="bi bi-hand-thumbs-down-fill"></i>
-                                                                                    </button>
+                                                                <div className="comment">
+                                                                    <h3 className="heading">Please carefully review the content of the post and the report before reporting.</h3>
+                                                                    {isLogin() ?
+                                                                        <div className="row">
+                                                                            <div className="col-xl-12">
+                                                                                <div className="mb-3">
+                                                                                    <textarea value={report[post.postId]} onChange={(e) => setReport({ ...report, [post.postId]: e.target.value })} className="form-control" id="exampleFormControlTextarea3" rows="3" placeholder="Content report" />
+                                                                                    {reportError[post.postId] && <p className='message-error'>{reportError[post.postId]}</p>}
                                                                                 </div>
                                                                             </div>
+                                                                            <div>
+                                                                                <button onClick={() => {
+                                                                                    handleSubmitReport(post.postId);
+                                                                                }} className="btn btn-primary" type="submit">Submit </button>
+                                                                            </div>
+                                                                        </div>
                                                                         :
-                                                                        <>
-                                                                            <Button className="me-2" variant="primary" style={{ width: '100%' }}>
-                                                                                <Link to="/login">Login to use</Link>
-                                                                            </Button>
-                                                                        </>
+                                                                        <><Button className="me-2" variant="primary" style={{ width: '100%' }}>
+                                                                            <Link to="/login">Login to use</Link>
+                                                                        </Button></>
                                                                     }
-
-                                                                </div> */}
+                                                                </div>
                                                             </Tab.Pane>
                                                         </Tab.Content>
                                                     </Tab.Container>
@@ -454,9 +535,8 @@ function Forum() {
                             <h4>No post in forum</h4>
                 }
             </div>
+            <ToastContainer />
         </div>
-
-
     )
 }
 

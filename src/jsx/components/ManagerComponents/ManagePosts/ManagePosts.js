@@ -12,7 +12,9 @@ import {
 } from "react-bootstrap";
 import { axiosInstance } from '../../../../services/AxiosConfig';
 import swal from "sweetalert";
+import { ToastContainer, toast } from "react-toastify";
 import { Link } from 'react-router-dom';
+import "./manage-posts.css"
 
 // import "./list-new-posts.css"
 const ManagePosts = () => {
@@ -40,7 +42,7 @@ const ManagePosts = () => {
     useEffect(() => {
         loadHistory()
     }, [])
-    
+
     const parseDate = (date) => {
         let dateParse = date.split('T');
         let dateChange = dateParse[0].split('-').reverse();
@@ -57,7 +59,57 @@ const ManagePosts = () => {
         setShowPostDetail(true)
     }
 
- 
+    //api ban
+    const apiBan = (postId) => {
+        return axiosInstance.put(`/api/ForumPosts/BanForumPost/${postId}`)
+    }
+    //handle ban click
+    const handleBanClick = (postId) => {
+
+        swal({
+            // title: "Do you want to report this post ?",
+            text:
+                `Do you want to ban post with post id is ${postId}?`,
+            buttons:
+            {
+                Yes: {
+                    text: 'Yes',
+                    value: true
+                },
+                No: {
+                    text: 'No',
+                    value: false
+                },
+            }
+        }).then((res) => {
+            if (res) {
+                console.log("ban")
+                apiBan(postId)
+                    .then((res) => {
+                        console.log(res)
+                        notifySusscess("Baned successfully",3000)
+                        loadHistory()
+                    })
+                    .catch((err) => console.log(err))
+            } else {
+                console.log("no")
+                return;
+            }
+        })
+    }
+
+    const notifySusscess = (message, timeClose) => {
+        toast.success(`✔️ ${message} !`, {
+            position: "top-center",
+            autoClose: timeClose,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+        });
+    };
+
     console.log(listHistory)
     return (
         <>
@@ -73,9 +125,10 @@ const ManagePosts = () => {
                                     <thead>
                                         <tr>
                                             <th>
+                                                <strong>Post Id</strong>
                                             </th>
                                             <th>
-                                                <strong>User</strong>
+                                                <strong>User post</strong>
                                             </th>
                                             <th>
                                                 <strong>Title</strong>
@@ -89,6 +142,10 @@ const ManagePosts = () => {
                                             <th>
                                                 <strong>Action</strong>
                                             </th>
+                                            <th>
+
+                                            </th>
+
                                         </tr>
                                     </thead>
 
@@ -105,7 +162,7 @@ const ManagePosts = () => {
                                                         return (
                                                             <tr key={index}>
                                                                 <td>
-                                                                    <strong>{index + 1}</strong>
+                                                                    <strong>{post.postId}</strong>
                                                                 </td>
                                                                 <td>{post.fullName}</td>
                                                                 {post.title.length < 60 ?
@@ -121,9 +178,20 @@ const ManagePosts = () => {
                                                                     :
                                                                     <td ><span className="light badge-danger badge">Disapproved</span></td>
                                                                 }
+
+                                                                {post.baned ?
+                                                                    <td className='btn-action-manage' title='UnBan'>
+                                                                        <Link><i class="bi bi-unlock-fill"></i> UnBan</Link>
+                                                                    </td>
+                                                                    :
+                                                                    <td className='btn-action-manage' title='Ban'>
+                                                                        <Link onClick={() => handleBanClick(post.postId)}> <i class="bi bi-lock-fill"></i> Ban</Link>
+                                                                    </td>
+                                                                }
                                                                 <td>
-                                                                    <Link onClick={()=>handleClickDetail(post.postId)}><i class="bi bi-card-list"></i> Detail</Link>
+                                                                    <Link onClick={() => handleClickDetail(post.postId)}><i class="bi bi-card-list"></i> Detail</Link>
                                                                 </td>
+
                                                             </tr>
                                                         )
                                                     })
@@ -170,8 +238,9 @@ const ManagePosts = () => {
                         </div>
                     </div>
                 </ModalBody>
-               
+
             </Modal>
+            <ToastContainer />
         </>
     )
 }
