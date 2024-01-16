@@ -9,6 +9,7 @@ import axios from "axios";
 import "./forgot-password.css"
 import swal from "sweetalert";
 import { useNavigate } from "react-router-dom";
+import { isInvalidPassword } from "../../../services/ValidateInput";
 const ForgotPassword = () => {
     const [loading, setLoading] = useState(false)
     const [messageError, setMessageError] = useState('')
@@ -31,8 +32,9 @@ const ForgotPassword = () => {
     //check new password
     const checkPassword = (newPass, newPassAgain) => {
         let message = ''
-        if (newPass?.trim() === '') {
-            message = { ...message, newPasswordError: "Please enter a new password" }
+        isInvalidPassword(newPass)
+        if (isInvalidPassword(newPass)) {
+            message = { ...message, newPasswordError: isInvalidPassword(newPass) }
         } else {
             if (newPassAgain?.trim() === '') {
                 message = { ...message, newPasswordAgainError: "Please enter new password again" }
@@ -164,9 +166,9 @@ const ForgotPassword = () => {
                 <Card>
                     <Card.Header><h5>Forgot password</h5></Card.Header>
                     <Card.Body className="body-forgot-pass">
-                        <div className="row">
+                        
                             {loading ?
-                                <div class="spinner-border-forgot" role="status"
+                                <div class="spinner-border-forgot spinner-border" role="status"
                                 >
                                     <span class="sr-only">Loading...</span>
                                 </div> :
@@ -224,7 +226,7 @@ const ForgotPassword = () => {
                                     }
                                 </>
                             }
-                        </div>
+                       
                     </Card.Body>
                     {messageError.errorMessageApi && <p className="message-error d-flex justify-content-center">{messageError.errorMessageApi}</p>}
 

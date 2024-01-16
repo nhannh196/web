@@ -2,7 +2,7 @@
     text-align: center !important;
 }
 
-@media (min-height:900px) {
+/* @media (min-height:900px) {
     #sign-up-form{
         height: 820px;
     }
@@ -18,4 +18,8 @@
     #sign-up-form{
         height: 500px;
     }
+} */
+
+#sign-up-form{
+    height: fit-content;
 }

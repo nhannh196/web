@@ -4,6 +4,7 @@ import "./change-password.css"
 import { axiosInstance } from "../../../services/AxiosConfig"
 import { getUserDetails, isLogin } from "../../../services/AuthService"
 import { ToastContainer, toast } from "react-toastify";
+import { isInvalidPassword } from "../../../services/ValidateInput"
 
 
 const ChangePassword = () => {
@@ -39,8 +40,9 @@ const ChangePassword = () => {
     //check input 
     const checkInput = (input) => {
         let message = ''
-        if (input.currentPassword?.trim() === '') {
-            message = { ...message, errorCurrentPassword: "Please enter current password!" }
+        
+        if (isInvalidPassword(input.currentPassword)) {
+            message = { ...message, errorCurrentPassword: isInvalidPassword(input.currentPassword) }
         }
         if (input.newPassword?.trim() === '') {
             message = { ...message, errorNewPassword: "Please enter new password!" }

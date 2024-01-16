@@ -28,13 +28,13 @@ export const COLUMNS = [
 		accessor: 'email',
 		Filter: ColumnFilter,
 	},
-	{
-		Header : 'Date of  Birth',
-		Footer : 'Date of  Birth',
-		accessor: 'dateOfBirth',
-		Cell: ({ value }) => {return format(new Date(value), 'dd/mm/yyyy')},
-		Filter: ColumnFilter,
-	},
+	// {
+	// 	Header : 'Date of  Birth',
+	// 	Footer : 'Date of  Birth',
+	// 	accessor: 'dateOfBirth',
+	// 	Cell: ({ value }) => {return format(new Date(value), 'dd/mm/yyyy')},
+	// 	Filter: ColumnFilter,
+	// },
 	{
 		Header : 'Status',
 		Footer : 'Status',

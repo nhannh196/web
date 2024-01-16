@@ -9,6 +9,7 @@ import CheckOtp from "../CheckOtpComponents/CheckOtp";
 import axios from "axios";
 import { Button } from "react-bootstrap";
 import { axiosInstance, baseURL } from "../../../services/AxiosConfig";
+import { isInvalidEmail, isInvalidFullname, isInvalidPassword, isInvalidUsername } from "../../../services/ValidateInput";
 
 // image
 // import logo from "../../images/logo-full.png";
@@ -45,8 +46,8 @@ function Register(props) {
   // check input in fields
   const checkInput = async () => {
     let message = {}
-    if (username === undefined || username.trim() === '') {
-      message = { ...message, userNameError: "Username is required" }
+    if (isInvalidUsername(username)) {
+      message = { ...message, userNameError: isInvalidUsername(username) }
     } else {
       try {
         let check = await checkUserName(username)
@@ -57,22 +58,21 @@ function Register(props) {
         console.log(error)
       }
     }
-    if (password === undefined || password.trim() === '') {
-      message = { ...message, passwordError: "Password is required" }
+
+    if (isInvalidPassword(password)) {
+      message = { ...message, passwordError: isInvalidPassword(password) }
     }
-    if (fullName === undefined || fullName.trim() === '') {
-      message = { ...message, fullNameError: "Fullname is required" }
+    if (isInvalidFullname(fullName)) {
+      message = { ...message, fullNameError: isInvalidFullname(fullName) }
     }
-    if (email === undefined || email.trim() === '') {
-      message = { ...message, emailError: "Email is required" }
-    } else {
-      if (!isValidEmail(email)) {
-        message = { ...message, emailError: "Email entered is not valid" }
-      }
+    if (isInvalidEmail(email)) {
+      message = { ...message, emailError: isInvalidEmail(email) }
     }
 
     return message
   }
+
+ console.log("password:",  isInvalidPassword('a1N212!3'))
 
   // Handle sign up
   const handleSignUp = async () => {

@@ -6,15 +6,12 @@ import { Routes, Route, Outlet } from "react-router-dom";
 /// Layout
 import Nav from "./layouts/nav";
 import Nav2 from "./layouts/nav/index2";
-import Footer from "./layouts/Footer";
 import ScrollToTop from "./layouts/ScrollToTop";
-import Main from './layouts/Main';
-import WalletBar from './layouts/WalletBar';
+
 
 /// Dashboard
 import Home from "./components/UserDefaultComponents/HomeDefault/Home";
 
-import Contact from "./components/Dashboard/Contact";
 
 
 //Course
@@ -35,7 +32,7 @@ import { ThemeContext } from "../context/ThemeContext";
 import { isLogin } from "../services/AuthService";
 
 import PostNew from "./components/UserAuthenticatedComponents/PostNew/PostNew";
-import ApexChart from "./components/charts/apexcharts";
+
 import ListUsers from "./components/AdminComponents/ListUsers/ListUsers";
 import ListManagers from "./components/AdminComponents/ListManagers/ListManagers";
 import CheckOtp from "./components/CheckOtpComponents/CheckOtp";
@@ -93,7 +90,7 @@ const Markup = () => {
     if (role === 2) {
       let routes = [
         { url: "post-new", component: <PostNew /> },
-        { url: "chart-apexchart", component: <ApexChart /> },
+        // { url: "chart-apexchart", component: <ApexChart /> },
         { url: "portfolio-optimization", component: <PortfolioOptimization /> },
         { url: "manage-my-posts", component: <ManageMyPosts /> },
         { url: "change-password", component: <ChangePassword /> },

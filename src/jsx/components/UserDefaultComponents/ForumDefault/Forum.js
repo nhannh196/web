@@ -14,6 +14,30 @@ import { compareNumbers } from '@fullcalendar/react';
 import swal from "sweetalert";
 import { ToastContainer, toast } from "react-toastify";
 
+const notifySusscess = (message, timeClose) => {
+    toast.success(`✔️ ${message} !`, {
+        position: "top-center",
+        autoClose: timeClose,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+    });
+};
+
+const notifyFailure = (message, timeClose) => {
+    toast.error(`❌ ${message} !`, {
+        position: "top-center",
+        autoClose: timeClose,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+    });
+}
+
 function Forum() {
     const [loading, setLoading] = useState(false);
     const [loadingReport, setLoadingReport] = useState(false)
@@ -300,7 +324,7 @@ function Forum() {
                         .catch(error => {
                             console.log(error.message)
                             if (error.message === "Request failed with status code 400") {
-                                setReportError({ ...reportError, [postId]:'You have reported this post before.' })
+                                setReportError({ ...reportError, [postId]: 'You have reported this post before.' })
                                 notifyFailure("Reported failed", 3000)
                             }
 
@@ -315,29 +339,7 @@ function Forum() {
     }
     console.log(report)
 
-    const notifySusscess = (message, timeClose) => {
-        toast.success(`✔️ ${message} !`, {
-            position: "top-center",
-            autoClose: timeClose,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-        });
-    };
-
-    const notifyFailure = (message, timeClose) => {
-        toast.error(`❌ ${message} !`, {
-            position: "top-center",
-            autoClose: timeClose,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-        });
-    }
+    
 
     return (
         <div className="row">
@@ -500,21 +502,23 @@ function Forum() {
                                                             <Tab.Pane eventKey="Report" className='tab-comments'>
 
                                                                 <div className="comment">
-                                                                    <h3 className="heading">Please carefully review the content of the post and the report before reporting.</h3>
                                                                     {isLogin() ?
-                                                                        <div className="row">
-                                                                            <div className="col-xl-12">
-                                                                                <div className="mb-3">
-                                                                                    <textarea value={report[post.postId]} onChange={(e) => setReport({ ...report, [post.postId]: e.target.value })} className="form-control" id="exampleFormControlTextarea3" rows="3" placeholder="Content report" />
-                                                                                    {reportError[post.postId] && <p className='message-error'>{reportError[post.postId]}</p>}
+                                                                        <>
+                                                                            <h3 className="heading">Please carefully review the content of the post and the report before reporting.</h3>
+                                                                            <div className="row">
+                                                                                <div className="col-xl-12">
+                                                                                    <div className="mb-3">
+                                                                                        <textarea value={report[post.postId]} onChange={(e) => setReport({ ...report, [post.postId]: e.target.value })} className="form-control" id="exampleFormControlTextarea3" rows="3" placeholder="Content report" />
+                                                                                        {reportError[post.postId] && <p className='message-error'>{reportError[post.postId]}</p>}
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div>
+                                                                                    <button onClick={() => {
+                                                                                        handleSubmitReport(post.postId);
+                                                                                    }} className="btn btn-primary" type="submit">Submit </button>
                                                                                 </div>
                                                                             </div>
-                                                                            <div>
-                                                                                <button onClick={() => {
-                                                                                    handleSubmitReport(post.postId);
-                                                                                }} className="btn btn-primary" type="submit">Submit </button>
-                                                                            </div>
-                                                                        </div>
+                                                                        </>
                                                                         :
                                                                         <><Button className="me-2" variant="primary" style={{ width: '100%' }}>
                                                                             <Link to="/login">Login to use</Link>

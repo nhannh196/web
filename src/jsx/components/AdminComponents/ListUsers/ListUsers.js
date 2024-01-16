@@ -13,29 +13,23 @@ import { Link } from "react-router-dom";
 // import './table.css';
 import './filtering.css';
 import axios from 'axios';
-import { axiosInstance } from '../../../../services/AxiosConfig';
+import { axiosInstance, baseURL } from '../../../../services/AxiosConfig';
+import { isInvalidEmail, isInvalidFullname, isInvalidPassword, isInvalidUsername } from '../../../../services/ValidateInput';
+import { ToastContainer, toast } from "react-toastify";
 
 const init = false;
 const initialState = false;
-const reducer = (stateAction, active) => {
-	switch (active.type) {
 
-		case 'changeStatusAccount':
-			return { ...stateAction, changeStatusAccount: !stateAction.changeStatusAccount }
-		case 'editProfile':
-			return { ...stateAction, editProfile: !stateAction.editProfile }
-		default:
-			return stateAction
-	}
-}
 
 export const ListUsers = () => {
 	const [listUsers, setListUsers] = useState([])
-	const [stateAction, dispatch] = useReducer(reducer, initialState);
+	// const [stateAction, dispatch] = useReducer(reducer, initialState);
 	const columns = useMemo(() => COLUMNS, [])
 	const [user, setUser] = useState({})
-	const [clickSave, setClickSave] = useState(true)
-
+	const [clickSave, setClickSave] = useState(false)
+	const [message, setMessage] = useState({});
+	const [showEdit, setShowEdit] = useState(false)
+	const [showChangeStatus, setShowChangeStatus] = useState(false)
 	useEffect(() => {
 		getListUser()
 	}, [user])
@@ -52,27 +46,71 @@ export const ListUsers = () => {
 				setListUsers(listNeed)
 			}).catch(err => console.log(err));
 	}
-	const changeStatusClickSave = () => {
-		updateUser()
-		setClickSave(!clickSave)
-	}
 
-	const updateUser = () => {
+
+
+
+	// check input in fields
+	const checkInput = (input) => {
+		let message = {}
+
+		if (isInvalidFullname(input.fullName)) {
+			message = { ...message, fullNameError: isInvalidFullname(input.fullName) }
+		}
+		if (isInvalidEmail(input.email)) {
+			message = { ...message, emailError: isInvalidEmail(input.email) }
+		}
+		return message
+	}
+	// console.log(user)
+	const notifySusscess = (message, timeClose) => {
+		toast.success(`✔️ ${message} !`, {
+			position: "top-center",
+			autoClose: timeClose,
+			hideProgressBar: false,
+			closeOnClick: true,
+			pauseOnHover: true,
+			draggable: true,
+			progress: undefined,
+		});
+	};
+	//handle save edit
+	const handleClickSaveEdit = () => {
 		const data = {
 			userId: user.userId,
 			username: user.username,
 			password: user.password,
 			fullName: user.fullName,
-			dateOfBirth: user.dateOfBirth,
+			// dateOfBirth: user.dateOfBirth,
 			registrationDate: user.registrationDate,
 			roleId: user.roleId,
 			email: user.email,
 			baned: user.baned
 		}
-		const response = axiosInstance.put(`/api/UsersAdmin/${user.userId}`, data)
-			.then((response) => {
-				setUser({});
-			}).catch(err => console.log(err))
+		const message = checkInput(user)
+		console.log("check user:", checkInput(user))
+		if (JSON.stringify(message) === "{}") {
+			console.log("save")
+			apiUpdateUser(data)
+				.then(() => {
+					getListUser()
+					notifySusscess("Edit successfully", 3000)
+					setUser({});
+					setMessage(message)
+					setShowEdit(!showEdit)
+				})
+				.catch(err => console.log(err))
+		} else {
+			console.log("chua save")
+			setMessage(message)
+
+		}
+
+	}
+
+	//api udate user
+	const apiUpdateUser = (data) => {
+		return axiosInstance.put(`/api/UsersAdmin/${user.userId}`, data)
 	}
 
 	const changeStatusAccount = () => {
@@ -89,6 +127,7 @@ export const ListUsers = () => {
 		}
 		const response = axiosInstance.put(`/api/UsersAdmin/${user.userId}`, data)
 			.then((response) => {
+				notifySusscess(`${data.baned ? 'Baned successfully' : 'Unbaned successfully'}`, 3000)
 				setUser({});
 			}).catch(err => console.log(err))
 	}
@@ -96,10 +135,7 @@ export const ListUsers = () => {
 
 	const [userUpdate, setUserUpdate] = useState({})
 
-	const data = useMemo(() => {
-		// getListUser()
-		return listUsers
-	}, [listUsers])
+	const data = listUsers
 	const tableInstance = useTable({
 		columns,
 		data,
@@ -205,10 +241,10 @@ export const ListUsers = () => {
 													</Dropdown.Toggle>
 													<Dropdown.Menu>
 														<Dropdown.Item>
-															<div to={"#"} onClick={() => { dispatch({ type: 'editProfile' }); setUser(row.original) }}>Edit</div>
+															<div to={"#"} onClick={() => { setShowEdit(!showEdit); setUser(row.original) }}>Edit</div>
 														</Dropdown.Item>
 														<Dropdown.Item>
-															<div variant="primary" type="button" className="mb-2 me-1" onClick={() => { dispatch({ type: 'changeStatusAccount' }); setUser(row.original) }}>
+															<div variant="primary" type="button" className="mb-2 me-1" onClick={() => { setShowChangeStatus(!showChangeStatus); setUser(row.original) }}>
 																{row.original.baned ? "UnBan" : "Ban"}
 															</div>
 														</Dropdown.Item>
@@ -256,73 +292,75 @@ export const ListUsers = () => {
 					</div>
 				</div>
 			</div>
-			<Modal className="modal fade" show={stateAction.editProfile} onHide={() => dispatch({ type: 'editProfile' })} centered>
+			<Modal className="modal fade" show={showEdit} centered>
 				<div className="modal-content">
 					<div className="modal-header">
 						<h5 className="modal-title">Profile</h5>
-						<Button variant="" type="button" className="btn-close" data-dismiss="modal" onClick={() => dispatch({ type: 'editProfile' })}>
-
+						<Button variant="" type="button" className="btn-close" data-dismiss="modal" onClick={() => { setShowEdit(!showEdit); setMessage({}) }}>
 						</Button>
 					</div>
-					{user &&
-						<div className="modal-body">
-							<form className="comment-form" onSubmit={(e) => { e.preventDefault(); dispatch({ type: 'editProfile' }); }}>
-								<div className="row">
-									<div className="col-lg-12">
-										<div className="form-group mb-3">
-											<label htmlFor="author" className="text-black font-w600">  Username  </label>
-											<input onChange={(e) => onChangeInput(e)} type="text" className="form-control" defaultValue={user.username} name="username" placeholder="Username" />
-										</div>
-									</div>
-									<div className="col-lg-12">
-										<div className="form-group mb-3">
-											<label htmlFor="email" className="text-black font-w600"> Full name </label>
-											<input onChange={(e) => onChangeInput(e)} type="text" className="form-control" defaultValue={user.fullName} placeholder="Full name" name="fullName" />
-										</div>
-									</div>
-									<div className="col-lg-12">
-										<div className="form-group mb-3">
-											<label htmlFor="email" className="text-black font-w600"> Email </label>
-											<input onChange={(e) => onChangeInput(e)} type="email" className="form-control" defaultValue={user.email} placeholder="Email" name="email" />
-										</div>
-									</div>
-									<div className="col-lg-12">
+
+					<div className="modal-body">
+						<div className="row">
+							<div className="col-lg-12">
+								<div className="form-group mb-3">
+									<label htmlFor="author" className="text-black font-w600">  Username  </label>
+									<input readOnly onChange={(e) => onChangeInput(e)} type="text" className="form-control" defaultValue={user.username} name="username" placeholder="Username" />
+								</div>
+							</div>
+							<div className="col-lg-12">
+								<div className="form-group mb-3">
+									<label htmlFor="email" className="text-black font-w600"> Full name </label>
+									<input onChange={(e) => onChangeInput(e)} type="text" className="form-control" defaultValue={user.fullName} placeholder="Full name" name="fullName" />
+									{message.fullNameError && <p style={{ color: 'red' }}>{message.fullNameError}</p>}
+								</div>
+							</div>
+							<div className="col-lg-12">
+								<div className="form-group mb-3">
+									<label htmlFor="email" className="text-black font-w600"> Email </label>
+									<input onChange={(e) => onChangeInput(e)} type="email" className="form-control" defaultValue={user.email} placeholder="Email" name="email" />
+									{message.emailError && <p style={{ color: 'red' }}>{message.emailError}</p>}
+								</div>
+							</div>
+							{/* <div className="col-lg-12">
 										<div className="form-group mb-3">
 											<label htmlFor="email" className="text-black font-w600"> Date of birth </label>
 											<input onChange={(e) => onChangeInput(e)} type="text" className="form-control" defaultValue={user.dateOfBirth} placeholder="Date of birth" name="dateOfBirth" />
 										</div>
-									</div>
-									<div className="col-lg-12">
-										<div className="form-group mb-3">
-											<input type="submit" value="Save" className="submit btn btn-primary" name="submit" onClick={() => changeStatusClickSave()} />
-										</div>
-									</div>
+									</div> */}
+							<div className="col-lg-12">
+								<div className="form-group mb-3">
+									<button className="submit btn btn-primary" onClick={() => handleClickSaveEdit()} >Save</button>
 								</div>
-							</form>
+							</div>
 						</div>
-					}
+
+					</div>
+
 				</div>
 			</Modal>
-			<Modal className="fade" show={stateAction.changeStatusAccount} onHide={() => dispatch({ type: 'changeStatusAccount' })} centered>
+			<Modal className="fade" show={showChangeStatus} centered>
 				<Modal.Header>
 					<Modal.Title>Warning</Modal.Title>
-					<Button onClick={() => dispatch({ type: 'changeStatusAccount' })} variant="" className="btn-close"></Button>
+					<Button onClick={() => setShowChangeStatus(!showChangeStatus)} variant="" className="btn-close"></Button>
 				</Modal.Header>
 				<Modal.Body>
 					<p>
 						Do you want {user.baned ? "Unban" : "Ban"} this account?
 					</p>
 				</Modal.Body>
-				<Modal.Footer>
+				<Modal.Footer >
+					<Button onClick={() => { setShowChangeStatus(!showChangeStatus); changeStatusAccount() }} variant="primary">Accept</Button>
+
 					<Button
-						onClick={() => dispatch({ type: 'changeStatusAccount' })}
+						onClick={() => setShowChangeStatus(!showChangeStatus)}
 						variant="danger light"
 					>
 						Close
 					</Button>
-					<Button onClick={() => { dispatch({ type: 'changeStatusAccount' }); changeStatusAccount() }} variant="primary">Accept</Button>
 				</Modal.Footer>
 			</Modal>
+			<ToastContainer />
 		</>
 	)
 

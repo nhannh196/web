@@ -14,25 +14,13 @@ import { Link } from "react-router-dom";
 // import './table.css';
 import './filtering.css';
 import axios from 'axios';
-import { axiosInstance } from '../../../../services/AxiosConfig';
+import { axiosInstance, baseURL } from '../../../../services/AxiosConfig';
 import { getUserDetails } from '../../../../services/AuthService';
-
+import { isInvalidEmail, isInvalidFullname, isInvalidPassword, isInvalidUsername } from '../../../../services/ValidateInput';
+import { ToastContainer, toast } from "react-toastify";
 const init = false;
 const initialState = false;
-const reducer = (stateAction, active) => {
-	switch (active.type) {
-		case 'changeStatusAccount':
-			return { ...stateAction, changeStatusAccount: !stateAction.changeStatusAccount }
-		case 'editProfile':
-			return { ...stateAction, editProfile: !stateAction.editProfile }
-		case 'addNewAdmin':
-			return { ...stateAction, addNewAdmin: !stateAction.addNewAdmin }
-		case 'addNewManager':
-			return { ...stateAction, addNewManager: !stateAction.addNewManager }
-		default:
-			return stateAction
-	}
-}
+
 // const [inputMessage, setInputMessage] = useState({})
 const ListManagers = () => {
 	const userDefault = {
@@ -57,44 +45,91 @@ const ListManagers = () => {
 	const [listAdmins, setListAdmins] = useState([])
 	const [inputMessage, setInputMessage] = useState({})
 	const [responseMessage, setResponseMessage] = useState('')
-	const [stateAction, dispatch] = useReducer(reducer, initialState);
+	// const [stateAction, dispatch] = useReducer(reducer, initialState);
 	const columns = useMemo(() => COLUMNS, [])
 
 
 	const [user, setUser] = useState(userDefault)
 	const [clickSave, setClickSave] = useState(true)
 	const [tabKey, setTabKey] = useState('Managers')
+	const [showEdit, setShowEdit] = useState(false)
+	const [showChangeStatus, setShowChangeStatus] = useState(false)
+	const [showAddNew, setShowAddNew] = useState(false)
+	const [message, setMessage] = useState({});
+	const [loadList, setLoadList] = useState(false)
 
-	useEffect(() => {
-		getListUser()
-
-	}, [user])
 
 	const onChangeInput = (e) => {
 		setUser({ ...user, [e.target.name]: e.target.value })
 	}
-	const getListUser = () => {
+
+	//api get list account
+	const apiGetListAccount = () => {
 		return axiosInstance.get('/api/UsersAdmin')
+	}
+
+	const loadListAccount = () => {
+		apiGetListAccount()
 			.then((response) => {
-				const listManagers = response.data.filter((user) => {
+				let listManagers = response.data.filter((user) => {
 					return user.roleId === 3
 				})
-				const listAdmins = response.data.filter((user) => {
+				let listAdmins = response.data.filter((user) => {
 					return user.roleId === 1
 				})
+
 				setListManagers(listManagers)
 				setListAdmins(listAdmins)
-				const listDefault = [...listManagers]
-			}).catch(error=>console.log(error));
+				// const listDefault = [...listManagers]
+			}).catch(error => console.log(error));
 	}
-	const changeStatusClickSave = () => {
-		updateUser()
-		// setClickSave(!clickSave)
+	useEffect(() => {
+		loadListAccount()
+	}, [])
+
+
+	const checkUserName = (userName) => {
+		return axios.get(`${baseURL}/Users/CheckUserName?userName=${userName}`)
 	}
-
-	// const [userNameError, setUserNameError] = useState(false)
-
-	const updateUser = () => {
+	// check input add new
+	const checkInputAddNew = async (input) => {
+		let message = {}
+		if (isInvalidUsername(input.username)) {
+			message = { ...message, userNameError: isInvalidUsername(input.username) }
+		} else {
+			try {
+				let check = await checkUserName(input.username)
+				if (check.data) {
+					message = { ...message, userNameError: `Username ${input.username} is already taken` }
+				}
+			} catch (error) {
+				console.log(error)
+			}
+		}
+		if (isInvalidPassword(input.password)) {
+			message = { ...message, passwordError: isInvalidPassword(input.password) }
+		}
+		if (isInvalidFullname(input.fullName)) {
+			message = { ...message, fullNameError: isInvalidFullname(input.fullName) }
+		}
+		if (isInvalidEmail(input.email)) {
+			message = { ...message, emailError: isInvalidEmail(input.email) }
+		}
+		return message
+	}
+	// check input edit
+	const checkInputEdit = (input) => {
+		let message = {}
+		if (isInvalidFullname(input.fullName)) {
+			message = { ...message, fullNameError: isInvalidFullname(input.fullName) }
+		}
+		if (isInvalidEmail(input.email)) {
+			message = { ...message, emailError: isInvalidEmail(input.email) }
+		}
+		return message
+	}
+	//handle click save edit
+	const handleClickSaveEdit = () => {
 		const data = {
 			userId: user.userId,
 			username: user.username,
@@ -106,75 +141,67 @@ const ListManagers = () => {
 			email: user.email,
 			baned: user.baned
 		}
-		const response = axiosInstance.put(`/api/UsersAdmin/${user.userId}`, data)
-			.then((response) => {
-				setUser({});
-			}).catch(error=>console.log(error))
+		let message = checkInputEdit(data)
+		console.log(message)
+		if (JSON.stringify(message) === "{}") {
+			apiEditUser(data)
+				.then(() => {
+					console.log("Save edit")
+					loadListAccount()
+					setMessage(message)
+					setShowEdit(!showEdit)
+					notifySusscess("Edit successfully",3000)
+				})
+				.catch(err => console.log(err));
+		} else {
+			console.log("chua save edit")
+			setMessage(message)
+		}
 	}
 
-	const checkInput = (input) => {
-		let message = {}
-		if (input.username === undefined || input.username.trim() === '') {
-			message = { ...message, userNameError: "Please enter a username!" }
-		}
-		if (input.password === undefined || input.password.trim() === '') {
-			message = { ...message, passwordError: "Please enter a password!" }
-		}
-		if (input.fullName === undefined || input.fullName.trim() === '') {
-			message = { ...message, fullNameError: "Please enter a fullname!" }
-		}
-		if (input.dateOfBirth === undefined || input.dateOfBirth.trim() === '') {
-			message = { ...message, dateOfBirthError: "Please enter a date of birth!" }
-		}
-		if (input.email === undefined || input.email.trim() === '') {
-			message = { ...message, emailError: "Please enter a email" }
-		}
-		return message;
+	//api save edit
+	const apiEditUser = (data) => {
+		return axiosInstance.put(`/api/UsersAdmin/${user.userId}`, data)
 	}
-
-	const createUserManager = () => {
+	// api create manager
+	const apiCreateManager = data => {
+		return axiosInstance.post(`/api/UsersAdmin/create-manager-account`, data)
+	}
+	//api create admin
+	const apiCreateAdmin = data => {
+		return axiosInstance.post(`/api/UsersAdmin/create-admin-account`, data)
+	}
+	const createNewAccount = async () => {
 		const data = {
 			username: user.username,
 			password: user.password,
 			email: user.email,
 			fullName: user.fullName,
 		}
-		const { userNameError, passwordError } = checkInput(data)
-		if (!userNameError && !passwordError) {
-			const response = axiosInstance.post(`/api/UsersAdmin/create-manager-account`, data)
-				.then((response) => {
-					setUser(userDefault);
-					dispatch({ type: 'addNewManager' });
-				}).catch((err) => {
-					setInputMessage({ userNameError: err.response.data.message })
-				})
-		} else {
-			console.log("tao ko dc do trong")
-			setInputMessage({ userNameError, passwordError })
-			// console.log(userNameError,passwordError);
-		}
-	}
+		let message = await checkInputAddNew(data)
+		if (JSON.stringify(message) === "{}") {
+			if (tabKey === "Managers") {
+				console.log("Create Manager")
+				apiCreateManager(data)
+					.then(res => {
+						loadListAccount()
+						notifySusscess("Added successfully",3000)
+					})
+					.catch(error => console.log(error))
+			} else {
+				apiCreateAdmin(data)
+					.then(res => {
+						loadListAccount()
+						notifySusscess("Added successfully",3000)
+					})
+					.catch(error => console.log(error))
+			}
 
-	const createNewAdmin = () => {
-		const data = {
-			username: user.username,
-			password: user.password,
-			email: user.email,
-			fullName: user.fullName,
-		}
-		const { userNameError, passwordError } = checkInput(data)
-		if (!userNameError && !passwordError) {
-			const response = axiosInstance.post(`/api/UsersAdmin/create-admin-account`, data)
-				.then((response) => {
-					setUser(userDefault);
-					dispatch({ type: 'addNewAdmin' });
-				}).catch((err) => {
-					setInputMessage({ userNameError: err.response.data.message })
-				})
+			setShowAddNew(!showAddNew)
+			setUser(userDefault);
+			setMessage(message)
 		} else {
-			console.log("tao ko dc do trong")
-			setInputMessage({ userNameError, passwordError })
-			// console.log(userNameError,passwordError);
+			setMessage(message)
 		}
 
 	}
@@ -194,28 +221,27 @@ const ListManagers = () => {
 		const response = axiosInstance.put(`/api/UsersAdmin/${user.userId}`, data)
 			.then((response) => {
 				setUser({});
-			}).catch(error=>console.log(error))
+				loadListAccount()
+				notifySusscess(`${data.baned? 'Baned successfully': 'Unbaned successfully'}`,3000)
+			}).catch(error => console.log(error))
 	}
 
 	const getManage = () => {
 		setTabKey('Managers')
-		setListUsers(listManagers)
+		// setListUsers(listManagers)
 	}
 	const getAdmin = () => {
 		setTabKey('Admins')
-		setListUsers(listAdmins)
+		// setListUsers(listAdmins)
 	}
 
-	const [userUpdate, setUserUpdate] = useState({})
-
 	const data = useMemo(() => {
-		// getListUser()
 		if (tabKey === 'Managers') {
 			return listManagers
-		} else if (tabKey === 'Admins') {
+		} else {
 			return listAdmins
 		}
-	}, [listManagers, listAdmins, user, tabKey]);
+	}, [listManagers, listAdmins, tabKey]);
 	const tableInstance = useTable({
 		columns,
 		data,
@@ -253,8 +279,8 @@ const ListManagers = () => {
 	);
 
 	// const userIdOfAdmin = JSON.parse(localStorage.getItem('userDetails')).userId;
-	const [userIdOfAdmin,setUserIdOfAdmin] =useState('')
-	useEffect( () => {
+	const [userIdOfAdmin, setUserIdOfAdmin] = useState('')
+	useEffect(() => {
 		const getUserId = async () => {
 			try {
 				let respone = await getUserDetails();
@@ -264,8 +290,18 @@ const ListManagers = () => {
 			}
 		}
 		getUserId()
-	},[])
-
+	}, [])
+	const notifySusscess = (message, timeClose) => {
+		toast.success(`✔️ ${message} !`, {
+			position: "top-center",
+			autoClose: timeClose,
+			hideProgressBar: false,
+			closeOnClick: true,
+			pauseOnHover: true,
+			draggable: true,
+			progress: undefined,
+		});
+	};
 	return (
 		<>
 			{/* <PageTitle activeMenu="Filtering" motherMenu="Table" />	 */}
@@ -282,7 +318,7 @@ const ListManagers = () => {
 								<div className="">
 									<button
 										className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal"
-										onClick={() => { setInputMessage({}); setUser(userDefault); dispatch({ type: 'addNewManager' }) }}
+										onClick={() => { setShowAddNew(!showAddNew) }}
 									>Add new manager
 										<svg width="24" height="24" className="ms-1" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 											<path d="M12 3C7.05 3 3 7.05 3 12C3 16.95 7.05 21 12 21C16.95 21 21 16.95 21 12C21 7.05 16.95 3 12 3ZM12 19.125C8.1 19.125 4.875 15.9 4.875 12C4.875 8.1 8.1 4.875 12 4.875C15.9 4.875 19.125 8.1 19.125 12C19.125 15.9 15.9 19.125 12 19.125Z" fill="#FCFCFC" />
@@ -343,10 +379,10 @@ const ListManagers = () => {
 																</Dropdown.Toggle>
 																<Dropdown.Menu>
 																	<Dropdown.Item>
-																		<div to={"#"} onClick={() => { dispatch({ type: 'editProfile' }); setUser(row.original) }}>Edit</div>
+																		<div to={"#"} onClick={() => { setShowEdit(!showEdit); setUser(row.original) }}>Edit</div>
 																	</Dropdown.Item>
 																	<Dropdown.Item>
-																		<div variant="primary" type="button" className="mb-2 me-1" onClick={() => { dispatch({ type: 'changeStatusAccount' }); setUser(row.original) }}>
+																		<div variant="primary" type="button" className="mb-2 me-1" onClick={() => { setShowChangeStatus(!showChangeStatus); setUser(row.original) }}>
 																			{row.original.baned ? "UnBan" : "Ban"}
 																		</div>
 																	</Dropdown.Item>
@@ -400,7 +436,7 @@ const ListManagers = () => {
 								<div className="">
 									<button
 										className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal"
-										onClick={() => { setInputMessage({}); setUser(userDefault); dispatch({ type: 'addNewAdmin' }) }}
+										onClick={() => { setShowAddNew(!showAddNew) }}
 									>Add new admin
 										<svg width="24" height="24" className="ms-1" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 											<path d="M12 3C7.05 3 3 7.05 3 12C3 16.95 7.05 21 12 21C16.95 21 21 16.95 21 12C21 7.05 16.95 3 12 3ZM12 19.125C8.1 19.125 4.875 15.9 4.875 12C4.875 8.1 8.1 4.875 12 4.875C15.9 4.875 19.125 8.1 19.125 12C19.125 15.9 15.9 19.125 12 19.125Z" fill="#FCFCFC" />
@@ -457,10 +493,10 @@ const ListManagers = () => {
 																	</Dropdown.Toggle>
 																	<Dropdown.Menu>
 																		<Dropdown.Item>
-																			<div to={"#"} onClick={() => { dispatch({ type: 'editProfile' }); setUser(row.original) }}>Edit</div>
+																			<div to={"#"} onClick={() => { setShowEdit(!showEdit); setUser(row.original) }}>Edit</div>
 																		</Dropdown.Item>
 																		<Dropdown.Item>
-																			<div variant="primary" type="button" className="mb-2 me-1" onClick={() => { dispatch({ type: 'changeStatusAccount' }); setUser(row.original) }}>
+																			<div variant="primary" type="button" className="mb-2 me-1" onClick={() => { setShowChangeStatus(!showChangeStatus); setUser(row.original) }}>
 																				{row.original.baned ? "UnBan" : "Ban"}
 																			</div>
 																		</Dropdown.Item>
@@ -511,129 +547,71 @@ const ListManagers = () => {
 					</TabContent>
 				</Tab.Container>
 			</div>
-			<Modal className="modal fade" show={stateAction.addNewAdmin} onHide={() => dispatch({ type: 'addNewAdmin' })} centered>
+			<Modal className="modal fade" show={showAddNew} centered>
 				<div className="modal-content">
 					<div className="modal-header">
-						<h5 className="modal-title">New Admin</h5>
-						<Button variant="" type="button" className="btn-close" data-dismiss="modal" onClick={() => dispatch({ type: 'addNewAdmin' })}>
+						<h5 className="modal-title">New {tabKey}</h5>
+						<Button variant="" type="button" className="btn-close" data-dismiss="modal" onClick={() => setShowAddNew(!showAddNew)}>
 
 						</Button>
 					</div>
 					{
 						<div className="modal-body">
-							<form className="comment-form" onSubmit={(e) => { e.preventDefault() }}>
-								<div className="row">
-									<div className="col-lg-12">
 
-										<div className="form-group mb-3">
-											<label htmlFor="author" className="text-black font-w600">  Username
-												<span class="required">*</span>
-											</label>
-											<input onChange={(e) => onChangeInput(e)} type="text" className="form-control" defaultValue="" name="username" placeholder="Username" />
-											{inputMessage.userNameError && <p style={{ color: 'red' }}>{inputMessage.userNameError}</p>}
-										</div>
+							<div className="row">
+								<div className="col-lg-12">
+
+									<div className="form-group mb-3">
+										<label htmlFor="author" className="text-black font-w600">  Username
+										</label>
+										<input onChange={(e) => onChangeInput(e)} type="text" className="form-control" defaultValue="" name="username" placeholder="Username" />
+										{message.userNameError && <p style={{ color: 'red' }}>{message.userNameError}</p>}
 									</div>
-									<div className="col-lg-12">
-										<div className="form-group mb-3">
-											<label htmlFor="email" className="text-black font-w600"> Password
-												<span class="required">*</span>
-											</label>
-											<input onChange={(e) => onChangeInput(e)} type="password" className="form-control" defaultValue="" placeholder="Password" name="password" />
-											{inputMessage.passwordError && <p style={{ color: 'red' }}>{inputMessage.passwordError}</p>}
-										</div>
+								</div>
+								<div className="col-lg-12">
+									<div className="form-group mb-3">
+										<label htmlFor="email" className="text-black font-w600"> Password
+										</label>
+										<input onChange={(e) => onChangeInput(e)} type="password" className="form-control" defaultValue="" placeholder="Password" name="password" />
+										{message.passwordError && <p style={{ color: 'red' }}>{message.passwordError}</p>}
 									</div>
-									<div className="col-lg-12">
-										<div className="form-group mb-3">
-											<label htmlFor="email" className="text-black font-w600"> Full name </label>
-											<input onChange={(e) => onChangeInput(e)} type="text" className="form-control" defaultValue="" placeholder="Full name" name="fullName" />
-										</div>
+								</div>
+								<div className="col-lg-12">
+									<div className="form-group mb-3">
+										<label htmlFor="email" className="text-black font-w600"> Full name </label>
+										<input onChange={(e) => onChangeInput(e)} type="text" className="form-control" defaultValue="" placeholder="Full name" name="fullName" />
+										{message.fullNameError && <p style={{ color: 'red' }}>{message.fullNameError}</p>}
 									</div>
-									<div className="col-lg-12">
-										<div className="form-group mb-3">
-											<label htmlFor="email" className="text-black font-w600"> Email </label>
-											<input onChange={(e) => onChangeInput(e)} type="email" className="form-control" defaultValue="" placeholder="Email" name="email" />
-										</div>
+								</div>
+								<div className="col-lg-12">
+									<div className="form-group mb-3">
+										<label htmlFor="email" className="text-black font-w600"> Email </label>
+										<input onChange={(e) => onChangeInput(e)} type="email" className="form-control" defaultValue="" placeholder="Email" name="email" />
+										{message.emailError && <p style={{ color: 'red' }}>{message.emailError}</p>}
 									</div>
-									<div className="col-lg-12">
+								</div>
+								{/* <div className="col-lg-12">
 										<div className="form-group mb-3">
 											<label htmlFor="email" className="text-black font-w600"> Date of birth </label>
 											<input onChange={(e) => onChangeInput(e)} type="text" className="form-control" defaultValue="" placeholder="Date of birth" name="dateOfBirth" />
 										</div>
-									</div>
-									<div className="col-lg-12">
-										<div className="form-group mb-3">
-											<input type="submit" value="Save" className="submit btn btn-primary" name="submit" onClick={() => { createNewAdmin() }} />
-										</div>
-									</div>
-								</div>
-							</form>
-						</div>
-					}
-				</div>
-			</Modal>
-			<Modal className="modal fade" show={stateAction.addNewManager} onHide={() => dispatch({ type: 'addNewManager' })} centered>
-				<div className="modal-content">
-					<div className="modal-header">
-						<h5 className="modal-title">New Managers</h5>
-						<Button variant="" type="button" className="btn-close" data-dismiss="modal" onClick={() => dispatch({ type: 'addNewManager' })}>
+									</div> */}
+								<div className="col-lg-12">
 
-						</Button>
-					</div>
-					{
-						<div className="modal-body">
-							<form className="comment-form" onSubmit={(e) => { e.preventDefault() }}>
-								<div className="row">
-									<div className="col-lg-12">
-										<div className="form-group mb-3">
-											<label htmlFor="author" className="text-black font-w600">  Username
-												<span class="required">*</span>
-											</label>
-											<input onChange={(e) => onChangeInput(e)} type="text" className="form-control" defaultValue="" name="username" placeholder="Username" />
-											{inputMessage.userNameError && <p style={{ color: 'red' }}>{inputMessage.userNameError}</p>}
-										</div>
-									</div>
-									<div className="col-lg-12">
-										<div className="form-group mb-3">
-											<label htmlFor="email" className="text-black font-w600"> Password
-												<span class="required">*</span>
-											</label>
-											<input onChange={(e) => onChangeInput(e)} type="password" className="form-control" defaultValue="" placeholder="Password" name="password" />
-											{inputMessage.passwordError && <p style={{ color: 'red' }}>{inputMessage.passwordError}</p>}
-										</div>
-									</div>
-									<div className="col-lg-12">
-										<div className="form-group mb-3">
-											<label htmlFor="email" className="text-black font-w600"> Full name </label>
-											<input onChange={(e) => onChangeInput(e)} type="text" className="form-control" defaultValue="" placeholder="Full name" name="fullName" />
-										</div>
-									</div>
-									<div className="col-lg-12">
-										<div className="form-group mb-3">
-											<label htmlFor="email" className="text-black font-w600"> Email </label>
-											<input onChange={(e) => onChangeInput(e)} type="text" className="form-control" defaultValue="" placeholder="Email" name="email" />
-										</div>
-									</div>
-									<div className="col-lg-12">
-										<div className="form-group mb-3">
-											<label htmlFor="email" className="text-black font-w600"> Date of birth </label>
-											<input onChange={(e) => onChangeInput(e)} type="text" className="form-control" defaultValue="" placeholder="Date of birth" name="dateOfBirth" />
-										</div>
-									</div>
-									<div className="col-lg-12">
-										<div className="form-group mb-3">
-											<input type="submit" value="Save" className="submit btn btn-primary" name="submit" onClick={() => { createUserManager() }} />
-										</div>
-									</div>
+									<button className="submit btn btn-primary" onClick={() => { createNewAccount() }} >Create</button>
+
 								</div>
-							</form>
+							</div>
+
 						</div>
 					}
 				</div>
 			</Modal>
-			<Modal className="fade" show={stateAction.changeStatusAccount} onHide={() => dispatch({ type: 'changeStatusAccount' })} centered>
+
+			<Modal className="fade" show={showChangeStatus} centered>
 				<Modal.Header>
 					<Modal.Title>Warning</Modal.Title>
-					<Button onClick={() => dispatch({ type: 'changeStatusAccount' })} variant="" className="btn-close"></Button>
+					<Button onClick={() => setShowChangeStatus(!showChangeStatus)} variant="" className="btn-close"></Button>
 				</Modal.Header>
 				<Modal.Body>
 					<p>
@@ -641,62 +619,65 @@ const ListManagers = () => {
 					</p>
 				</Modal.Body>
 				<Modal.Footer>
+					<Button onClick={() => { setShowChangeStatus(!showChangeStatus); changeStatusAccount() }} variant="primary">Accept</Button>
 					<Button
-						onClick={() => dispatch({ type: 'changeStatusAccount' })}
+						onClick={() => setShowChangeStatus(!showChangeStatus)}
 						variant="danger light"
 					>
 						Close
 					</Button>
-					<Button onClick={() => { dispatch({ type: 'changeStatusAccount' }); changeStatusAccount() }} variant="primary">Accept</Button>
 				</Modal.Footer>
 			</Modal>
-			<Modal className="modal fade" show={stateAction.editProfile} onHide={() => dispatch({ type: 'editProfile' })} centered>
+			<Modal className="modal fade" show={showEdit} centered>
 				<div className="modal-content">
 					<div className="modal-header">
 						<h5 className="modal-title">Profile</h5>
-						<Button variant="" type="button" className="btn-close" data-dismiss="modal" onClick={() => dispatch({ type: 'editProfile' })}>
+						<Button variant="" type="button" className="btn-close" data-dismiss="modal" onClick={() => setShowEdit(!showEdit)}>
 
 						</Button>
 					</div>
 					{user &&
 						<div className="modal-body">
-							<form className="comment-form" onSubmit={(e) => { e.preventDefault(); dispatch({ type: 'editProfile' }); }}>
-								<div className="row">
-									<div className="col-lg-12">
-										<div className="form-group mb-3">
-											<label htmlFor="author" className="text-black font-w600">  Username  </label>
-											<input onChange={(e) => onChangeInput(e)} type="text" className="form-control" defaultValue={user.username} name="username" placeholder="Username" />
-										</div>
+
+							<div className="row">
+								<div className="col-lg-12">
+									<div className="form-group mb-3">
+										<label htmlFor="author" className="text-black font-w600">  Username  </label>
+										<input readOnly onChange={(e) => onChangeInput(e)} type="text" className="form-control" defaultValue={user.username} name="username" placeholder="Username" />
 									</div>
-									<div className="col-lg-12">
-										<div className="form-group mb-3">
-											<label htmlFor="email" className="text-black font-w600"> Full name </label>
-											<input onChange={(e) => onChangeInput(e)} type="text" className="form-control" defaultValue={user.fullName} placeholder="Full name" name="fullName" />
-										</div>
+								</div>
+								<div className="col-lg-12">
+									<div className="form-group mb-3">
+										<label htmlFor="email" className="text-black font-w600"> Full name </label>
+										<input onChange={(e) => onChangeInput(e)} type="text" className="form-control" defaultValue={user.fullName} placeholder="Full name" name="fullName" />
+										{message.fullNameError && <p style={{ color: 'red' }}>{message.fullNameError}</p>}
 									</div>
-									<div className="col-lg-12">
-										<div className="form-group mb-3">
-											<label htmlFor="email" className="text-black font-w600"> Email </label>
-											<input onChange={(e) => onChangeInput(e)} type="email" className="form-control" defaultValue={user.email} placeholder="Email" name="email" />
-										</div>
+								</div>
+								<div className="col-lg-12">
+									<div className="form-group mb-3">
+										<label htmlFor="email" className="text-black font-w600"> Email </label>
+										<input onChange={(e) => onChangeInput(e)} type="email" className="form-control" defaultValue={user.email} placeholder="Email" name="email" />
+										{message.emailError && <p style={{ color: 'red' }}>{message.emailError}</p>}
 									</div>
-									<div className="col-lg-12">
+								</div>
+								{/* <div className="col-lg-12">
 										<div className="form-group mb-3">
 											<label htmlFor="email" className="text-black font-w600"> Date of birth </label>
 											<input onChange={(e) => onChangeInput(e)} type="text" className="form-control" defaultValue={user.dateOfBirth} placeholder="Date of birth" name="dateOfBirth" />
 										</div>
-									</div>
-									<div className="col-lg-12">
-										<div className="form-group mb-3">
-											<input type="submit" value="Save" className="submit btn btn-primary" name="submit" onClick={() => changeStatusClickSave()} />
-										</div>
+									</div> */}
+								<div className="col-lg-12">
+									<div className="form-group mb-3">
+										<button className="submit btn btn-primary" onClick={() => handleClickSaveEdit()}>Save</button>
 									</div>
 								</div>
-							</form>
+							</div>
+
 						</div>
 					}
 				</div>
 			</Modal>
+            <ToastContainer />
 		</>
 	)
 

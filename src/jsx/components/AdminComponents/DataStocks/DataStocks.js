@@ -62,16 +62,21 @@ const DataStocks = () => {
     }
     useEffect(() => {
         if (file) {
+            setLoading(true)
             apiLoadFile()
                 .then((result) => {
-                    setFileData(result.data)
-                    setMessageSystem('')
+                    if (result.data.length > 0) {
+                        setFileData(result.data)
+                        setMessageSystem('')
+                    } else {
+                        notifyFailure('Load file failed!', 5000)
+                        setMessageSystem('File invalid, please check file!')
+                        setFileData([])
+                    }
                 }).catch((err) => {
                     console.log(err)
-                    notifyFailure('Load file failed!', 5000)
-                    setMessageSystem('File invalid, please check file!')
-                    setFileData([])
-                })
+
+                }).finally(() => setLoading(false))
         } else {
             return;
         }
@@ -353,7 +358,8 @@ const DataStocks = () => {
 
 
     console.log(fileData)
-    const isNotFound = !(currentItems.length > 0) && (fileData || dataToSearching)
+    const isNotFound = (!(currentItems.length > 0) && searching)
+    console.log(isNotFound)
     return (
         <>
             <div className="row">
@@ -370,7 +376,7 @@ const DataStocks = () => {
                             // onClick={() => { setLoadFile(true)}}
                             ></input>
                         </div>
-                        {file &&
+                        {fileData.length>0 &&
                             <div>
                                 <button className="btn-upload-file" onClick={e => handleUpload()}>Save stocks</button>
                             </div>
@@ -489,7 +495,7 @@ const DataStocks = () => {
                                         }
 
                                     </tbody>
-                                    
+
                                 </Table>
                             </Card.Body>
                             <ReactPaginate
