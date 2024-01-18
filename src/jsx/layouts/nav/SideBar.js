@@ -39,14 +39,14 @@ const SideBar = () => {
 
   const [state, setState] = useReducer(reducer, initialState);
   const [menuList, setMenuList] = useState([])
-  useEffect(() => {
-    var btn = document.querySelector(".nav-control");
-    var aaa = document.querySelector("#main-wrapper");
-    function toggleFunc() {
-      return aaa.classList.toggle("menu-toggle");
-    }
-    btn.addEventListener("click", toggleFunc);
-  }, []);
+  // useEffect(() => {
+  //   var btn = document.querySelector(".nav-control");
+  //   var aaa = document.querySelector("#main-wrapper");
+  //   function toggleFunc() {
+  //     return aaa.classList.toggle("menu-toggle");
+  //   }
+  //   btn.addEventListener("click", toggleFunc);
+  // }, []);
 
   let handleheartBlast = document.querySelector('.heart');
   function heartBlast() {

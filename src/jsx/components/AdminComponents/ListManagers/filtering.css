@@ -76,3 +76,10 @@
         font-size:14px;
     }
 }
+.nav-action.active{
+    color: #01A3FF !important;
+}
+
+.nav-action{
+    color: #495057 !important;
+}

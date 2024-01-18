@@ -151,11 +151,11 @@ const FavoriteStocks = () => {
                                             </th>
                                             <th>
                                                 <Link><strong onClick={() => {
-                                                }}>DAILY PROFIT
+                                                }}>RETURN
                                                 </strong></Link>
                                             </th>
                                             <th>
-                                                <strong>SHARPE RATIO</strong>
+                                                <strong>RISK</strong>
                                             </th>
                                             <th>
                                                 <strong>CLOSE</strong>

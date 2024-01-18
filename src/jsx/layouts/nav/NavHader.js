@@ -32,7 +32,7 @@ const NavHader = () => {
         <img src={logoApp} width={40} height={40}/>
       </Link>
 
-      <div
+      {/* <div
         className="nav-control"
         onClick={() => {
           setToggle(!toggle);
@@ -55,7 +55,7 @@ const NavHader = () => {
             <rect y="22" width="4" height="4" rx="2" fill="#2A353A" />
           </svg>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };

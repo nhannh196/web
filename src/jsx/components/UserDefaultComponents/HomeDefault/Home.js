@@ -331,13 +331,13 @@ const Home = () => {
 												<Link><strong onClick={() => {
 													handleSortDailyProfit();
 													// setSortStockId(null)
-												}}>DAILY PROFIT
+												}}>RETURN
 													{(sortColumn === 'DailyProfit' && sortDirection === true) && <i class="bi bi-arrow-up"></i>}
 													{(sortColumn === 'DailyProfit' && sortDirection === false) && <i class="bi bi-arrow-down"></i>}
 												</strong></Link>
 											</th>
 											<th>
-												<strong>SHARPE RATIO</strong>
+												<strong>RISK</strong>
 											</th>
 											<th>
 												<strong>CLOSE</strong>
@@ -384,16 +384,18 @@ const Home = () => {
 															<td>
 																<strong>{stock.ticker}</strong>
 															</td>
-															{stock.dailyProfit >= 0 ?
+															<td className={stock.dailyProfit >= 0 ? 'positive-numbers':'negative-numbers'}>{stock.dailyProfit}</td>
+															{/* {stock.dailyProfit >= 0 ?
 																<td className='positive-numbers'>{stock.dailyProfit}</td>
 																:
 																<td className='negative-numbers'>{stock.dailyProfit}</td>
-															}
-															{parseValuesTo4Decimal(stock.sharpeRatio) >= 0 ?
+															} */}
+															<td className={parseValuesTo4Decimal(stock.sharpeRatio) >= 0?'positive-numbers':'negative-numbers'}>{parseValuesTo4Decimal(stock.sharpeRatio)}</td>
+															{/* {parseValuesTo4Decimal(stock.sharpeRatio) >= 0 ?
 																<td className='positive-numbers'>{parseValuesTo4Decimal(stock.sharpeRatio)}</td>
 																:
 																<td className='negative-numbers'>{parseValuesTo4Decimal(stock.sharpeRatio)}</td>
-															}
+															} */}
 															<td>{stock.close}</td>
 															<td>{stock.volume}</td>
 															<td>{stock.dtyyyymmdd}</td>

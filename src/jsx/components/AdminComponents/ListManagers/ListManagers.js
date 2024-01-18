@@ -308,8 +308,8 @@ const ListManagers = () => {
 			<div className="card">
 				<Tab.Container defaultActiveKey={tabKey}>
 					<Nav className="nav nav-tabs tab-auto" id="nav-tab" role="tablist">
-						<Nav.Link className="nav-link" eventKey="Managers" onClick={() => { getManage() }}>List Managers</Nav.Link>
-						<Nav.Link className="nav-link" eventKey="Admins" onClick={() => { getAdmin() }}>List Admins</Nav.Link>
+						<Nav.Link className="nav-link nav-action" eventKey="Managers" onClick={() => { getManage() }}>List Managers</Nav.Link>
+						<Nav.Link className="nav-link nav-action" eventKey="Admins" onClick={() => { getAdmin() }}>List Admins</Nav.Link>
 					</Nav>
 					<TabContent>
 						<TabPane eventKey="Managers">

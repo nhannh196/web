@@ -15,7 +15,7 @@ import { Link } from 'react-router-dom';
 import ReactPaginate from 'react-paginate';
 import DatePicker from "react-datepicker";
 import "./data-stocks.css"
-import { trim } from "lodash";
+import { set, trim } from "lodash";
 import { ToastContainer, toast } from "react-toastify";
 import swal from "sweetalert";
 
@@ -38,6 +38,7 @@ const DataStocks = () => {
     const [search, setSearch] = useState('')
     const [dataToSearching, setDataToSearching] = useState([])
     const [pageCurrent, setPageCurrent] = useState(0)
+    const [updatedSuccess, setUpdatedSuccess] = useState(false)
     const svg1 = (
         <svg width="20px" height="20px" viewBox="0 0 24 24" version="1.1">
             <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
@@ -66,6 +67,7 @@ const DataStocks = () => {
             apiLoadFile()
                 .then((result) => {
                     if (result.data.length > 0) {
+                        setUpdatedSuccess(false)
                         setFileData(result.data)
                         setMessageSystem('')
                     } else {
@@ -337,7 +339,7 @@ const DataStocks = () => {
                             setFileData(result.data)
                             setMessageSystem('Saved successfully, this is your data saved successfully')
                             setFile(null)
-
+                            setUpdatedSuccess(true)
                         })
                         .catch((err) => {
                             console.log(err.message)
@@ -376,7 +378,8 @@ const DataStocks = () => {
                             // onClick={() => { setLoadFile(true)}}
                             ></input>
                         </div>
-                        {fileData.length>0 &&
+                        {fileData.length > 0 &&
+                            !updatedSuccess &&
                             <div>
                                 <button className="btn-upload-file" onClick={e => handleUpload()}>Save stocks</button>
                             </div>
@@ -433,9 +436,15 @@ const DataStocks = () => {
                                             <th>
                                                 <strong>CLOSE PRICE</strong>
                                             </th>
-                                            <th>
-                                                <strong>ACTION</strong>
-                                            </th>
+                                            {updatedSuccess ?
+                                                <th>
+                                                    <strong>RETURN</strong>
+                                                </th>
+                                                :
+                                                <th>
+                                                    <strong>ACTION</strong>
+                                                </th>
+                                            }
                                         </tr>
                                     </thead>
 
@@ -471,11 +480,15 @@ const DataStocks = () => {
                                                             <td>
                                                                 {data.closePrice}
                                                             </td>
-                                                            <td className="action-table">
-                                                                <Link className="me-2 shadow btn-xs sharp edit-stock" title="Edit" onClick={() => { setShowEdit(!showEdit); setStockEdit(data) }}><i class="bi bi-pencil-fill"></i></Link>
-                                                                <Link className="me-2 shadow btn-xs sharp delete-stock" title="Delete" onClick={() => { handleDelete(data.stockCode) }}><i className="fa fa-close color-danger"></i></Link>
+                                                            {updatedSuccess ?
+                                                                <td>{data?.dailyProfit.toFixed(4)}</td>
+                                                                :
+                                                                <td className="action-table">
+                                                                    <Link className="me-2 shadow btn-xs sharp edit-stock" title="Edit" onClick={() => { setShowEdit(!showEdit); setStockEdit(data) }}><i class="bi bi-pencil-fill"></i></Link>
+                                                                    <Link className="me-2 shadow btn-xs sharp delete-stock" title="Delete" onClick={() => { handleDelete(data.stockCode) }}><i className="fa fa-close color-danger"></i></Link>
 
-                                                            </td>
+                                                                </td>
+                                                            }
                                                         </tr>
                                                     )
                                                 })

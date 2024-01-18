@@ -1,13 +1,8 @@
 import axios from "axios";
 
-//  export const getTokenForAxios = ()=>{
-//     console.log(localStorage.getItem('accessToken'))
-//     return localStorage.getItem('accessToken')
-// }
-// const accessToken=getTokenForAxios()
+export const baseURL = 'http://www.api-capstone.com:888'
+// export const baseURL = 'https://www.test-api-capstone.com:666'
 
-// export const baseURL = 'https://559e-2402-800-6370-54b0-d8d1-fd37-8f4b-d4f3.ngrok-free.app'
-export const baseURL = 'https://localhost:7053'
 export const axiosInstance = axios.create(
   {
     baseURL: baseURL,

@@ -46,7 +46,7 @@ const ListNewPosts = () => {
     useEffect(() => {
         const timeLoadNewPost = setInterval(() => {
             loadNewPosts()
-        }, 120000)
+        }, 10000)
         return () => {
             clearInterval(timeLoadNewPost)
         }

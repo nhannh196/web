@@ -108,7 +108,6 @@ function Register(props) {
       fullName: fullName,
       email: email
     }
-    // console.log(`https://localhost:7053/Users/register?otp=${otp}`)
     return axiosInstance.post(`${baseURL}/Users/Register?otp=${otp}`, data)
   }
 
@@ -218,6 +217,7 @@ function Register(props) {
                           <strong>Password</strong>
                         </label>
                         <input
+                        type="password"
                           value={password}
                           onChange={(e) =>
                             setPassword(e.target.value)
