@@ -62,7 +62,7 @@ const DrawChart = (props) => {
         let obj = {
             series: [
                 {
-                    name: "Daily Profit",
+                    name: "Daily Return",
                     data: dataDailyProfit.reverse(),
                 },
             ],
@@ -304,7 +304,7 @@ const DrawChart = (props) => {
                     <div className="col-xl-12">
                         <TabContainer defaultActiveKey="DailyProfitChart">
                             <Nav className="nav nav-tabs tab-auto" id="nav-tab" role="tablist">
-                                <Nav.Link className="nav-link nav-portfolio" eventKey="DailyProfitChart" onClick={() => { }}>Daily Profit Chart</Nav.Link>
+                                <Nav.Link className="nav-link nav-portfolio" eventKey="DailyProfitChart" onClick={() => { }}>Daily Return Chart</Nav.Link>
                                 <Nav.Link className="nav-link nav-portfolio" eventKey="Chart" onClick={() => { }}>Candlestick Chart</Nav.Link>
                             </Nav>
                             <TabContent>

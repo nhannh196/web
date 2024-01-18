@@ -331,7 +331,7 @@ const Home = () => {
 												<Link><strong onClick={() => {
 													handleSortDailyProfit();
 													// setSortStockId(null)
-												}}>RETURN
+												}}>DAILY RETURN
 													{(sortColumn === 'DailyProfit' && sortDirection === true) && <i class="bi bi-arrow-up"></i>}
 													{(sortColumn === 'DailyProfit' && sortDirection === false) && <i class="bi bi-arrow-down"></i>}
 												</strong></Link>

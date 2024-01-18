@@ -803,7 +803,7 @@ const PortfolioComponent = () => {
                                                             <Link><strong onClick={() => {
                                                                 handleSortDailyProfit();
                                                                 // setSortStockId(null)
-                                                            }}>RETURN
+                                                            }}>DAILY RETURN
                                                                 {(sortColumn === 'DailyProfit' && sortDirection === true) && <i class="bi bi-arrow-up"></i>}
                                                                 {(sortColumn === 'DailyProfit' && sortDirection === false) && <i class="bi bi-arrow-down"></i>}
                                                             </strong></Link>
@@ -1054,10 +1054,9 @@ const PortfolioComponent = () => {
                                                             </>
                                                             :
                                                             <>
-                                                                {
-                                                                    // dataportfolio.rr > 0 && 
-                                                                    <h6>Estimated profit: {dataportfolio.rr?.toFixed(4)}%</h6>}
-                                                                {dataportfolio.sum && <h6>Sum of rate: 100%</h6>}
+                                                                {dataportfolio?.risk && <h6>Risk: {dataportfolio.risk?.toFixed(4)}</h6>}
+                                                                {dataportfolio?.rr && <h6>Estimated profit: {dataportfolio.rr?.toFixed(4)}%</h6>}
+                                                                {dataportfolio?.sum && <h6>Sum of rate: 100%</h6>}
                                                                 <Table responsive>
                                                                     <thead >
                                                                         <tr >
@@ -1074,7 +1073,7 @@ const PortfolioComponent = () => {
                                                                                 <strong>ALLOCATION RATIO</strong>
                                                                             </th>
                                                                             <th>
-                                                                                <strong>DAILY PROFIT</strong>
+                                                                                <strong>DAILY RETURN</strong>
                                                                             </th>
 
                                                                         </tr>
@@ -1089,8 +1088,8 @@ const PortfolioComponent = () => {
                                                                                         <td>
                                                                                             <strong>{stock.ticker}</strong>
                                                                                         </td>
-                                                                                        <td>{stock.expectedReturn}</td>
-                                                                                        <td>{stock.standardDeviation}</td>
+                                                                                        <td className={stock.expectedReturn >= 0 ? 'positive-numbers' : 'negative-numbers'}>{stock.expectedReturn}</td>
+                                                                                        <td className={stock.standardDeviation >= 0 ? 'positive-numbers' : 'negative-numbers'}>{stock.standardDeviation}</td>
 
                                                                                         <td>{stock.value} %</td>
                                                                                         {/* {dataportfolio?.stockResults.map((s, index) => {
