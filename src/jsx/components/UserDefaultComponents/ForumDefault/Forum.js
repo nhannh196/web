@@ -339,8 +339,8 @@ function Forum() {
     }
     console.log(report)
 
-    
 
+    console.log(listPostsView)
     return (
         <div className="row">
             <div className="col-xl-12">
@@ -448,8 +448,14 @@ function Forum() {
                                                                     </>
                                                                 }
                                                             </Nav.Link>
-                                                            <Nav.Link className="forum-nav-link" eventKey="Report" onClick={e => handleShowTabClick(post.postId, "Report")}>
-                                                                <i class="bi bi-exclamation-triangle-fill"></i> Report</Nav.Link>
+                                                            {userDetails.roleId === 2 ?
+                                                                userDetails.userId === post.userId ?
+                                                                    <></> :
+                                                                    <Nav.Link className="forum-nav-link" eventKey="Report" onClick={e => handleShowTabClick(post.postId, "Report")}>
+                                                                        <i class="bi bi-exclamation-triangle-fill"></i> Report</Nav.Link>
+                                                                :
+                                                                <></>
+                                                            }
                                                         </Nav>
                                                         <Tab.Content>
                                                             <Tab.Pane eventKey="Comments" className='tab-comments'>

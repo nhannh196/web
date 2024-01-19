@@ -848,11 +848,7 @@ const PortfolioComponent = () => {
                                                                                 :
                                                                                 <td className='negative-numbers'>{stock.dailyProfit}</td>
                                                                             }
-                                                                            {parseValuesTo4Decimal(stock.sharpeRatio) >= 0 ?
-                                                                                <td className='positive-numbers'>{parseValuesTo4Decimal(stock.sharpeRatio)}</td>
-                                                                                :
-                                                                                <td className='negative-numbers'>{parseValuesTo4Decimal(stock.sharpeRatio)}</td>
-                                                                            }
+                                                                            <td className='risk-numbers'>{parseValuesTo4Decimal(stock.standardDeviation)}</td>
                                                                             <td>{stock.dtyyyymmdd}</td>
 
                                                                             <td>
@@ -982,13 +978,23 @@ const PortfolioComponent = () => {
                                                                         </div>}
                                                                 </div>
                                                                 <div className="justify-content-end">
-                                                                    <span className="justify-content-end btn-xs sharp">
+
+                                                                    <div className="form-btn-portfolio">
                                                                         <Link className="btn btn-danger shadow btn-xs sharp" title="Delete"
                                                                             onClick={() => { deleteStockportfolio(stock.ticker) }}
                                                                         >
                                                                             <i className="fa fa-close color-danger"></i>
                                                                         </Link>
-                                                                    </span>
+                                                                        {listStockNameFavorite.includes(stock.ticker) ?
+                                                                            <div className='td-favorite'>
+                                                                                <i onClick={() => handleDeleteFavorite(stock.ticker)} class="bi bi-heart-fill" title='Delete from favorites'></i>
+                                                                            </div>
+                                                                            :
+                                                                            <div >
+                                                                                <i onClick={() => handleAddFavorite(stock.ticker)} class="bi bi-heart-fill" title='Add to favorites'></i>
+                                                                            </div>
+                                                                        }
+                                                                    </div>
 
                                                                 </div>
                                                             </div>
@@ -1054,7 +1060,7 @@ const PortfolioComponent = () => {
                                                             </>
                                                             :
                                                             <>
-                                                                {dataportfolio?.risk && <h6>Risk: {dataportfolio.risk?.toFixed(4)}</h6>}
+                                                                {dataportfolio?.risk && <h6>Risk: {dataportfolio.risk?.toFixed(4)}%</h6>}
                                                                 {dataportfolio?.rr && <h6>Estimated profit: {dataportfolio.rr?.toFixed(4)}%</h6>}
                                                                 {dataportfolio?.sum && <h6>Sum of rate: 100%</h6>}
                                                                 <Table responsive>
@@ -1089,7 +1095,7 @@ const PortfolioComponent = () => {
                                                                                             <strong>{stock.ticker}</strong>
                                                                                         </td>
                                                                                         <td className={stock.expectedReturn >= 0 ? 'positive-numbers' : 'negative-numbers'}>{stock.expectedReturn}</td>
-                                                                                        <td className={stock.standardDeviation >= 0 ? 'positive-numbers' : 'negative-numbers'}>{stock.standardDeviation}</td>
+                                                                                        <td className='risk-numbers'>{stock.standardDeviation}</td>
 
                                                                                         <td>{stock.value} %</td>
                                                                                         {/* {dataportfolio?.stockResults.map((s, index) => {
@@ -1119,8 +1125,8 @@ const PortfolioComponent = () => {
                                                                                                     </div>
                                                                                                     <div className='chart-body'>
                                                                                                         <div className='chart-body_detail'>
-                                                                                                            <div><strong>Profit average:</strong>{` ${Number(chartZoom(stock.ticker).profitAverage).toFixed(4)}`}</div>
-                                                                                                            <div><strong>Standard deviation:</strong>{` ${Number(chartZoom(stock.ticker).standardDeviation).toFixed(4)}`}</div>
+                                                                                                            <div><strong>Return average:</strong>{` ${Number(chartZoom(stock.ticker).profitAverage).toFixed(4)}`}</div>
+                                                                                                            <div><strong>Risk average:</strong>{` ${Number(chartZoom(stock.ticker).standardDeviation).toFixed(4)}`}</div>
                                                                                                         </div>
                                                                                                         <ReactApexChart
                                                                                                             options={chartZoom(stock.ticker).options}

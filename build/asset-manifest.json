@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/static/css/main.c9987de5.css",
-    "main.js": "/static/js/main.ceaa0f30.js",
+    "main.css": "/static/css/main.b71f3333.css",
+    "main.js": "/static/js/main.a95d81e2.js",
     "static/js/787.046056e3.chunk.js": "/static/js/787.046056e3.chunk.js",
     "static/media/materialdesignicons-webfont.svg?v=2.4.85": "/static/media/materialdesignicons-webfont.6285372902a5d4634762.svg",
     "static/media/la-brands-400.svg": "/static/media/la-brands-400.928495fae14841a0d610.svg",
@@ -73,12 +73,12 @@
     "static/media/fa-v4compatibility.woff2": "/static/media/fa-v4compatibility.3d503f89ccaf1b224aa5.woff2",
     "index.html": "/index.html",
     "static/media/check.svg": "/static/media/check.00b7ce7137636f3f980c.svg",
-    "main.c9987de5.css.map": "/static/css/main.c9987de5.css.map",
-    "main.ceaa0f30.js.map": "/static/js/main.ceaa0f30.js.map",
+    "main.b71f3333.css.map": "/static/css/main.b71f3333.css.map",
+    "main.a95d81e2.js.map": "/static/js/main.a95d81e2.js.map",
     "787.046056e3.chunk.js.map": "/static/js/787.046056e3.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.c9987de5.css",
-    "static/js/main.ceaa0f30.js"
+    "static/css/main.b71f3333.css",
+    "static/js/main.a95d81e2.js"
   ]
 }

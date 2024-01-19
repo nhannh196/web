@@ -347,3 +347,11 @@ i:hover {
     max-height: 506px;
     z-index: 1000;
 } */
+
+.form-btn-portfolio{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    width: 80px;
+
+}

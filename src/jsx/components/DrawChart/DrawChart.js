@@ -296,8 +296,8 @@ const DrawChart = (props) => {
                         />
                     </div>
                     <div className="detail-chart_view">
-                        <div><strong>Profit average:</strong>{` ${Number(dataToDraw?.profitAverage).toFixed(4)}`}</div>
-                        <div><strong>Standard deviation:</strong>{` ${Number(dataToDraw?.standardDeviation).toFixed(4)}`}</div>
+                        <div><strong>Return average:</strong>{` ${Number(dataToDraw?.profitAverage).toFixed(4)}`}</div>
+                        <div><strong>Risk average:</strong>{` ${Number(dataToDraw?.standardDeviation).toFixed(4)}`}</div>
                     </div>
                 </div>
                 <div className="row">

@@ -390,7 +390,7 @@ const Home = () => {
 																:
 																<td className='negative-numbers'>{stock.dailyProfit}</td>
 															} */}
-															<td className={parseValuesTo4Decimal(stock.sharpeRatio) >= 0?'positive-numbers':'negative-numbers'}>{parseValuesTo4Decimal(stock.sharpeRatio)}</td>
+															<td className='risk-numbers'>{parseValuesTo4Decimal(stock.standardDeviation)}</td>
 															{/* {parseValuesTo4Decimal(stock.sharpeRatio) >= 0 ?
 																<td className='positive-numbers'>{parseValuesTo4Decimal(stock.sharpeRatio)}</td>
 																:
